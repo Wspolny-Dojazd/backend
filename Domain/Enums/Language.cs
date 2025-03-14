@@ -1,17 +1,17 @@
 ﻿namespace Domain.Enums;
 
 /// <summary>
-/// Language enum that represents system's language setting.
+/// Represents language option.
 /// </summary>
 public enum Language
 {
     /// <summary>
-    /// Polish language setting.
+    /// Polish language option.
     /// </summary>
-    Polish, 
+    Polish,
 
     /// <summary>
-    /// English language setting.
+    /// English language option.
     /// </summary>
     English,
 }

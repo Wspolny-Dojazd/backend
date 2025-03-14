@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Persistence;
 
 /// <summary>
-/// Class <c>DatabaseContext</c> connects database tables with model objects.
+/// Represents connection between database tables and model objects.
 /// </summary>
 public class DatabaseContext : DbContext
 {
