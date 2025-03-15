@@ -12,7 +12,7 @@ public class DatabaseContext : DbContext
     /// <summary>
     /// Initializes a new instance of the <see cref="DatabaseContext"/> class.
     /// </summary>
-    /// <param name="options">Database context options, that are passed to the base constructor.</param>
+    /// <param name="options">Database context options that are passed to the base constructor.</param>
     public DatabaseContext(DbContextOptions<DatabaseContext> options)
         : base(options)
     {

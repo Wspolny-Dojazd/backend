@@ -9,6 +9,6 @@ namespace Domain.Interfaces
 {
     public interface IUserRepository
     {
-        User GetUserById(int id);
+        Task<User> GetUserByIdAsync(int id);
     }
 }

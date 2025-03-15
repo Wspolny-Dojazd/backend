@@ -41,4 +41,9 @@ public class Group
     /// Gets or sets group's list of users' live locations.
     /// </summary>
     public List<Location> LiveLocations { get; set; }
+
+    /// <summary>
+    /// Gets or sets group members.
+    /// </summary>
+    public List<User> GroupMembers { get; set; }
 }
