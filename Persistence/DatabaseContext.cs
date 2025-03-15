@@ -65,6 +65,11 @@ public class DatabaseContext : DbContext
             _ = entity.Property(p => p.Nickname).HasColumnName("nickname");
             _ = entity.Property(p => p.Email).HasColumnName("email");
             _ = entity.Property(p => p.PasswordHash).HasColumnName("password_hash");
+
+            _ = entity.Property(p => p.CreatedAt)
+                .HasColumnName("created_at")
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
 
         _ = modelBuilder.Entity<Group>(entity =>
@@ -183,7 +188,7 @@ public class DatabaseContext : DbContext
 
         _ = modelBuilder.Entity<User>()
             .HasMany(u => u.Groups)
-            .WithMany()
+            .WithMany(g => g.GroupMembers)
             .UsingEntity<Dictionary<string, object>>(
                 "group_members",
                 j => j.HasOne<Group>().WithMany().HasForeignKey("group_id"),
