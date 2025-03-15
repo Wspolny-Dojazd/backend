@@ -1,27 +1,35 @@
-﻿using Domain.Interfaces;
+﻿using Application.Interfaces;
 using Domain.Model;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Persistence;
-using Persistence.Repositories;
 
-namespace API.Controllers
+namespace API.Controllers;
+
+/// <summary>
+/// Represents controller that defines api user endpoints.
+/// </summary>
+[Route("api/[controller]")]
+[ApiController]
+public class UserController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UserController : ControllerBase
+    private readonly IUserService userService;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UserController"/> class.
+    /// </summary>
+    /// <param name="userService">User service that defines user data methods.</param>
+    public UserController(IUserService userService)
     {
-        private readonly IUserRepository _userRepository;
+        this.userService = userService;
+    }
 
-        public UserController(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
-
-        [HttpGet("{id}")]
-        public ActionResult<User> GetUserById(int id)
-        {
-            return _userRepository.GetUserById(id);
-        }
+    /// <summary>
+    /// Method that defines get user by id endpoint.
+    /// </summary>
+    /// <param name="id">Unique user's identifier.</param>
+    /// <returns>Returns action result object.</returns>
+    [HttpGet("{id}")]
+    public async Task<ActionResult<User>> GetUserById(int id)
+    {
+        return this.Ok(await this.userService.GetUserByIdAsync(id));
     }
 }

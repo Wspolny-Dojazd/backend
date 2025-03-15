@@ -1,13 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Domain.Enums;
 
-namespace Domain.Enums;
-
+/// <summary>
+/// Represents distance unit option.
+/// </summary>
 public enum DistanceUnit
 {
+    /// <summary>
+    /// Kilometers option.
+    /// </summary>
     Kilometers,
+
+    /// <summary>
+    /// Miles option.
+    /// </summary>
     Miles,
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Domain.Enums;
 
 /// <summary>
-/// Status enum that defines the start state of the route.
+/// Represents group's status.
 /// </summary>
 public enum Status
 {
