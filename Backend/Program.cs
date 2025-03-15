@@ -1,4 +1,6 @@
 using Application;
+using Application.Interfaces;
+using Application.Services;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -10,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddControllers();
 
