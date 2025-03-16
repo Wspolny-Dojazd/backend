@@ -11,6 +11,10 @@
 	  <Visible>false</Visible> 
     </AdditionalFiles>
   </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="appsettings.example.json.default" />
+  </ItemGroup>
  
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.14" />
