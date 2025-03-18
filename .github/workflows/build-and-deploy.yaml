@@ -2,7 +2,7 @@ name: Build and Deploy to K3s
 
 on:
   pull_request:
-    branches: [10-cicd-deployment-tests]
+    branches: [devops/10-cicd-deployment-tests]
 
 jobs:
   build-and-push:
