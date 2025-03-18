@@ -1,12 +1,14 @@
 name: Build and Deploy to K3s
 
 on:
+
   pull_request:
-    branches: [devops/10-cicd-deployment-tests]
-  types:
-    - opened
-    - reopened
-    - synchronize
+    branches: 
+    - devops/10-cicd-deployment-tests
+    types:
+      - opened
+      - reopened
+      - synchronize
 
 jobs:
   build-and-push:
