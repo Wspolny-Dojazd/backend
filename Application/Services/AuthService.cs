@@ -3,10 +3,13 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Interfaces;
 using Domain.Model;
+using Persistence.Repositories;
 
 namespace Application.Services;
-
-public class AuthService
+/// <summary>
+/// 
+/// </summary>
+public class AuthService:IAuthService
 {
     private readonly IUserRepository userRepository;
     private readonly IPasswordService passwordService;
@@ -64,10 +67,23 @@ public class AuthService
         var userReturnData = new LoginUserReturnDto
         {
             Id = user.Id,
+            Email = user.Email,
             Nickname = user.Nickname,
             JWTToken = token,
         };
 
         return userReturnData;
+    }
+    
+    public async Task<bool> ValidateEmailAsync(string email)
+    {
+        var user = await this.userRepository.GetUserByEmailAsync(email);
+
+        if (user == null)
+        {
+            return true;
+        }
+
+        return false;
     }
 }

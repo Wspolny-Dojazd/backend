@@ -7,13 +7,14 @@ using System.Security.Claims;
 using System.Text;
 
 namespace Application.Services;
+
 public class JWTTokenService : IJWTTokenService
 {
-    private readonly IConfiguration _configuration;
+    private readonly IConfiguration configuration;
 
     public JWTTokenService(IConfiguration configuration)
     {
-        _configuration = configuration;
+        this.configuration = configuration;
     }
 
     public string GenerateToken(User user)
@@ -22,15 +23,15 @@ public class JWTTokenService : IJWTTokenService
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Nickname),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration["Jwt:Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
+            issuer: this.configuration["Jwt:Issuer"],
+            audience: this.configuration["Jwt:Audience"],
             claims: claims,
             expires: DateTime.Now.AddMinutes(30),
             signingCredentials: creds);

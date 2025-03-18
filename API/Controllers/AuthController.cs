@@ -12,18 +12,32 @@ public class AuthController : ControllerBase
 
     public AuthController(IAuthService authService)
     {
-        this.authService= authService;
+        this.authService = authService;
     }
 
     [HttpPost]
     public async Task<ActionResult<LoginUserReturnDto>> LoginAsync(LoginUserDto loginUserDto)
     {
-        var user = await authService.LoginUserAsync(loginUserDto);
+        var user = await this.authService.LoginUserAsync(loginUserDto);
         if (user == null)
         {
             return Unauthorized();
         }
-        return Ok(user);
+
+        return this.Ok(user);
     }
 
+    [HttpPost("register")]
+
+    public async Task<ActionResult<LoginUserReturnDto>> Register([FromBody] RegisterUserDto userRegisterData)
+    {
+        if (!await this.authService.ValidateEmailAsync(userRegisterData.Email))
+        {
+            return BadRequest("Email already exists");
+        }
+
+        var user = await this.authService.RegisterUserAsync(userRegisterData);
+
+        return this.Ok(user);
+    }
 }
