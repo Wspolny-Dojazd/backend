@@ -1,8 +1,8 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
+using AutoMapper;
 using Domain.Interfaces;
-using Persistence.Repositories;
-using System.ComponentModel.DataAnnotations;
+using Domain.Model;
 
 namespace Application.Services;
 
@@ -11,23 +11,29 @@ public class AuthService
     private readonly IUserRepository userRepository;
     private readonly IPasswordService passwordService;
     private readonly IJWTTokenService jwtTokenService;
+    private readonly IMapper mapper;
 
-    public AuthService(IUserRepository userRepository, IPasswordService passwordService, IJWTTokenService jwtTokenService)
+    public AuthService(
+        IUserRepository userRepository,
+        IPasswordService passwordService,
+        IJWTTokenService jwtTokenService,
+        IMapper mapper)
     {
         this.userRepository = userRepository;
         this.passwordService = passwordService;
         this.jwtTokenService = jwtTokenService;
+        this.mapper = mapper;
     }
 
     public async Task<LoginUserReturnDto> LoginUserAsync(LoginUserDto userLoginDto)
     {
-        var user = await userRepository.GetUserByEmailAsync(userLoginDto.Email);
+        var user = await this.userRepository.GetUserByEmailAsync(userLoginDto.Email);
 
-        if (user != null && passwordService.VerifyPassword(user.PasswordHash, userLoginDto.Password))
+        if (user != null && this.passwordService.VerifyPassword(user.PasswordHash, userLoginDto.Password))
         {
-            await userRepository.UpdateUserAsync(user);
+            await this.userRepository.UpdateUserAsync(user);
 
-            var token = jwtTokenService.GenerateToken(user);
+            var token = this.jwtTokenService.GenerateToken(user);
 
             var userReturnData = new LoginUserReturnDto
             {
@@ -40,7 +46,28 @@ public class AuthService
             return userReturnData;
         }
         else
+        {
             return null;
+        }
     }
 
+    public async Task<LoginUserReturnDto> RegisterUserAsync(RegisterUserDto userRegisterDto)
+    {
+        var user = this.mapper.Map<RegisterUserDto, User>(userRegisterDto);
+        user.Nickname = user.Nickname.ToLower();
+        user.PasswordHash = this.passwordService.HashPassword(userRegisterDto.Password);
+        user.CreatedAt = DateTime.Now;
+        await this.userRepository.InsertUserAsync(user);
+
+        var token = this.jwtTokenService.GenerateToken(user);
+
+        var userReturnData = new LoginUserReturnDto
+        {
+            Id = user.Id,
+            Nickname = user.Nickname,
+            JWTToken = token,
+        };
+
+        return userReturnData;
+    }
 }
