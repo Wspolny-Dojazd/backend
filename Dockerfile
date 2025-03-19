@@ -7,11 +7,15 @@ WORKDIR /app
 # Copy the entire source code into the container
 COPY . .
 
+# Setup env variables to speedup publish process
 ENV DOTNET_NUGET_SIGNATURE_VERIFICATION=false
 ENV NUGET_CERT_REVOCATION_MODE=offline
 
 # Create build for current runtime
 RUN dotnet publish --ucr --artifacts-path artifacts
+
+# Remove source code to reduce final image size
+RUN rm -rf API Application Backend.sln Dockerfile Domain Persistence README.md deployment.yaml stylecop.json
 
 # Generate certificates required for https functionality
 RUN dotnet dev-certs https --trust
