@@ -25,9 +25,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Install qemu
-        run: |
-          apt install qemu-user-static
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
       - name: Build Docker image
         run: |
