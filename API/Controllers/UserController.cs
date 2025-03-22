@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.DTOs;
+using Application.Interfaces;
 using Domain.Model;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,5 +32,28 @@ public class UserController : ControllerBase
     public async Task<ActionResult<User>> GetUserById(int id)
     {
         return this.Ok(await this.userService.GetUserByIdAsync(id));
+    }
+
+    /// <summary>
+    /// Method that defines delete user by nickname.
+    /// </summary>
+    /// <param name="nickname">Unique user's nickname.</param>
+    /// <returns>Returns action result object.</returns>
+    [HttpDelete]
+    public async Task<ActionResult> DeleteUserByNickname(string nickname)
+    {
+        await this.userService.DeleteUserByNicknameAsync(nickname);
+        return this.Ok();
+    }
+
+    /// <summary>
+    /// Method that defines get users by nickname end point.
+    /// </summary>
+    /// <param name="value">String by which the users are found.</param>
+    /// <returns>Returns action result object.</returns>
+    [HttpGet]
+    public async Task<ActionResult<List<UserDto>>> GetUsersByNicknameAsync(string value)
+    {
+        return this.Ok(await this.userService.GetUsersByNicknameAsync(value));
     }
 }
