@@ -35,7 +35,7 @@ public class UserController : ControllerBase
     }
 
     /// <summary>
-    /// Method that defines delete user by nickname.
+    /// Method that defines delete user by nickname endpoint.
     /// </summary>
     /// <param name="nickname">Unique user's nickname.</param>
     /// <returns>Returns action result object.</returns>
@@ -47,7 +47,7 @@ public class UserController : ControllerBase
     }
 
     /// <summary>
-    /// Method that defines get users by nickname end point.
+    /// Method that defines get users by nickname endpoint.
     /// </summary>
     /// <param name="value">String by which the users are found.</param>
     /// <returns>Returns action result object.</returns>
