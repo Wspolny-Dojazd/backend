@@ -11,9 +11,9 @@ public class Route
     public int Id { get; set; }
 
     /// <summary>
-    /// Gets or sets tip that helps to get to the location.
+    /// Gets or sets the tip that helps to get to the location.
     /// </summary>
-    public string Tip { get; set; }
+    public required string Tip { get; set; }
 
     /// <summary>
     /// Gets or sets the location's latitude.

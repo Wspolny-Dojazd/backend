@@ -1,14 +1,12 @@
-﻿namespace Application.DTOs
+﻿namespace Application.DTOs;
+
+public class LoginUserReturnDto
 {
-    public class LoginUserReturnDto
-    {
-        public int Id { get; set; }
+    public required int Id { get; set; }
 
-        public string Email { get; set; }
+    public required string Email { get; set; }
 
-        public string Nickname { get; set; }
+    public required string Nickname { get; set; }
 
-        public string JWTToken {  get; set; }
-
-    }
+    public required string JWTToken { get; set; }
 }

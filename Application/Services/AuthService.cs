@@ -6,10 +6,11 @@ using Domain.Model;
 using Persistence.Repositories;
 
 namespace Application.Services;
+
 /// <summary>
-/// 
+///
 /// </summary>
-public class AuthService:IAuthService
+public class AuthService : IAuthService
 {
     private readonly IUserRepository userRepository;
     private readonly IPasswordService passwordService;
@@ -74,7 +75,7 @@ public class AuthService:IAuthService
 
         return userReturnData;
     }
-    
+
     public async Task<bool> ValidateEmailAsync(string email)
     {
         var user = await this.userRepository.GetUserByEmailAsync(email);

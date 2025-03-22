@@ -24,27 +24,27 @@ public class DatabaseContext : DbContext
     public DbSet<Group> Groups { get; set; }
 
     /// <summary>
-    /// Gets or sets Location DbSet.
+    /// Gets or sets the Location DbSet.
     /// </summary>
     public DbSet<Location> Locations { get; set; }
 
     /// <summary>
-    /// Gets or sets Message DbSet.
+    /// Gets or sets the Message DbSet.
     /// </summary>
     public DbSet<Message> Messages { get; set; }
 
     /// <summary>
-    /// Gets or sets UserConfiguration DbSet.
+    /// Gets or sets the UserConfiguration DbSet.
     /// </summary>
     public DbSet<UserConfiguration> UserConfiguration { get; set; }
 
     /// <summary>
-    /// Gets or sets User DbSet.
+    /// Gets or sets the User DbSet.
     /// </summary>
     public DbSet<User> Users { get; set; }
 
     /// <summary>
-    /// Gets or sets Route DbSet.
+    /// Gets or sets the Route DbSet.
     /// </summary>
     public DbSet<Route> Routes { get; set; }
 

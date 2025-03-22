@@ -21,7 +21,7 @@ public class AuthController : ControllerBase
         var user = await this.authService.LoginUserAsync(loginUserDto);
         if (user == null)
         {
-            return Unauthorized();
+            return this.Unauthorized();
         }
 
         return this.Ok(user);
@@ -33,7 +33,7 @@ public class AuthController : ControllerBase
     {
         if (!await this.authService.ValidateEmailAsync(userRegisterData.Email))
         {
-            return BadRequest("Email already exists");
+            return this.BadRequest("Email already exists");
         }
 
         var user = await this.authService.RegisterUserAsync(userRegisterData);

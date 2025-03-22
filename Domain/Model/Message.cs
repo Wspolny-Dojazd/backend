@@ -21,17 +21,17 @@ public class Message
     public int UserId { get; set; }
 
     /// <summary>
-    /// Gets or sets message's content.
+    /// Gets or sets the message's content.
     /// </summary>
-    public string Content { get; set; }
+    public required string Content { get; set; }
 
     /// <summary>
     /// Gets or sets the group in which the message was sent.
     /// </summary>
-    public Group Group { get; set; }
+    public required Group Group { get; set; }
 
     /// <summary>
     /// Gets or sets the user who sent the message.
     /// </summary>
-    public User User { get; set; }
+    public required User User { get; set; }
 }

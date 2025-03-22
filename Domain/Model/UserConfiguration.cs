@@ -11,24 +11,24 @@ public class UserConfiguration
     /// Gets or sets the unique configuration identifier.
     /// </summary>
     public int Id { get; set; }
-    
+
     /// <summary>
-    /// Gets or sets user's identifier.
+    /// Gets or sets the user's identifier.
     /// </summary>
     public int UserId { get; set; }
 
     /// <summary>
-    /// Gets or sets user's system's language.
+    /// Gets or sets the user's system's language.
     /// </summary>
     public Language Language { get; set; }
 
     /// <summary>
-    /// Gets or sets user's system's time system.
+    /// Gets or sets the user's system's time system.
     /// </summary>
     public TimeSystem TimeSystem { get; set; }
 
     /// <summary>
-    /// Gets or sets user's system's distance unit.
+    /// Gets or sets the user's system's distance unit.
     /// </summary>
     public DistanceUnit DistanceUnit { get; set; }
 }

@@ -21,12 +21,12 @@ public class Location
     public int Lat { get; set; }
 
     /// <summary>
-    /// Gets or sets location's longitude.
+    /// Gets or sets the location's longitude.
     /// </summary>
     public int Lon { get; set; }
 
     /// <summary>
-    /// Gets or sets user.
+    /// Gets or sets the user.
     /// </summary>
-    public User User { get; set; }
+    public required User User { get; set; }
 }
