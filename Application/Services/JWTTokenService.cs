@@ -8,15 +8,27 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Application.Services;
 
+/// <summary>
+/// Represents token operations.
+/// </summary>
 public class JWTTokenService : IJWTTokenService
 {
     private readonly IConfiguration configuration;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JWTTokenService"/> class.
+    /// </summary>
+    /// <param name="configuration">Represents a set of key/value application configuration properties..</param>
     public JWTTokenService(IConfiguration configuration)
     {
         this.configuration = configuration;
     }
 
+    /// <summary>
+    /// Method that generate user's token.
+    /// </summary>
+    /// <param name="user">Instance of the user.</param>
+    /// <returns>Returns the hashed user's password.</returns>
     public string GenerateToken(User user)
     {
         var claims = new[]

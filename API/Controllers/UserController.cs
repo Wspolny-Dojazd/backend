@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 /// <summary>
-/// Represents controller that defines api user endpoints.
+/// Represents user's API endpoints.
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]

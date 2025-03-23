@@ -18,6 +18,7 @@ public class UserService : IUserService
     /// Initializes a new instance of the <see cref="UserService"/> class.
     /// </summary>
     /// <param name="userRepository">User repository that allows database operations on user table.</param>
+    /// <param name="mapper">Used to map objects between different classes.</param>
     public UserService(IUserRepository userRepository, IMapper mapper)
     {
         this.userRepository = userRepository;
