@@ -269,3 +269,12 @@ dotnet_style_qualification_for_field = true:silent
 dotnet_style_qualification_for_property = true:silent
 dotnet_style_qualification_for_method = true:silent
 dotnet_style_qualification_for_event = true:silent
+
+[**/Migrations/*.cs]
+dotnet_analyzer_diagnostic.severity = none
+dotnet_diagnostic.IDE0005.severity = none   # unnecessary using directive
+dotnet_diagnostic.IDE0051.severity = none   # unused private member
+dotnet_diagnostic.IDE0060.severity = none   # unused parameter
+dotnet_diagnostic.IDE0079.severity = none   # unnecessary suppression
+dotnet_diagnostic.IDE0044.severity = none   # make field readonly
+dotnet_diagnostic.IDE0090.severity = none   # use new(...) expression
