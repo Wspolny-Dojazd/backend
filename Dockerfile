@@ -17,8 +17,5 @@ RUN dotnet publish --ucr --artifacts-path artifacts
 # Remove source code to reduce final image size
 RUN rm -rf API Application Backend.sln Dockerfile Domain Persistence README.md deployment.yaml stylecop.json
 
-# Generate certificates required for https functionality
-RUN dotnet dev-certs https --trust
-
 # Run the application
-CMD ["./artifacts/publish/API/release/API", "--urls", "http://*:80;https://*:443"]
+CMD ["./artifacts/publish/API/release/API", "--urls", "http://*:80"]
