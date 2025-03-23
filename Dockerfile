@@ -21,4 +21,4 @@ RUN rm -rf API Application Backend.sln Dockerfile Domain Persistence README.md d
 RUN dotnet dev-certs https --trust
 
 # Run the application
-CMD ["./artifacts/publish/API/release/API", "--urls", "http://*:5121;https://*:7242"]
+CMD ["./artifacts/publish/API/release/API", "--urls", "http://*:80;https://*:443"]
