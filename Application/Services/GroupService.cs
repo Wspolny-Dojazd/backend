@@ -7,7 +7,7 @@ using Domain.Model;
 namespace Application.Services;
 
 /// <summary>
-/// Represents user operations with user repository.
+/// Represents group operations with group repository.
 /// </summary>
 public class GroupService : IGroupService
 {
@@ -17,7 +17,7 @@ public class GroupService : IGroupService
     /// <summary>
     /// Initializes a new instance of the <see cref="GroupService"/> class.
     /// </summary>
-    /// <param name="groupRepository">User repository that allows database operations on user table.</param>
+    /// <param name="groupRepository">Group repository that allows database operations on group table.</param>
     public GroupService(IGroupRepository groupRepository, IMapper mapper)
     {
         this.groupRepository = groupRepository;
@@ -25,14 +25,22 @@ public class GroupService : IGroupService
     }
 
     /// <summary>
-    /// Method that gets user display data.
+    /// Method that gets group display data.
     /// </summary>
-    /// <param name="id">Unique user identifier.</param>
-    /// <returns>Returns user display data.</returns>
+    /// <param name="id">Unique group identifier.</param>
+    /// <returns>Returns group display data.</returns>
     public async Task<GroupDto> GetGroupByIdAsync(int id)
     {
         var group = await this.groupRepository.GetGroupByIdAsync(id);
 
         return this.mapper.Map<Group, GroupDto>(group);
     }
+
+    public async Task<GroupDto> CreateGroupAsync()
+    {
+        var group = await this.groupRepository.CreateGroupAsync();
+
+        return this.mapper.Map<Group, GroupDto>(group);
+    }
+
 }
