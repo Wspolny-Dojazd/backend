@@ -1,9 +1,8 @@
 name: Build and Deploy to K3s
 
 on:
-
   pull_request:
-    branches: 
+    branches:
     - devops/10-cicd-deployment-tests
     types:
       - opened
@@ -35,3 +34,19 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/wspolny-dojazd:backend
+  
+  rollout:
+    name: Rollout
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger rollout
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          port: ${{ secrets.PORT }}
+          script: sudo kubectl rollout restart deployment/csharp-server-deployment
