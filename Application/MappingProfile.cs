@@ -15,5 +15,6 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         _ = this.CreateMap<User, UserDto>();
+        _ = this.CreateMap<Group, GroupDto>();
     }
 }

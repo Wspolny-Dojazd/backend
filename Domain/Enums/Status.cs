@@ -14,10 +14,10 @@ public enum Status
     /// <summary>
     /// Not started state.
     /// </summary>
-    NotStarted,
+    NOT_STARTED,
 
     /// <summary>
     /// Started state.
     /// </summary>
-    Started,
+    STARTED,
 }
