@@ -14,8 +14,5 @@ ENV NUGET_CERT_REVOCATION_MODE=offline
 # Create build for current runtime
 RUN dotnet publish --ucr --artifacts-path artifacts
 
-# Remove source code to reduce final image size
-RUN rm -rf API Application Backend.sln Dockerfile Domain Persistence README.md deployment.yaml stylecop.json
-
 # Run the application
 CMD ["./artifacts/publish/API/release/API", "--urls", "http://*:80"]
