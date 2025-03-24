@@ -1,17 +1,11 @@
 name: Build and Deploy to K3s
 
 on:
-  pull_request:
-    branches:
-    - devops/10-cicd-deployment-tests
-    types:
-      - opened
-      - reopened
-      - synchronize
+  workflow_dispatch:
 
 jobs:
   build-and-push:
-    name: Build ⛏
+    name: Build and push ⛏
     runs-on: ubuntu-latest
 
     steps:
@@ -36,7 +30,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/wspolny-dojazd:backend
   
   rollout:
-    name: Rollout
+    name: Rollout 🚀
     needs: build-and-push
     runs-on: ubuntu-latest
 
