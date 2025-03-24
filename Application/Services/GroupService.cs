@@ -42,5 +42,16 @@ public class GroupService : IGroupService
 
         return this.mapper.Map<Group, GroupDto>(group);
     }
+    public async Task<GroupDto> AddUserViaCodeAsync(string code, int userId)
+    {
+        var group = await this.groupRepository.AddUserViaCodeAsync(code, userId);
 
+        return this.mapper.Map<Group, GroupDto>(group);
+    }
+    public async Task<GroupDto> RemoveUserFromGroupAsync(int id, int userId)
+    {
+        var group = await this.groupRepository.RemoveUserFromGroupAsync(id, userId);
+
+        return this.mapper.Map<Group, GroupDto>(group);
+    }
 }

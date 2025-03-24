@@ -68,4 +68,65 @@ public class GroupRepository : IGroupRepository
         return joiningCode;
     }
 
+    public async Task<Group?> AddUserViaCodeAsync(string code, int userId)
+    {
+        Group? group = await this.databaseContext.Groups
+            .Include(g => g.GroupMembers)
+            .FirstOrDefaultAsync(g => g.JoiningCode == code);
+
+        if (group == null)
+        {
+            return null;
+        }
+
+        User? user = await this.databaseContext.Users
+            .Include(u => u.Groups)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null)
+        {
+            return null;
+        }
+
+        if (!group.GroupMembers.Contains(user))
+        {
+            group.GroupMembers.Add(user);
+            user.Groups.Add(group);
+        }
+
+        await this.databaseContext.SaveChangesAsync();
+
+        return group;
+    }
+    public async Task<Group?> RemoveUserFromGroupAsync(int id, int userId)
+    {
+        Group? group = await this.databaseContext.Groups
+            .Include(g => g.GroupMembers)
+            .FirstOrDefaultAsync(g => g.Id == id);
+
+        if (group == null)
+        {
+            return null;
+        }
+
+        User? user = await this.databaseContext.Users
+            .Include(u => u.Groups)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null)
+        {
+            return null;
+        }
+
+        if (group.GroupMembers.Contains(user))
+        {
+            group.GroupMembers.Remove(user);
+            user.Groups.Remove(group);
+        }
+
+        await this.databaseContext.SaveChangesAsync();
+
+        return group;
+    }
+
 }

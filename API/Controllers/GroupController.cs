@@ -38,4 +38,27 @@ public class GroupController : ControllerBase
     {
         return this.Ok(await this.groupService.CreateGroupAsync());
     }
+    public class JoinGroupRequest
+    {
+        public int UserId { get; set; }
+    }
+
+    [HttpPost("join-via-code/{code}")]
+    public async Task<ActionResult<Group>> AddUserViaCodeAsync(string code, [FromBody] JoinGroupRequest request)
+    {
+        return this.Ok(await this.groupService.AddUserViaCodeAsync(code, request.UserId));
+    }
+
+    [HttpPost("{id}/leave")]
+    public async Task<ActionResult<Group>> UserLeaveAsync(int id, [FromBody] JoinGroupRequest request)
+    {
+        return this.Ok(await this.groupService.RemoveUserFromGroupAsync(id, request.UserId));
+    }
+
+    [HttpPost("{id}/kick-user/{userId}")]
+    public async Task<ActionResult<Group>> UserLeaveAsync(int id, int userId)
+    {
+        return this.Ok(await this.groupService.RemoveUserFromGroupAsync(id, userId));
+    }
+
 }
