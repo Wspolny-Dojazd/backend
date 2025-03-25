@@ -7,27 +7,14 @@ namespace Persistence.Repositories;
 /// <summary>
 /// Represents crud operations for user.
 /// </summary>
-public class UserRepository : IUserRepository
+/// <param name="databaseContext">The database context used to access user data.</param>
+public class UserRepository(DatabaseContext databaseContext)
+    : IUserRepository
 {
-    private readonly DatabaseContext databaseContext;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="UserRepository"/> class.
-    /// </summary>
-    /// <param name="databaseContext">Database context that allows to get and manipulate database data.</param>
-    public UserRepository(DatabaseContext databaseContext)
-    {
-        this.databaseContext = databaseContext;
-    }
-
-    /// <summary>
-    /// This async method get user's data by id from database.
-    /// </summary>
-    /// <param name="id">User's id.</param>
-    /// <returns>User's data from database.</returns>
+    /// <inheritdoc/>
     public async Task<User> GetUserByIdAsync(int id)
     {
-        return await this.databaseContext.Users
+        return await databaseContext.Users
             .Where(u => u.Id == id)
             .FirstOrDefaultAsync();
     }

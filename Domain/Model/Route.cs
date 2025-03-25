@@ -1,27 +1,27 @@
 ﻿namespace Domain.Model;
 
 /// <summary>
-/// Represents the route that leads to some location.
+/// Represents a tip or instruction leading to a specific location.
 /// </summary>
 public class Route
 {
     /// <summary>
-    /// Gets or sets the unique identifier of route.
+    /// Gets or sets the unique identifier of the route.
     /// </summary>
     public int Id { get; set; }
 
     /// <summary>
-    /// Gets or sets tip that helps to get to the location.
+    /// Gets or sets the tip or hint for navigating to the destination.
     /// </summary>
-    public string Tip { get; set; }
+    public required string Tip { get; set; }
 
     /// <summary>
-    /// Gets or sets the location's latitude.
+    /// Gets or sets the latitude coordinate of the location.
     /// </summary>
     public int Lat { get; set; }
 
     /// <summary>
-    /// Gets or sets the location's longitude.
+    /// Gets or sets the longitude coordinate of the location.
     /// </summary>
     public int Lon { get; set; }
 }

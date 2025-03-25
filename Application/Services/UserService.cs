@@ -1,4 +1,5 @@
 ﻿using Application.DTOs;
+using Application.Exceptions;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Interfaces;
@@ -7,32 +8,19 @@ using Domain.Model;
 namespace Application.Services;
 
 /// <summary>
-/// Represents user operations with user repository.
+/// Provides user-related business logic.
 /// </summary>
-public class UserService : IUserService
+/// <param name="userRepository">The repository for accessing user data.</param>
+/// <param name="mapper">The object mapper.</param>
+public class UserService(IUserRepository userRepository, IMapper mapper)
+    : IUserService
 {
-    private readonly IUserRepository userRepository;
-    private readonly IMapper mapper;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="UserService"/> class.
-    /// </summary>
-    /// <param name="userRepository">User repository that allows database operations on user table.</param>
-    public UserService(IUserRepository userRepository, IMapper mapper)
-    {
-        this.userRepository = userRepository;
-        this.mapper = mapper;
-    }
-
-    /// <summary>
-    /// Method that gets user display data.
-    /// </summary>
-    /// <param name="id">Unique user identifier.</param>
-    /// <returns>Returns user display data.</returns>
+    /// <inheritdoc/>
     public async Task<UserDto> GetUserByIdAsync(int id)
     {
-        var user = await this.userRepository.GetUserByIdAsync(id);
+        var user = await userRepository.GetUserByIdAsync(id)
+            ?? throw new UserNotFoundException(id);
 
-        return this.mapper.Map<User, UserDto>(user);
+        return mapper.Map<User, UserDto>(user);
     }
 }

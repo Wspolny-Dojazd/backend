@@ -3,7 +3,7 @@
 namespace Domain.Model;
 
 /// <summary>
-/// Represents a group of people.
+/// Represents a group of users traveling to a common destination.
 /// </summary>
 public class Group
 {
@@ -13,37 +13,37 @@ public class Group
     public int Id { get; set; }
 
     /// <summary>
-    /// Gets or sets group's joining code.
+    /// Gets or sets the code used to join the group.
     /// </summary>
-    public string JoiningCode { get; set; }
+    public required string JoiningCode { get; set; }
 
     /// <summary>
-    /// Gets or sets group's starting status.
+    /// Gets or sets the current status of the group.
     /// </summary>
     public Status Status { get; set; }
 
     /// <summary>
-    /// Gets or sets group's destination latitude.
+    /// Gets or sets the destination latitude of the group.
     /// </summary>
     public int DestinationLat { get; set; }
 
     /// <summary>
-    /// Gets or sets group's destination longitude.
+    /// Gets or sets the destination longitude of the group.
     /// </summary>
     public int DestinationLon { get; set; }
 
     /// <summary>
-    /// Gets or sets group's list of routes.
+    /// Gets or sets the collection of routes associated with the group.
     /// </summary>
-    public List<Route> Routes { get; set; }
+    public required List<Route> Routes { get; set; }
 
     /// <summary>
-    /// Gets or sets group's list of users' live locations.
+    /// Gets or sets the collection of live locations of group members.
     /// </summary>
-    public List<Location> LiveLocations { get; set; }
+    public required List<Location> LiveLocations { get; set; }
 
     /// <summary>
-    /// Gets or sets group members.
+    /// Gets or sets the list of users who are members of the group.
     /// </summary>
-    public List<User> GroupMembers { get; set; }
+    public required List<User> GroupMembers { get; set; }
 }

@@ -1,7 +1,7 @@
 ﻿namespace Domain.Model;
 
 /// <summary>
-/// Represents an user.
+/// Represents a user in the system.
 /// </summary>
 public class User
 {
@@ -11,37 +11,37 @@ public class User
     public int Id { get; set; }
 
     /// <summary>
-    /// Gets or sets user's Email.
+    /// Gets or sets the user's email address.
     /// </summary>
-    public string Email { get; set; }
+    public required string Email { get; set; }
 
     /// <summary>
-    /// Gets or sets user's Nickname.
+    /// Gets or sets the user's nickname.
     /// </summary>
-    public string Nickname { get; set; }
+    public required string Nickname { get; set; }
 
     /// <summary>
-    /// Gets or sets user's password hash.
+    /// Gets or sets the hash of the user's password.
     /// </summary>
-    public string PasswordHash { get; set; }
+    public required string PasswordHash { get; set; }
 
     /// <summary>
-    /// Gets or sets the date of creating user's object.
+    /// Gets or sets the date and time when the user was created.
     /// </summary>
     public DateTime CreatedAt { get; set; }
 
     /// <summary>
-    /// Gets or sets user's friend list.
+    /// Gets or sets the list of user's friends.
     /// </summary>
-    public List<User> Friends { get; set; }
+    public required List<User> Friends { get; set; }
 
     /// <summary>
-    /// Gets or sets user's groups.
+    /// Gets or sets the list of groups the user belongs to.
     /// </summary>
-    public List<Group> Groups { get; set; }
+    public required List<Group> Groups { get; set; }
 
     /// <summary>
-    /// Gets or sets user's configuration.
+    /// Gets or sets the user's configuration preferences.
     /// </summary>
-    public UserConfiguration UserConfiguration { get; set; }
+    public required UserConfiguration UserConfiguration { get; set; }
 }

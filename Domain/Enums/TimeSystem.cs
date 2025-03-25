@@ -1,17 +1,17 @@
 ﻿namespace Domain.Enums;
 
 /// <summary>
-/// Represents time system option.
+/// Specifies the user's preferred time system.
 /// </summary>
 public enum TimeSystem
 {
     /// <summary>
-    /// Represents time as 0-12:00.
+    /// 12-hour format (AM/PM).
     /// </summary>
     AMPM,
 
     /// <summary>
-    /// Represents time as 0-24:00.
+    /// 24-hour format (00:00–23:59).
     /// </summary>
     TwentyFourHours,
 }

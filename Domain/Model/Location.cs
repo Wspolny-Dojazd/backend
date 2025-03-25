@@ -1,32 +1,32 @@
 ﻿namespace Domain.Model;
 
 /// <summary>
-/// Represents user's current location.
+/// Represents a user's current geographic location.
 /// </summary>
 public class Location
 {
     /// <summary>
-    /// Gets or sets the unique identifier of location.
+    /// Gets or sets the unique identifier of the location.
     /// </summary>
     public int Id { get; set; }
 
     /// <summary>
-    /// Gets or sets the identifier of user.
+    /// Gets or sets the identifier of the user associated with the location.
     /// </summary>
     public int UserId { get; set; }
 
     /// <summary>
-    /// Gets or sets location's lattitude.
+    /// Gets or sets the latitude coordinate.
     /// </summary>
     public int Lat { get; set; }
 
     /// <summary>
-    /// Gets or sets location's longitude.
+    /// Gets or sets the longitude coordinate.
     /// </summary>
     public int Lon { get; set; }
 
     /// <summary>
-    /// Gets or sets user.
+    /// Gets or sets the user associated with the location.
     /// </summary>
-    public User User { get; set; }
+    public required User User { get; set; }
 }

@@ -3,32 +3,32 @@
 namespace Domain.Model;
 
 /// <summary>
-/// UserConfiguration model class that defines its properties.
+/// Represents user-specific application configuration settings.
 /// </summary>
 public class UserConfiguration
 {
     /// <summary>
-    /// Gets or sets the unique configuration identifier.
+    /// Gets or sets the unique identifier of the configuration.
     /// </summary>
     public int Id { get; set; }
-    
+
     /// <summary>
-    /// Gets or sets user's identifier.
+    /// Gets or sets the identifier of the user to whom the configuration belongs.
     /// </summary>
     public int UserId { get; set; }
 
     /// <summary>
-    /// Gets or sets user's system's language.
+    /// Gets or sets the preferred application language.
     /// </summary>
     public Language Language { get; set; }
 
     /// <summary>
-    /// Gets or sets user's system's time system.
+    /// Gets or sets the preferred time display format.
     /// </summary>
     public TimeSystem TimeSystem { get; set; }
 
     /// <summary>
-    /// Gets or sets user's system's distance unit.
+    /// Gets or sets the preferred distance unit.
     /// </summary>
     public DistanceUnit DistanceUnit { get; set; }
 }
