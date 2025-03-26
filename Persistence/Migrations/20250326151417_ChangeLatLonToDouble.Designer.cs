@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250326151417_ChangeLatLonToDouble")]
+    partial class ChangeLatLonToDouble
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,7 +49,7 @@ namespace Persistence.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("ENUM('NotStarted', 'Started')")
+                        .HasColumnType("ENUM('NOT_STARTED', 'STARTED')")
                         .HasColumnName("status");
 
                     b.HasKey("Id")
@@ -211,7 +214,7 @@ namespace Persistence.Migrations
 
                     b.Property<string>("TimeSystem")
                         .IsRequired()
-                        .HasColumnType("ENUM('TwelveHour', 'TwentyFourHour')")
+                        .HasColumnType("ENUM('AMPM', 'TwentyFourHour')")
                         .HasColumnName("time_system");
 
                     b.Property<int>("UserId")

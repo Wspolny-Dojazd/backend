@@ -5,53 +5,48 @@ using Microsoft.EntityFrameworkCore;
 namespace Persistence;
 
 /// <summary>
-/// Represents connection between database tables and model objects.
+/// Represents the Entity Framework Core database context used to interact
+/// with the application's relational database. Configures entity mappings
+/// and database schema for the domain models.
 /// </summary>
-public class DatabaseContext : DbContext
+/// <param name="options">The options to configure the database context.</param>
+public class DatabaseContext(DbContextOptions<DatabaseContext> options)
+    : DbContext(options)
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="DatabaseContext"/> class.
-    /// </summary>
-    /// <param name="options">Database context options that are passed to the base constructor.</param>
-    public DatabaseContext(DbContextOptions<DatabaseContext> options)
-        : base(options)
-    {
-    }
-
-    /// <summary>
-    /// Gets or sets Group DbSet.
-    /// </summary>
-    public DbSet<Group> Groups { get; set; }
-
-    /// <summary>
-    /// Gets or sets Location DbSet.
-    /// </summary>
-    public DbSet<Location> Locations { get; set; }
-
-    /// <summary>
-    /// Gets or sets Message DbSet.
-    /// </summary>
-    public DbSet<Message> Messages { get; set; }
-
-    /// <summary>
-    /// Gets or sets UserConfiguration DbSet.
-    /// </summary>
-    public DbSet<UserConfiguration> UserConfiguration { get; set; }
-
-    /// <summary>
-    /// Gets or sets User DbSet.
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing users.
     /// </summary>
     public DbSet<User> Users { get; set; }
 
     /// <summary>
-    /// Gets or sets Route DbSet.
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing groups.
+    /// </summary>
+    public DbSet<Group> Groups { get; set; }
+
+    /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing user configurations.
+    /// </summary>
+    public DbSet<UserConfiguration> UserConfiguration { get; set; }
+
+    /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing messages.
+    /// </summary>
+    public DbSet<Message> Messages { get; set; }
+
+    /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing locations.
+    /// </summary>
+    public DbSet<Location> Locations { get; set; }
+
+    /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing routes.
     /// </summary>
     public DbSet<Route> Routes { get; set; }
 
     /// <summary>
-    /// Connects model with database tables.
+    /// Configures the entity model and relationships for the database schema.
     /// </summary>
-    /// <param name="modelBuilder">Constructs model for a context. </param>
+    /// <param name="modelBuilder">The builder used to construct the model for this context.</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -79,12 +74,12 @@ public class DatabaseContext : DbContext
 
             _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
             _ = entity.Property(p => p.JoiningCode).HasColumnName("joining_code");
-            _ = entity.Property(p => p.DestinationLat).HasColumnName("destination_lat").HasColumnType("int");
-            _ = entity.Property(p => p.DestinationLon).HasColumnName("destination_lon").HasColumnType("int");
+            _ = entity.Property(p => p.DestinationLat).HasColumnName("destination_lat").HasColumnType("double");
+            _ = entity.Property(p => p.DestinationLon).HasColumnName("destination_lon").HasColumnType("double");
 
             _ = entity.Property(p => p.Status)
                 .HasColumnName("status")
-                .HasColumnType("ENUM('NOT_STARTED', 'STARTED')")
+                .HasColumnType("ENUM('NotStarted', 'Started')")
                 .HasConversion(
                     v => v.ToString(),
                     v => (Status)Enum.Parse(typeof(Status), v));
@@ -120,7 +115,7 @@ public class DatabaseContext : DbContext
 
             _ = entity.Property(p => p.TimeSystem)
                 .HasColumnName("time_system")
-                .HasColumnType("ENUM('AMPM', 'TwentyFourHour')")
+                .HasColumnType("ENUM('TwelveHour', 'TwentyFourHour')")
                 .HasConversion(
                     v => v.ToString(),
                     v => (TimeSystem)Enum.Parse(typeof(TimeSystem), v));
@@ -140,8 +135,8 @@ public class DatabaseContext : DbContext
 
             _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
             _ = entity.Property(p => p.Tip).HasColumnName("tip");
-            _ = entity.Property(p => p.Lat).HasColumnName("lat").HasColumnType("int");
-            _ = entity.Property(p => p.Lon).HasColumnName("lon").HasColumnType("int");
+            _ = entity.Property(p => p.Lat).HasColumnName("lat").HasColumnType("double");
+            _ = entity.Property(p => p.Lon).HasColumnName("lon").HasColumnType("double");
         });
 
         _ = modelBuilder.Entity<Location>(entity =>
@@ -151,8 +146,8 @@ public class DatabaseContext : DbContext
 
             _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
             _ = entity.Property(p => p.UserId).HasColumnName("user_id").HasColumnType("int");
-            _ = entity.Property(p => p.Lat).HasColumnName("lat").HasColumnType("int");
-            _ = entity.Property(p => p.Lon).HasColumnName("lon").HasColumnType("int");
+            _ = entity.Property(p => p.Lat).HasColumnName("lat").HasColumnType("double");
+            _ = entity.Property(p => p.Lon).HasColumnName("lon").HasColumnType("double");
 
             _ = entity.HasOne(l => l.User)
                 .WithMany()

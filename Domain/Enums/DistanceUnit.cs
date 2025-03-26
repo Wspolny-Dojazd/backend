@@ -1,17 +1,17 @@
 ﻿namespace Domain.Enums;
 
 /// <summary>
-/// Represents distance unit option.
+/// Specifies the unit of distance measurement.
 /// </summary>
 public enum DistanceUnit
 {
     /// <summary>
-    /// Kilometers option.
+    /// Distance measured in kilometers.
     /// </summary>
     Kilometers,
 
     /// <summary>
-    /// Miles option.
+    /// Distance measured in miles.
     /// </summary>
     Miles,
 }
