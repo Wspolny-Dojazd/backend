@@ -1,7 +1,7 @@
 ﻿namespace Domain.Model;
 
 /// <summary>
-/// Represents a user's current geographic location.
+/// Represents the current location of a user.
 /// </summary>
 public class Location
 {

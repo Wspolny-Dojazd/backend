@@ -8,7 +8,7 @@ namespace Domain.Model;
 public class Group
 {
     /// <summary>
-    /// Gets or sets the group's unique identifier.
+    /// Gets or sets the unique identifier of the group.
     /// </summary>
     public int Id { get; set; }
 
@@ -33,17 +33,17 @@ public class Group
     public int DestinationLon { get; set; }
 
     /// <summary>
-    /// Gets or sets the collection of routes associated with the group.
+    /// Gets or sets the routes associated with the group.
     /// </summary>
     public required List<Route> Routes { get; set; }
 
     /// <summary>
-    /// Gets or sets the collection of live locations of group members.
+    /// Gets or sets the live locations of group members.
     /// </summary>
     public required List<Location> LiveLocations { get; set; }
 
     /// <summary>
-    /// Gets or sets the list of users who are members of the group.
+    /// Gets or sets the users who are members of the group.
     /// </summary>
     public required List<User> GroupMembers { get; set; }
 }

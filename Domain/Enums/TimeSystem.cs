@@ -1,7 +1,7 @@
 ﻿namespace Domain.Enums;
 
 /// <summary>
-/// Specifies the user's preferred time system.
+/// Specifies the preferred time system for displaying time values.
 /// </summary>
 public enum TimeSystem
 {

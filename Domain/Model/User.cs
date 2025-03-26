@@ -6,22 +6,22 @@
 public class User
 {
     /// <summary>
-    /// Gets or sets the user's unique identifier.
+    /// Gets or sets the unique identifier of the user.
     /// </summary>
     public int Id { get; set; }
 
     /// <summary>
-    /// Gets or sets the user's email address.
+    /// Gets or sets the email address of the user.
     /// </summary>
     public required string Email { get; set; }
 
     /// <summary>
-    /// Gets or sets the user's nickname.
+    /// Gets or sets the nickname of the user.
     /// </summary>
     public required string Nickname { get; set; }
 
     /// <summary>
-    /// Gets or sets the hash of the user's password.
+    /// Gets or sets the password hash of the user.
     /// </summary>
     public required string PasswordHash { get; set; }
 
@@ -31,17 +31,17 @@ public class User
     public DateTime CreatedAt { get; set; }
 
     /// <summary>
-    /// Gets or sets the list of user's friends.
+    /// Gets or sets the friends of the user.
     /// </summary>
     public required List<User> Friends { get; set; }
 
     /// <summary>
-    /// Gets or sets the list of groups the user belongs to.
+    /// Gets or sets the groups to which the user belongs.
     /// </summary>
     public required List<Group> Groups { get; set; }
 
     /// <summary>
-    /// Gets or sets the user's configuration preferences.
+    /// Gets or sets the configuration of the user.
     /// </summary>
     public required UserConfiguration UserConfiguration { get; set; }
 }
