@@ -6,12 +6,12 @@
 public enum TimeSystem
 {
     /// <summary>
-    /// 12-hour format (AM/PM).
+    /// 12-hour format with AM/PM (e.g., 2:00 PM).
     /// </summary>
-    AMPM,
+    TwelveHour,
 
     /// <summary>
-    /// 24-hour format (00:00–23:59).
+    /// 24-hour format (e.g., 14:00).
     /// </summary>
-    TwentyFourHours,
+    TwentyFourHour,
 }

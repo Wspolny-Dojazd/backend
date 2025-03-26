@@ -115,7 +115,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
 
             _ = entity.Property(p => p.TimeSystem)
                 .HasColumnName("time_system")
-                .HasColumnType("ENUM('AMPM', 'TwentyFourHour')")
+                .HasColumnType("ENUM('TwelveHour', 'TwentyFourHour')")
                 .HasConversion(
                     v => v.ToString(),
                     v => (TimeSystem)Enum.Parse(typeof(TimeSystem), v));
