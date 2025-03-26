@@ -18,10 +18,10 @@ public class Route
     /// <summary>
     /// Gets or sets the latitude coordinate of the location.
     /// </summary>
-    public int Lat { get; set; }
+    public double Lat { get; set; }
 
     /// <summary>
     /// Gets or sets the longitude coordinate of the location.
     /// </summary>
-    public int Lon { get; set; }
+    public double Lon { get; set; }
 }

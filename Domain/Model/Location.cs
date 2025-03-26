@@ -18,12 +18,12 @@ public class Location
     /// <summary>
     /// Gets or sets the latitude coordinate.
     /// </summary>
-    public int Lat { get; set; }
+    public double Lat { get; set; }
 
     /// <summary>
     /// Gets or sets the longitude coordinate.
     /// </summary>
-    public int Lon { get; set; }
+    public double Lon { get; set; }
 
     /// <summary>
     /// Gets or sets the user associated with the location.

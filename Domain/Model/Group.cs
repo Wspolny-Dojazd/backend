@@ -25,12 +25,12 @@ public class Group
     /// <summary>
     /// Gets or sets the destination latitude of the group.
     /// </summary>
-    public int DestinationLat { get; set; }
+    public double DestinationLat { get; set; }
 
     /// <summary>
     /// Gets or sets the destination longitude of the group.
     /// </summary>
-    public int DestinationLon { get; set; }
+    public double DestinationLon { get; set; }
 
     /// <summary>
     /// Gets or sets the routes associated with the group.

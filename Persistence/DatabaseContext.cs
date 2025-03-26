@@ -74,8 +74,8 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
 
             _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
             _ = entity.Property(p => p.JoiningCode).HasColumnName("joining_code");
-            _ = entity.Property(p => p.DestinationLat).HasColumnName("destination_lat").HasColumnType("int");
-            _ = entity.Property(p => p.DestinationLon).HasColumnName("destination_lon").HasColumnType("int");
+            _ = entity.Property(p => p.DestinationLat).HasColumnName("destination_lat").HasColumnType("double");
+            _ = entity.Property(p => p.DestinationLon).HasColumnName("destination_lon").HasColumnType("double");
 
             _ = entity.Property(p => p.Status)
                 .HasColumnName("status")
@@ -135,8 +135,8 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
 
             _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
             _ = entity.Property(p => p.Tip).HasColumnName("tip");
-            _ = entity.Property(p => p.Lat).HasColumnName("lat").HasColumnType("int");
-            _ = entity.Property(p => p.Lon).HasColumnName("lon").HasColumnType("int");
+            _ = entity.Property(p => p.Lat).HasColumnName("lat").HasColumnType("double");
+            _ = entity.Property(p => p.Lon).HasColumnName("lon").HasColumnType("double");
         });
 
         _ = modelBuilder.Entity<Location>(entity =>
@@ -146,8 +146,8 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
 
             _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
             _ = entity.Property(p => p.UserId).HasColumnName("user_id").HasColumnType("int");
-            _ = entity.Property(p => p.Lat).HasColumnName("lat").HasColumnType("int");
-            _ = entity.Property(p => p.Lon).HasColumnName("lon").HasColumnType("int");
+            _ = entity.Property(p => p.Lat).HasColumnName("lat").HasColumnType("double");
+            _ = entity.Property(p => p.Lon).HasColumnName("lon").HasColumnType("double");
 
             _ = entity.HasOne(l => l.User)
                 .WithMany()
