@@ -79,7 +79,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
 
             _ = entity.Property(p => p.Status)
                 .HasColumnName("status")
-                .HasColumnType("ENUM('NOT_STARTED', 'STARTED')")
+                .HasColumnType("ENUM('NotStarted', 'Started')")
                 .HasConversion(
                     v => v.ToString(),
                     v => (Status)Enum.Parse(typeof(Status), v));
