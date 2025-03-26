@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		stylecop.json = stylecop.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{055FE1D5-8F55-4679-8710-B0955273C501}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{55DFD1F0-B6A8-4492-8B0B-8B77BFE5EBBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55DFD1F0-B6A8-4492-8B0B-8B77BFE5EBBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55DFD1F0-B6A8-4492-8B0B-8B77BFE5EBBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{055FE1D5-8F55-4679-8710-B0955273C501}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{055FE1D5-8F55-4679-8710-B0955273C501}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{055FE1D5-8F55-4679-8710-B0955273C501}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{055FE1D5-8F55-4679-8710-B0955273C501}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
