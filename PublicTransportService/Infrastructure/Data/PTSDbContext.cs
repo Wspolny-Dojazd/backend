@@ -30,7 +30,7 @@ public class PTSDbContext(DbContextOptions<PTSDbContext> options)
     /// </summary>
     internal DbSet<StopTime> StopTimes { get; set; }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

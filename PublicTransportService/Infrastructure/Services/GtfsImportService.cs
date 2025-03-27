@@ -74,7 +74,6 @@ internal class GtfsImportService(PTSDbContext context, ILogger<GtfsImportService
             logger.LogDebug("Extracted GTFS files to {Path}", tempPath);
 
             logger.LogInformation("Clearing existing GTFS data...");
-
             _ = await context.StopTimes.ExecuteDeleteAsync();
             _ = await context.Stops.ExecuteDeleteAsync();
             _ = await context.Shapes.ExecuteDeleteAsync();
@@ -264,9 +263,11 @@ internal class GtfsImportService(PTSDbContext context, ILogger<GtfsImportService
             var chunkStopwatch = Stopwatch.StartNew();
             var chunk = allRecords.Skip(i * batchSize).Take(batchSize);
 
-            var recentChunkTimes = chunkTimes.Count > totalChunks / 10
-                ? chunkTimes.Skip(chunkTimes.Count - (totalChunks / 10))
-                : chunkTimes;
+            const int RecentChunkPercentage = 10;
+            var recentCount = (int)Math.Ceiling(totalChunks * RecentChunkPercentage / 100.0);
+            var recentChunkTimes = chunkTimes.Count <= recentCount
+                ? chunkTimes
+                : chunkTimes.TakeLast(recentCount);
 
             var averageChunkTime = recentChunkTimes.Any()
                 ? TimeSpan.FromMilliseconds(recentChunkTimes.Average(t => t.TotalMilliseconds))
@@ -275,11 +276,6 @@ internal class GtfsImportService(PTSDbContext context, ILogger<GtfsImportService
             var percent = (i + 1) * 100.0 / totalChunks;
             var remainingChunks = totalChunks - (i + 1);
             var eta = TimeSpan.FromMilliseconds(averageChunkTime.TotalMilliseconds * remainingChunks);
-
-            if (averageChunkTime == TimeSpan.Zero)
-            {
-                eta = TimeSpan.FromSeconds(remainingChunks * 2);
-            }
 
             var message = $"\rSaving chunk {i + 1}/{totalChunks} ({percent:N1}%)... ETA: {eta:hh\\:mm\\:ss}";
             Console.Write(message.PadRight(100));
@@ -303,7 +299,7 @@ internal class GtfsImportService(PTSDbContext context, ILogger<GtfsImportService
             globalStopwatch.Elapsed.TotalSeconds);
     }
 
-    private async Task DownloadGtfsWithProgressAsync(HttpClient httpClient,  string destinationPath)
+    private async Task DownloadGtfsWithProgressAsync(HttpClient httpClient, string destinationPath)
     {
         using var response = await httpClient.SendAsync(
             new HttpRequestMessage(HttpMethod.Get, GtfsUrl),
@@ -322,8 +318,11 @@ internal class GtfsImportService(PTSDbContext context, ILogger<GtfsImportService
             return;
         }
 
+        const int DownloadBufferSize = 8_192;
+        var buffer = new byte[DownloadBufferSize];
+
+        const double Megabyte = 1_000_000.0;
         var totalBytes = contentLength.Value;
-        var buffer = new byte[8192];
         long totalRead = 0;
         int read;
 
@@ -343,12 +342,12 @@ internal class GtfsImportService(PTSDbContext context, ILogger<GtfsImportService
             {
                 var elapsedSeconds = stopwatch.Elapsed.TotalSeconds;
                 var speed = elapsedSeconds > 0 ? totalRead / elapsedSeconds : 0;
-                var speedMBs = speed / 1_000_000.0;
+                var speedMBs = speed / Megabyte;
                 var remainingBytes = totalBytes - totalRead;
                 var etaSeconds = speed > 0 ? remainingBytes / speed : 0;
 
                 var message =
-                    $"\rDownloading GTFS... {totalRead / 1_000_000.0:N1} MB / {totalBytes / 1_000_000.0:N1} " +
+                    $"\rDownloading GTFS... {totalRead / Megabyte:N1} MB / {totalBytes / Megabyte:N1} " +
                     $"MB ({progress}%) - {speedMBs:N2} MB/s, ETA: {TimeSpan.FromSeconds(etaSeconds):hh\\:mm\\:ss}";
 
                 Console.Write(message.PadRight(100));
