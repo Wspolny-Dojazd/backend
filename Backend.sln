@@ -31,6 +31,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		stylecop.json = stylecop.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PublicTransportService", "PublicTransportService\PublicTransportService.csproj", "{F90271D5-0660-42CE-A0A8-01E08AFC6C08}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{0F18669E-12A8-4EC9-A1B7-793AD1580804}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GtfsImporter", "Tools\GtfsImporter\GtfsImporter.csproj", "{D32743AD-CACA-4C8E-BB7D-E97FC45F0CA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,11 +59,22 @@ Global
 		{55DFD1F0-B6A8-4492-8B0B-8B77BFE5EBBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55DFD1F0-B6A8-4492-8B0B-8B77BFE5EBBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55DFD1F0-B6A8-4492-8B0B-8B77BFE5EBBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F90271D5-0660-42CE-A0A8-01E08AFC6C08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F90271D5-0660-42CE-A0A8-01E08AFC6C08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F90271D5-0660-42CE-A0A8-01E08AFC6C08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F90271D5-0660-42CE-A0A8-01E08AFC6C08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D32743AD-CACA-4C8E-BB7D-E97FC45F0CA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D32743AD-CACA-4C8E-BB7D-E97FC45F0CA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D32743AD-CACA-4C8E-BB7D-E97FC45F0CA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D32743AD-CACA-4C8E-BB7D-E97FC45F0CA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54EA1CE2-5561-41D2-BC40-8BCCB92121E7}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D32743AD-CACA-4C8E-BB7D-E97FC45F0CA4} = {0F18669E-12A8-4EC9-A1B7-793AD1580804}
 	EndGlobalSection
 EndGlobal
