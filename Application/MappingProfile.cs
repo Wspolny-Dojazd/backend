@@ -5,12 +5,12 @@ using Domain.Model;
 namespace Application;
 
 /// <summary>
-/// Represents a configuration for maps.
+/// Represents the AutoMapper configuration for mapping between domain entities and data transfer objects.
 /// </summary>
 public class MappingProfile : Profile
 {
     /// <summary>
-    /// Initializes configuration for maps.
+    /// Initializes a new instance of the <see cref="MappingProfile"/> class.
     /// </summary>
     public MappingProfile()
     {

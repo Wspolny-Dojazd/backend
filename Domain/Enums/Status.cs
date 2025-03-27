@@ -1,17 +1,17 @@
 ﻿namespace Domain.Enums;
 
 /// <summary>
-/// Represents group's status.
+/// Specifies the status of a group.
 /// </summary>
 public enum Status
 {
     /// <summary>
-    /// Not started state.
+    /// The group has not started yet.
     /// </summary>
     NotStarted,
 
     /// <summary>
-    /// Started state.
+    /// The group is currently in progress.
     /// </summary>
     Started,
 }
