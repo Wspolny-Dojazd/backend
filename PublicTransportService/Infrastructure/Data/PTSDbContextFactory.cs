@@ -12,13 +12,16 @@ public class PTSDbContextFactory : IDesignTimeDbContextFactory<PTSDbContext>
     /// <inheritdoc />
     public PTSDbContext CreateDbContext(string[] args)
     {
-        var basePath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "../API"));
+        var apiFolder = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "../API"));
+        var builder = new ConfigurationBuilder();
 
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(basePath)
-            .AddJsonFile("appsettings.json", optional: true)
-            .Build();
+        if (Directory.Exists(apiFolder))
+        {
+            _ = builder.SetBasePath(apiFolder)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false);
+        }
 
+        var configuration = builder.AddEnvironmentVariables().Build();
         var connectionString = configuration.GetConnectionString("AppDbConnectionString");
 
         var optionsBuilder = new DbContextOptionsBuilder<PTSDbContext>()
