@@ -8,7 +8,7 @@ using Domain.Model;
 namespace Application.Services;
 
 /// <summary>
-/// Provides user-related business logic.
+/// Provides user-related logic.
 /// </summary>
 /// <param name="userRepository">The repository for accessing user data.</param>
 /// <param name="mapper">The object mapper.</param>
@@ -18,7 +18,7 @@ public class UserService(IUserRepository userRepository, IMapper mapper)
     /// <inheritdoc/>
     public async Task<UserDto> GetUserByIdAsync(int id)
     {
-        var user = await userRepository.GetUserByIdAsync(id)
+        var user = await userRepository.GetByIdAsync(id)
             ?? throw new UserNotFoundException(id);
 
         return mapper.Map<User, UserDto>(user);

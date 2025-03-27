@@ -11,8 +11,6 @@ public interface IUserService
     /// Retrieves a user by its unique identifier.
     /// </summary>
     /// <param name="id">The ID of the user to retrieve.</param>
-    /// <returns>
-    /// The user if found; otherwise, <c>null</c>.
-    /// </returns>
+    /// <returns>The user data.</returns>
     Task<UserDto> GetUserByIdAsync(int id);
 }

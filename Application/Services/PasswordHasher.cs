@@ -4,9 +4,9 @@ using Application.Interfaces;
 namespace Application.Services;
 
 /// <summary>
-/// Represents password operations.
+/// Provides password hashing and verification.
 /// </summary>
-public class PasswordService : IPasswordService
+public class PasswordHasher : IPasswordHasher
 {
     private const int SaltSize = 128 / 8;
     private const int KeySize = 256 / 8;
@@ -14,12 +14,8 @@ public class PasswordService : IPasswordService
     private const char Delimiter = ';';
     private static readonly HashAlgorithmName HashAlgorithmName = HashAlgorithmName.SHA256;
 
-    /// <summary>
-    /// Method that hashes the user's password.
-    /// </summary>
-    /// <param name="password">User's password that will be hashed.</param>
-    /// <returns>Returns hashed user's password.</returns>
-    public string HashPassword(string password)
+    /// <inheritdoc/>
+    public string Hash(string password)
     {
         var salt = RandomNumberGenerator.GetBytes(SaltSize);
         var hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, HashAlgorithmName, KeySize);
@@ -27,13 +23,8 @@ public class PasswordService : IPasswordService
         return string.Join(Delimiter, Convert.ToBase64String(salt), Convert.ToBase64String(hash));
     }
 
-    /// <summary>
-    /// Method that verifies if the hashed user's password and provided password match.
-    /// </summary>
-    /// <param name="hashedPassword">Hashed user's password.</param>
-    /// <param name="providedPassword">Provided password.</param>
-    /// <returns>Bool value depending on password match.</returns>
-    public bool VerifyPassword(string hashedPassword, string providedPassword)
+    /// <inheritdoc/>
+    public bool Verify(string hashedPassword, string providedPassword)
     {
         var elements = hashedPassword.Split(Delimiter);
         var salt = Convert.FromBase64String(elements[0]);
