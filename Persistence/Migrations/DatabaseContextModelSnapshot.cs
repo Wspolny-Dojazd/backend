@@ -31,12 +31,12 @@ namespace Persistence.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("DestinationLat")
-                        .HasColumnType("int")
+                    b.Property<double>("DestinationLat")
+                        .HasColumnType("double")
                         .HasColumnName("destination_lat");
 
-                    b.Property<int>("DestinationLon")
-                        .HasColumnType("int")
+                    b.Property<double>("DestinationLon")
+                        .HasColumnType("double")
                         .HasColumnName("destination_lon");
 
                     b.Property<string>("JoiningCode")
@@ -46,7 +46,7 @@ namespace Persistence.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("ENUM('NOT_STARTED', 'STARTED')")
+                        .HasColumnType("ENUM('NotStarted', 'Started')")
                         .HasColumnName("status");
 
                     b.HasKey("Id")
@@ -64,12 +64,12 @@ namespace Persistence.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Lat")
-                        .HasColumnType("int")
+                    b.Property<double>("Lat")
+                        .HasColumnType("double")
                         .HasColumnName("lat");
 
-                    b.Property<int>("Lon")
-                        .HasColumnType("int")
+                    b.Property<double>("Lon")
+                        .HasColumnType("double")
                         .HasColumnName("lon");
 
                     b.Property<int>("UserId")
@@ -130,12 +130,12 @@ namespace Persistence.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Lat")
-                        .HasColumnType("int")
+                    b.Property<double>("Lat")
+                        .HasColumnType("double")
                         .HasColumnName("lat");
 
-                    b.Property<int>("Lon")
-                        .HasColumnType("int")
+                    b.Property<double>("Lon")
+                        .HasColumnType("double")
                         .HasColumnName("lon");
 
                     b.Property<string>("Tip")
@@ -211,7 +211,7 @@ namespace Persistence.Migrations
 
                     b.Property<string>("TimeSystem")
                         .IsRequired()
-                        .HasColumnType("ENUM('AMPM', 'TwentyFourHour')")
+                        .HasColumnType("ENUM('TwelveHour', 'TwentyFourHour')")
                         .HasColumnName("time_system");
 
                     b.Property<int>("UserId")

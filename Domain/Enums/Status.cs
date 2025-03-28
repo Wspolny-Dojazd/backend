@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Domain.Enums;
+﻿namespace Domain.Enums;
 
 /// <summary>
-/// Represents group's status.
+/// Specifies the status of a group.
 /// </summary>
 public enum Status
 {
     /// <summary>
-    /// Not started state.
+    /// The group has not started yet.
     /// </summary>
     NOT_STARTED,
 
     /// <summary>
-    /// Started state.
+    /// The group is currently in progress.
     /// </summary>
     STARTED,
 }
