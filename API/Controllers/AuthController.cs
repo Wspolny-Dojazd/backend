@@ -5,6 +5,7 @@ using Application.DTOs.Auth;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace API.Controllers;
 
@@ -30,8 +31,10 @@ public class AuthController(IAuthService authService) : ControllerBase
     {
         if (!this.ModelState.IsValid)
         {
-            var hasEmailError = this.ModelState["Email"]?.Errors.Any(e => e.ErrorMessage.Contains("email", StringComparison.OrdinalIgnoreCase)) == true;
-            var code = hasEmailError ? LoginErrorCode.INVALID_EMAIL_FORMAT : LoginErrorCode.VALIDATION_ERROR;
+            var code = HasInvalidEmail(this.ModelState)
+                ? LoginErrorCode.INVALID_EMAIL_FORMAT
+                : LoginErrorCode.VALIDATION_ERROR;
+
             return this.BadRequest(new ErrorResponse(code));
         }
 
@@ -55,8 +58,10 @@ public class AuthController(IAuthService authService) : ControllerBase
     {
         if (!this.ModelState.IsValid)
         {
-            var hasEmailError = this.ModelState["Email"]?.Errors.Any(e => e.ErrorMessage.Contains("email", StringComparison.OrdinalIgnoreCase)) == true;
-            var code = hasEmailError ? LoginErrorCode.INVALID_EMAIL_FORMAT : LoginErrorCode.VALIDATION_ERROR;
+            var code = HasInvalidEmail(this.ModelState)
+                ? RegisterErrorCode.INVALID_EMAIL_FORMAT
+                : RegisterErrorCode.VALIDATION_ERROR;
+
             return this.BadRequest(new ErrorResponse(code));
         }
 
@@ -68,8 +73,9 @@ public class AuthController(IAuthService authService) : ControllerBase
     /// Retrieves the currently authenticated user's profile and JWT token.
     /// </summary>
     /// <returns>The authenticated user's data and token.</returns>
-    /// <response code="200">Authenticated user found; returns user info and token.</response>
+    /// <response code="200">The user profile has been retrieved successfully.</response>
     /// <response code="401">The user is not authenticated.</response>
+    /// <response code="404">The authenticated user was not found.</response>
     [Authorize]
     [HttpGet("me")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
@@ -80,5 +86,11 @@ public class AuthController(IAuthService authService) : ControllerBase
         var userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var result = await authService.GetMeAsync(userId);
         return this.Ok(result);
+    }
+
+    private static bool HasInvalidEmail(ModelStateDictionary modelState)
+    {
+        return modelState["Email"]?.Errors
+            .Any(e => e.ErrorMessage.Contains("email", StringComparison.OrdinalIgnoreCase)) == true;
     }
 }

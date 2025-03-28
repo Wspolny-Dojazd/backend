@@ -9,8 +9,8 @@ namespace Application.Services;
 /// <summary>
 /// Provides authentication operations.
 /// </summary>
-/// <param name="jwtTokenService">The JWT token service.</param>
 /// <param name="userRepository">The repository for accessing user data.</param>
+/// <param name="jwtTokenService">The JWT token service.</param
 /// <param name="passwordHasher">The password hashing service.</param>
 public class AuthService(
     IUserRepository userRepository,

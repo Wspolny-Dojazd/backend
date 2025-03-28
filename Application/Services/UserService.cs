@@ -16,7 +16,7 @@ public class UserService(IUserRepository userRepository, IMapper mapper)
     : IUserService
 {
     /// <inheritdoc/>
-    public async Task<UserDto> GetUserByIdAsync(int id)
+    public async Task<UserDto> GetByIdAsync(int id)
     {
         var user = await userRepository.GetByIdAsync(id)
             ?? throw new UserNotFoundException(id);
