@@ -12,10 +12,24 @@ public class UserRepository(DatabaseContext databaseContext)
     : IUserRepository
 {
     /// <inheritdoc/>
-    public async Task<User> GetUserByIdAsync(int id)
+    public async Task<User?> GetByIdAsync(int id)
     {
         return await databaseContext.Users
             .Where(u => u.Id == id)
             .FirstOrDefaultAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task<User?> GetByEmailAsync(string email)
+    {
+        return await databaseContext.Users
+            .FirstOrDefaultAsync(u => u.Email == email);
+    }
+
+    /// <inheritdoc/>
+    public async Task AddAsync(User user)
+    {
+        _ = await databaseContext.Users.AddAsync(user);
+        _ = await databaseContext.SaveChangesAsync();
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Domain.Model;
+namespace Domain.Model;
 
 /// <summary>
 /// Represents a chat message sent within a group.

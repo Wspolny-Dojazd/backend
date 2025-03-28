@@ -1,4 +1,4 @@
-﻿namespace Domain.Model;
+namespace Domain.Model;
 
 /// <summary>
 /// Represents a user in the system.
