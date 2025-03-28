@@ -1,4 +1,4 @@
-﻿namespace Domain.Model;
+namespace Domain.Model;
 
 /// <summary>
 /// Represents a tip or instruction leading to a specific location.

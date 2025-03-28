@@ -1,4 +1,4 @@
-﻿namespace Domain.Model;
+namespace Domain.Model;
 
 /// <summary>
 /// Represents the current location of a user.

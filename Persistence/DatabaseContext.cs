@@ -1,4 +1,4 @@
-﻿using Domain.Enums;
+using Domain.Enums;
 using Domain.Model;
 using Microsoft.EntityFrameworkCore;
 
