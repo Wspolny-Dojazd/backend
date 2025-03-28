@@ -1,4 +1,6 @@
-﻿using Application.Interfaces;
+﻿using API.Models.Errors;
+using Application.DTOs;
+using Application.Interfaces;
 using Domain.Model;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,38 +29,70 @@ public class GroupController : ControllerBase
     /// </summary>
     /// <param name="id">Unique group's identifier.</param>
     /// <returns>Returns action result object.</returns>
+    [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
     [HttpGet("{id}")]
     public async Task<ActionResult<Group>> GetGroupById(int id)
     {
-        return this.Ok(await this.groupService.GetGroupByIdAsync(id));
+        var group = await this.groupService.GetGroupByIdAsync(id);
+        return this.Ok(group);
     }
 
+    /// <summary>
+    /// Method that defines create group endpoint.
+    /// </summary>
+    /// <returns>Returns action result object.</returns>
+    [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
     [HttpPost]
     public async Task<ActionResult<Group>> CreateGroupAsync()
     {
-        return this.Ok(await this.groupService.CreateGroupAsync());
-    }
-    public class JoinGroupRequest
-    {
-        public int UserId { get; set; }
+        var group = await this.groupService.CreateGroupAsync();
+        return this.Ok(group);
     }
 
+    /// <summary>
+    /// Method that defines add user via joining code endpoint.
+    /// </summary>
+    /// <param name="code">Unique group's joining code.</param>
+    /// <param name="request">GroupRequest object.</param>
+    /// <returns>Returns action result object.</returns>
+    [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
     [HttpPost("join-via-code/{code}")]
-    public async Task<ActionResult<Group>> AddUserViaCodeAsync(string code, [FromBody] JoinGroupRequest request)
+    public async Task<ActionResult<Group>> AddUserViaCodeAsync(string code, [FromBody] GroupRequest request)
     {
-        return this.Ok(await this.groupService.AddUserViaCodeAsync(code, request.UserId));
+        var group = await this.groupService.AddUserViaCodeAsync(code, request.UserId);
+        return this.Ok(group);
     }
 
+    /// <summary>
+    /// Method that defines user leaves the group endpoint.
+    /// </summary>
+    /// <param name="id">Unique user's identifier.</param>
+    /// <param name="request">GroupREquest object.</param>
+    /// <returns>Returns action result object.</returns>
+    [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
     [HttpPost("{id}/leave")]
-    public async Task<ActionResult<Group>> UserLeaveAsync(int id, [FromBody] JoinGroupRequest request)
+    public async Task<ActionResult<Group>> UserLeaveAsync(int id, [FromBody] GroupRequest request)
     {
-        return this.Ok(await this.groupService.RemoveUserFromGroupAsync(id, request.UserId));
+        var group = await this.groupService.RemoveUserFromGroupAsync(id, request.UserId);
+        return this.Ok(group);
     }
 
+    /// <summary>
+    /// Method that defines kick user from the group endpoint.
+    /// </summary>
+    /// <param name="id">Unique group's identifier.</param>
+    /// <param name="userId">Unique user's indentifier.</param>
+    /// <returns>Returns action result object.</returns>
+    [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
     [HttpPost("{id}/kick-user/{userId}")]
-    public async Task<ActionResult<Group>> UserLeaveAsync(int id, int userId)
+    public async Task<ActionResult<Group>> KickUserAsync(int id, int userId)
     {
-        return this.Ok(await this.groupService.RemoveUserFromGroupAsync(id, userId));
+        var group = await this.groupService.RemoveUserFromGroupAsync(id, userId);
+        return this.Ok(group);
     }
-
 }

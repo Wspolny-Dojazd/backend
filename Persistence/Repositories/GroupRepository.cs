@@ -25,49 +25,33 @@ public class GroupRepository : IGroupRepository
     /// </summary>
     /// <param name="id">GRoup's id.</param>
     /// <returns>Group's data from database.</returns>
-    public async Task<Group> GetGroupByIdAsync(int id)
+    public async Task<Group?> GetGroupByIdAsync(int id)
     {
         return await this.databaseContext.Groups
             .Where(g => g.Id == id)
             .FirstOrDefaultAsync();
     }
 
+    /// <inheritdoc/>
     public async Task<Group> CreateGroupAsync()
     {
-        Group group = new Group();
-
-        // Generating joiningCode
-        group.JoiningCode = await this.GenerateUniqueJoiningCodeAsync();
+        Group group = new Group
+        {
+            JoiningCode = await this.GenerateUniqueJoiningCodeAsync(),
+            Routes = new List<Route>(),
+            LiveLocations = new List<Location>(),
+            GroupMembers = new List<User>(),
+        };
 
         // Adding group
-        await this.databaseContext.Groups.AddAsync(group);
+        _ = await this.databaseContext.Groups.AddAsync(group);
 
-        await this.databaseContext.SaveChangesAsync();
+        _ = await this.databaseContext.SaveChangesAsync();
 
         return group;
     }
 
-    private async Task<string> GenerateUniqueJoiningCodeAsync()
-    {
-        var random = new Random();
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        string joiningCode;
-
-        bool isUnique;
-
-        do
-        {
-            joiningCode = new string(Enumerable.Range(0, 6)
-                .Select(_ => chars[random.Next(chars.Length)])
-                .ToArray());
-
-            isUnique = !await this.databaseContext.Groups.AnyAsync(g => g.JoiningCode == joiningCode);
-
-        } while (!isUnique); 
-
-        return joiningCode;
-    }
-
+    /// <inheritdoc/>
     public async Task<Group?> AddUserViaCodeAsync(string code, int userId)
     {
         Group? group = await this.databaseContext.Groups
@@ -94,10 +78,12 @@ public class GroupRepository : IGroupRepository
             user.Groups.Add(group);
         }
 
-        await this.databaseContext.SaveChangesAsync();
+        _ = await this.databaseContext.SaveChangesAsync();
 
         return group;
     }
+
+    /// <inheritdoc/>
     public async Task<Group?> RemoveUserFromGroupAsync(int id, int userId)
     {
         Group? group = await this.databaseContext.Groups
@@ -120,13 +106,32 @@ public class GroupRepository : IGroupRepository
 
         if (group.GroupMembers.Contains(user))
         {
-            group.GroupMembers.Remove(user);
-            user.Groups.Remove(group);
+            _ = group.GroupMembers.Remove(user);
+            _ = user.Groups.Remove(group);
         }
 
-        await this.databaseContext.SaveChangesAsync();
+        _ = await this.databaseContext.SaveChangesAsync();
 
         return group;
     }
 
+    private async Task<string> GenerateUniqueJoiningCodeAsync()
+    {
+        var random = new Random();
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        string joiningCode;
+
+        bool isUnique;
+
+        do
+        {
+            joiningCode = new string(Enumerable.Range(0, 6)
+                .Select(_ => chars[random.Next(chars.Length)])
+                .ToArray());
+
+            isUnique = !await this.databaseContext.Groups.AnyAsync(g => g.JoiningCode == joiningCode);
+        } while (!isUnique);
+
+        return joiningCode;
+    }
 }

@@ -13,5 +13,5 @@ public class GroupDto
     /// <summary>
     /// Gets or sets user's nickname.
     /// </summary>
-    public string JoiningCode { get; set; }
+    public required string JoiningCode { get; set; }
 }
