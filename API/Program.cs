@@ -25,8 +25,10 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserConfigurationRepository, UserConfigurationRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserConfigurationService, UserConfigurationService>();
 
 builder.Services.AddControllers();
 
