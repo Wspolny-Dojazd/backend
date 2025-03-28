@@ -9,26 +9,22 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 /// <summary>
-/// Provides API endpoints for managing and retrieving user-related data.
+/// Provides API endpoints for managing and retrieving data related to user configuration.
 /// </summary>
-/// <param name="userConfigurationService">The user service that handles user data operations.</param>
+/// <param name="userConfigurationService">The user configuration service that handles configuration data operations.</param>
 [Route("api/user-configuration")]
 [ApiController]
 public class UserConfigurationController(IUserConfigurationService userConfigurationService)
     : ControllerBase
 {
     /// <summary>
-    /// Retrieves a user by their unique identifier.
+    /// Retrieves a user configuration when authorized.
     /// </summary>
-    /// <param name="userId">The unique identifier of the user to retrieve.</param>
-    /// <returns>The user data.</returns>
-    /// <response code="200">The user was found.</response>
-    /// <response code="404">The user was not found.</response>
+    /// <returns>The user configuration.</returns>
+    /// <response code="200">The user configuration was found.</response>
     [Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(UserConfigurationDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(UserConfigurationDto), StatusCodes.Status401Unauthorized)] // TODO change typeof to ErrorResponse
-    [ProducesResponseType(typeof(ErrorResponse<UserErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserConfigurationDto>> Get()
     {
         var userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -37,18 +33,23 @@ public class UserConfigurationController(IUserConfigurationService userConfigura
     }
 
     /// <summary>
-    /// Retrieves a user by their unique identifier.
+    /// Updates user configuration.
     /// </summary>
-    /// <param name="dto">The unique identifier of the user to retrieve.</param>
-    /// <returns>The user data.</returns>
-    /// <response code="200">The user was found.</response>
-    /// <response code="404">The user was not found.</response>
+    /// <param name="dto">User configuration fields to update.</param>
+    /// <returns>Nothing.</returns>
+    /// <response code="200">The update was successful.</response>
+    /// <response code="400">User configuration data had invalid format.</response>
     [Authorize]
     [HttpPut]
     [ProducesResponseType(typeof(UserConfigurationDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(UserConfigurationDto), StatusCodes.Status401Unauthorized)] // TODO change typeof to ErrorResponse
+    [ProducesResponseType(typeof(ErrorResponse<UserConfigurationErrorCode>), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Put([FromBody] UserConfigurationDto dto)
     {
+        if (!this.ModelState.IsValid)
+        {
+            return this.BadRequest(new ErrorResponse(UserConfigurationErrorCode.VALIDATION_ERROR, "User Configuration was invalid."));
+        }
+
         var userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         await userConfigurationService.UpdateAsync(userId, dto);
         return this.Ok();

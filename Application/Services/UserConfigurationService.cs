@@ -8,9 +8,9 @@ using Domain.Model;
 namespace Application.Services;
 
 /// <summary>
-/// Provides user-related business logic.
+/// Provides user configuration related business logic.
 /// </summary>
-/// <param name="repository">The repository for accessing user data.</param>
+/// <param name="repository">The repository for accessing user configuration data.</param>
 /// <param name="mapper">The object mapper.</param>
 public class UserConfigurationService(IUserConfigurationRepository repository, IMapper mapper)
     : IUserConfigurationService
@@ -28,7 +28,7 @@ public class UserConfigurationService(IUserConfigurationRepository repository, I
     public async Task UpdateAsync(int userId, UserConfigurationDto dto)
     {
         var conf = await repository.GetByUserIdAsync(userId)
-            ?? throw new UserNotFoundException(userId); // TODO UserConfigurationEXCEPTION
+            ?? throw new UserConfigurationNotFoundException(userId);
 
         conf.DistanceUnit = dto.DistanceUnit;
         conf.Language = dto.Language;

@@ -59,7 +59,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserConfigurationRepository, UserConfigurationRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IJWTTokenService, JWTTokenService>();builder.Services.AddScoped<IUserConfigurationService, UserConfigurationService>();
+builder.Services.AddScoped<IJWTTokenService, JWTTokenService>();
+builder.Services.AddScoped<IUserConfigurationService, UserConfigurationService>();
 
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IAuthService, AuthService>();

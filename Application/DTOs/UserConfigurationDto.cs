@@ -4,13 +4,32 @@ using Domain.Enums;
 namespace Application.DTOs;
 
 /// <summary>
-/// Represents the data transfer object used for returning user data in API responses.
+/// Represents the user configuration settings, including time system, distance unit, language, and theme preferences.
+/// This class is used for managing and updating user-specific settings in the system.
 /// </summary>
-/// <param name="Id">The unique identifier of the user.</param>
-/// <param name="Nickname">The nickname of the user.</param>
-/// <param name="Email">The email address of the user.</param>
-public record UserConfigurationDto(
-    [property: Required] TimeSystem TimeSystem,
-    [property: Required] DistanceUnit DistanceUnit,
-    [property: Required] Language Language,
-    [property: Required] Theme Theme);
+public class UserConfigurationDto
+{
+    /// <summary>
+    /// Gets or sets the time system preference of the user.
+    /// </summary>
+    [Required]
+    public required TimeSystem TimeSystem { get; set; }
+
+    /// <summary>
+    /// Gets or sets the unit of distance preferred by the user.
+    /// </summary>
+    [Required]
+    public required DistanceUnit DistanceUnit { get; set; }
+
+    /// <summary>
+    /// Gets or sets the language preference of the user.
+    /// </summary>
+    [Required]
+    public required Language Language { get; set; }
+
+    /// <summary>
+    /// Gets or sets the theme preference of the user.
+    /// </summary>
+    [Required]
+    public required Theme Theme { get; set; }
+}

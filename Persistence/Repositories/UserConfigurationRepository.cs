@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Persistence.Repositories;
 
 /// <summary>
-/// Represents crud operations for user.
+/// Repository class that provides data access operations for <see cref="UserConfiguration"/> entities.
 /// </summary>
-/// <param name="databaseContext">The database context used to access user data.</param>
+/// <param name="databaseContext">The database context used to access user configuration data.</param>
 public class UserConfigurationRepository(DatabaseContext databaseContext)
     : IUserConfigurationRepository
 {
