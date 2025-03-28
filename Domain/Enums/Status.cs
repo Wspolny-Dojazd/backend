@@ -8,10 +8,10 @@ public enum Status
     /// <summary>
     /// The group has not started yet.
     /// </summary>
-    NOT_STARTED,
+    NotStarted,
 
     /// <summary>
     /// The group is currently in progress.
     /// </summary>
-    STARTED,
+    Started,
 }
