@@ -1,4 +1,4 @@
-﻿using API.Models.Errors;
+using API.Models.Errors;
 using Application.DTOs;
 using Application.Interfaces;
 using Domain.Model;
@@ -11,7 +11,7 @@ namespace API.Controllers;
 /// </summary>
 [Route("api/[controller]")]
 [ApiController]
-public class GroupController : ControllerBase
+public class GroupsController : ControllerBase
 {
     private readonly IGroupService groupService;
 
@@ -19,7 +19,7 @@ public class GroupController : ControllerBase
     /// Initializes a new instance of the <see cref="GroupController"/> class.
     /// </summary>
     /// <param name="groupService">Group service that defines group data methods.</param>
-    public GroupController(IGroupService groupService)
+    public GroupsController(IGroupService groupService)
     {
         this.groupService = groupService;
     }

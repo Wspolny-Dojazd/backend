@@ -15,6 +15,7 @@ public class UserRepository(DatabaseContext databaseContext)
     public async Task<User?> GetByIdAsync(int id)
     {
         return await databaseContext.Users
+            .Include(u => u.Groups)
             .Where(u => u.Id == id)
             .FirstOrDefaultAsync();
     }

@@ -23,12 +23,26 @@ public class GroupRepository : IGroupRepository
     /// <summary>
     /// This async method get group's data by id from database.
     /// </summary>
-    /// <param name="id">GRoup's id.</param>
+    /// <param name="id">Group's id.</param>
     /// <returns>Group's data from database.</returns>
     public async Task<Group?> GetGroupByIdAsync(int id)
     {
         return await this.databaseContext.Groups
+            .Include(g => g.GroupMembers)
             .Where(g => g.Id == id)
+            .FirstOrDefaultAsync();
+    }
+
+    /// <summary>
+    /// This async method get group's data by id from database.
+    /// </summary>
+    /// <param name="code">Group's joining code.</param>
+    /// <returns>Group's data from database.</returns>
+    public async Task<Group?> GetGroupByCodeAsync(string code)
+    {
+        return await this.databaseContext.Groups
+            .Include(g => g.GroupMembers)
+            .Where(g => g.JoiningCode == code)
             .FirstOrDefaultAsync();
     }
 
@@ -52,67 +66,9 @@ public class GroupRepository : IGroupRepository
     }
 
     /// <inheritdoc/>
-    public async Task<Group?> AddUserViaCodeAsync(string code, int userId)
+    public async void SaveAsync()
     {
-        Group? group = await this.databaseContext.Groups
-            .Include(g => g.GroupMembers)
-            .FirstOrDefaultAsync(g => g.JoiningCode == code);
-
-        if (group == null)
-        {
-            return null;
-        }
-
-        User? user = await this.databaseContext.Users
-            .Include(u => u.Groups)
-            .FirstOrDefaultAsync(u => u.Id == userId);
-
-        if (user == null)
-        {
-            return null;
-        }
-
-        if (!group.GroupMembers.Contains(user))
-        {
-            group.GroupMembers.Add(user);
-            user.Groups.Add(group);
-        }
-
         _ = await this.databaseContext.SaveChangesAsync();
-
-        return group;
-    }
-
-    /// <inheritdoc/>
-    public async Task<Group?> RemoveUserFromGroupAsync(int id, int userId)
-    {
-        Group? group = await this.databaseContext.Groups
-            .Include(g => g.GroupMembers)
-            .FirstOrDefaultAsync(g => g.Id == id);
-
-        if (group == null)
-        {
-            return null;
-        }
-
-        User? user = await this.databaseContext.Users
-            .Include(u => u.Groups)
-            .FirstOrDefaultAsync(u => u.Id == userId);
-
-        if (user == null)
-        {
-            return null;
-        }
-
-        if (group.GroupMembers.Contains(user))
-        {
-            _ = group.GroupMembers.Remove(user);
-            _ = user.Groups.Remove(group);
-        }
-
-        _ = await this.databaseContext.SaveChangesAsync();
-
-        return group;
     }
 
     private async Task<string> GenerateUniqueJoiningCodeAsync()

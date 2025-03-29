@@ -4,5 +4,5 @@ namespace Application.Exceptions;
 /// Represents an exception thrown when a user is not found.
 /// </summary>
 /// <param name="userId">The unique identifier of the user that was not found.</param>
-public class JoiningViaCodeFailedExeption(int userId, string code)
-    : AppException(404, "JOINING_VIA_CODE_FAILED", $"The user with Id {userId} could not be added to the group via code: {code}");
+public class UserAlreadyInGroupExeption(int groupId, int userId)
+    : AppException(404, "USER_ALREADY_IN_GROUP", $"The user with ID {userId} is already a member of the group with ID {groupId}.");
