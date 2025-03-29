@@ -1,5 +1,7 @@
+using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
+using API.Conventions;
 using API.Middleware;
 using API.Models.Errors;
 using API.Models.Errors.Auth;
@@ -9,6 +11,7 @@ using Application.Services;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -26,6 +29,10 @@ builder.Services.AddSwaggerGen(options =>
         Title = "Transport API",
         Version = "v1",
     });
+
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
