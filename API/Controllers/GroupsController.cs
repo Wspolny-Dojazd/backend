@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using API.Models.Errors;
 using Application.DTOs;
 using Application.Interfaces;
@@ -7,92 +8,92 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 /// <summary>
-/// Represents controller that defines api group endpoints.
+/// Provides API endpoints for managing groups and user membership within groups.
 /// </summary>
+/// <param name="groupService">The service that handles group-related logic.</param>
 [Route("api/[controller]")]
 [ApiController]
-public class GroupsController : ControllerBase
+public class GroupsController(IGroupService groupService) : ControllerBase
 {
-    private readonly IGroupService groupService;
-
     /// <summary>
-    /// Initializes a new instance of the <see cref="GroupController"/> class.
+    /// Retrieves a group by its unique identifier.
     /// </summary>
-    /// <param name="groupService">Group service that defines group data methods.</param>
-    public GroupsController(IGroupService groupService)
-    {
-        this.groupService = groupService;
-    }
-
-    /// <summary>
-    /// Method that defines get group by id endpoint.
-    /// </summary>
-    /// <param name="id">Unique group's identifier.</param>
-    /// <returns>Returns action result object.</returns>
-    [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
+    /// <param name="id">The unique identifier of the group.</param>
+    /// <returns>The requested group details.</returns>
+    /// <response code="200">The group was successfully retrieved.</response>
+    /// <response code="404">The group was not found.</response>
     [HttpGet("{id}")]
-    public async Task<ActionResult<Group>> GetGroupById(int id)
+    [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<GroupDto>> GetGroupById(int id)
     {
-        var group = await this.groupService.GetGroupByIdAsync(id);
+        var group = await groupService.GetByIdAsync(id);
         return this.Ok(group);
     }
 
     /// <summary>
-    /// Method that defines create group endpoint.
+    /// Creates a new group.
     /// </summary>
-    /// <returns>Returns action result object.</returns>
-    [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
+    /// <returns>The created group details.</returns>
+    /// <response code="200">The group was successfully created.</response>
     [HttpPost]
-    public async Task<ActionResult<Group>> CreateGroupAsync()
+    [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<GroupDto>> Create()
     {
-        var group = await this.groupService.CreateGroupAsync();
+        var group = await groupService.CreateAsync();
         return this.Ok(group);
     }
 
     /// <summary>
-    /// Method that defines add user via joining code endpoint.
+    /// Adds the currently authenticated user to a group using a joining code.
     /// </summary>
-    /// <param name="code">Unique group's joining code.</param>
-    /// <param name="request">GroupRequest object.</param>
-    /// <returns>Returns action result object.</returns>
+    /// <param name="code">The unique joining code of the group.</param>
+    /// <returns>The updated group details.</returns>
+    /// <response code="200">The user was successfully added to the group.</response>
+    /// <response code="404">The group was not found.</response>
+    [HttpPost("join/code/{code}")]
     [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
-    [HttpPost("join-via-code/{code}")]
-    public async Task<ActionResult<Group>> AddUserViaCodeAsync(string code, [FromBody] GroupRequest request)
+    public async Task<ActionResult<GroupDto>> JoinByCode(string code)
     {
-        var group = await this.groupService.AddUserViaCodeAsync(code, request.UserId);
+        var userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var group = await groupService.AddUserByCodeAsync(code, userId);
         return this.Ok(group);
     }
 
     /// <summary>
-    /// Method that defines user leaves the group endpoint.
+    /// Removes the currently authenticated user from the specified group.
     /// </summary>
-    /// <param name="id">Unique user's identifier.</param>
-    /// <param name="request">GroupREquest object.</param>
-    /// <returns>Returns action result object.</returns>
-    [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
+    /// <param name="id">The unique identifier of the group.</param>
+    /// <returns>The updated group details.</returns>
+    /// <response code="200">The user was successfully removed from the group.</response>
+    /// <response code="404">The group was not found.</response>
     [HttpPost("{id}/leave")]
-    public async Task<ActionResult<Group>> UserLeaveAsync(int id, [FromBody] GroupRequest request)
+    [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<GroupDto>> Leave(int id)
     {
-        var group = await this.groupService.RemoveUserFromGroupAsync(id, request.UserId);
+        var userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var group = await groupService.RemoveUserAsync(id, userId);
         return this.Ok(group);
     }
 
     /// <summary>
-    /// Method that defines kick user from the group endpoint.
+    /// Removes a specific user from a group (kick user).
     /// </summary>
-    /// <param name="id">Unique group's identifier.</param>
-    /// <param name="userId">Unique user's indentifier.</param>
-    /// <returns>Returns action result object.</returns>
+    /// <param name="id">The unique identifier of the group.</param>
+    /// <param name="userId">The unique identifier of the user to be removed.</param>
+    /// <returns>The updated group details.</returns>
+    /// <response code="200">The user was successfully removed from the group.</response>
+    /// <response code="400">The user is not a member of the group.</response>
+    /// <response code="404">The group was not found.</response>
+    [HttpPost("{id}/kick/{userId}")]
     [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
-    [HttpPost("{id}/kick-user/{userId}")]
-    public async Task<ActionResult<Group>> KickUserAsync(int id, int userId)
+    public async Task<ActionResult<GroupDto>> Kick(int id, int userId)
     {
-        var group = await this.groupService.RemoveUserFromGroupAsync(id, userId);
+        var group = await groupService.RemoveUserAsync(id, userId);
         return this.Ok(group);
     }
 }

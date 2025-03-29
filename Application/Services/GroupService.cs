@@ -34,63 +34,59 @@ public class GroupService : IGroupService
     /// </summary>
     /// <param name="id">Unique group identifier.</param>
     /// <returns>Returns group display data.</returns>
-    public async Task<GroupDto> GetGroupByIdAsync(int id)
+    public async Task<GroupDto> GetByIdAsync(int id)
     {
-        var group = await this.groupRepository.GetGroupByIdAsync(id)
-                    ?? throw new GroupByIdNotFoundException(id);
+        var group = await this.groupRepository.GetByIdAsync(id)
+                    ?? throw new GroupNotFoundException(id);
 
         return this.mapper.Map<Group, GroupDto>(group);
     }
 
     /// <inheritdoc/>
-    public async Task<GroupDto> CreateGroupAsync()
+    public async Task<GroupDto> CreateAsync()
     {
-        var group = await this.groupRepository.CreateGroupAsync();
-
-        return this.mapper.Map<Group, GroupDto>(group);
-    }
-
-    /// <inheritdoc/>
-    public async Task<GroupDto> AddUserViaCodeAsync(string code, int userId)
-    {
-        var group = await this.groupRepository.GetGroupByCodeAsync(code)
-                    ?? throw new GroupByCodeNotFoundException(code);
-        var user = await this.userRepository.GetByIdAsync(userId)
-                    ?? throw new UserNotFoundException(userId);
-
-        if (!group.GroupMembers.Contains(user))
+        var group = new Group
         {
-            group.GroupMembers.Add(user);
-            user.Groups.Add(group);
-            this.groupRepository.SaveAsync();
-        }
-        else
-        {
-            throw new UserAlreadyInGroupExeption(group.Id, userId);
-        }
+            JoiningCode = await this.groupRepository.GenerateUniqueJoiningCodeAsync(),
+            Routes = new List<Route>(),
+            LiveLocations = new List<Location>(),
+            GroupMembers = new List<User>(),
+        };
+        await this.groupRepository.AddAsync(group);
 
         return this.mapper.Map<Group, GroupDto>(group);
     }
 
     /// <inheritdoc/>
-    public async Task<GroupDto> RemoveUserFromGroupAsync(int id, int userId)
+    public async Task<GroupDto> AddUserByCodeAsync(string code, int userId)
     {
-        var group = await this.groupRepository.GetGroupByIdAsync(id)
-                    ?? throw new GroupByIdNotFoundException(id);
+        var group = await this.groupRepository.GetByCodeAsync(code)
+                    ?? throw new GroupNotFoundException(code);
         var user = await this.userRepository.GetByIdAsync(userId)
                     ?? throw new UserNotFoundException(userId);
 
         if (group.GroupMembers.Contains(user))
         {
-            _ = group.GroupMembers.Remove(user);
-            _ = user.Groups.Remove(group);
-            this.groupRepository.SaveAsync();
-        }
-        else
-        {
-            throw new UserNotInGroupExeption(id, userId);
+            throw new UserAlreadyInGroupException(group.Id, userId);
         }
 
+        await this.groupRepository.AddUserAsync(group, user);
+        return this.mapper.Map<Group, GroupDto>(group);
+    }
+
+    /// <inheritdoc/>
+    public async Task<GroupDto> RemoveUserAsync(int id, int userId)
+    {
+        var group = await this.groupRepository.GetByIdAsync(id)
+                    ?? throw new GroupNotFoundException(id);
+        var user = await this.userRepository.GetByIdAsync(userId)
+                    ?? throw new UserNotFoundException(userId);
+        if (!group.GroupMembers.Contains(user))
+        {
+            throw new UserNotInGroupException(id, userId);
+        }
+
+        await this.groupRepository.RemoveUserAsync(group, user);
         return this.mapper.Map<Group, GroupDto>(group);
     }
 }

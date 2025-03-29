@@ -12,23 +12,37 @@ public interface IGroupRepository
     /// </summary>
     /// <param name="id">The unique identifier of the group.</param>
     /// <returns>The group if found; otherwise, <see langword="null"/>.</returns>
-    Task<Group?> GetGroupByIdAsync(int id);
+    Task<Group?> GetByIdAsync(int id);
 
     /// <summary>
     /// Retrieves a group by its unique identifier.
     /// </summary>
     /// <param name="code">The unique joining code of the group.</param>
     /// <returns>The group if found; otherwise, <see langword="null"/>.</returns>
-    Task<Group?> GetGroupByCodeAsync(string code);
+    Task<Group?> GetByCodeAsync(string code);
 
     /// <summary>
-    /// Creates new group.
+    /// Adds a new group to the context.
     /// </summary>
-    /// <returns>The group if created; otherwise, <see langword="null"/>.</returns>
-    Task<Group> CreateGroupAsync();
+    /// <param name="group">The group to add.</param>
+    Task AddAsync(Group group);
 
     /// <summary>
-    /// Saves changes to database.
+    /// Adds a user to a group.
     /// </summary>
-    void SaveAsync();
+    /// <param name="group">The group to update.</param>
+    /// <param name="user">The user to add.</param>
+    Task AddUserAsync(Group group, User user);
+
+    /// <summary>
+    /// Removes a user from a group.
+    /// </summary>
+    /// <param name="group">The group to update.</param>
+    /// <param name="user">The user to remove.</param>
+    Task RemoveUserAsync(Group group, User user);
+
+    /// <summary>
+    /// Generates unique joinign code.
+    /// </summary>
+    Task<string> GenerateUniqueJoiningCodeAsync();
 }

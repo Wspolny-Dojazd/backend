@@ -1,17 +1,12 @@
-﻿namespace Application.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Application.DTOs;
 
 /// <summary>
-/// Represents user's display data.
+/// Represents the data transfer object used for returning group data in API responses.
 /// </summary>
-public class GroupDto
-{
-    /// <summary>
-    /// Gets or sets user's identifier.
-    /// </summary>
-    public int Id { get; set; }
-
-    /// <summary>
-    /// Gets or sets user's nickname.
-    /// </summary>
-    public required string JoiningCode { get; set; }
-}
+/// <param name="Id">The unique identifier of the group.</param>
+/// <param name="JoiningCode">The joining code of the group.</param>
+public record GroupDto(
+    [property: Required] int Id,
+    [property: Required] string JoiningCode);

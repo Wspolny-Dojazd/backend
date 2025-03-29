@@ -6,17 +6,22 @@ namespace API.Models.Errors;
 public enum GroupErrorCode
 {
     /// <summary>
-    /// The specified user was not found.
+    /// The group was not found.
     /// </summary>
     GROUP_NOT_FOUND,
 
     /// <summary>
-    /// Failed to add user via joining code.
+    /// The specified user was not found.
     /// </summary>
-    JOINING_VIA_CODE_FAILED,
+    USER_NOT_FOUND,
 
     /// <summary>
-    /// Failed to remove user from the group.
+    /// The specified user cannot be add to the gorup because is already a member.
     /// </summary>
-    REMOVING_USER_FAILED,
+    USER_ALREADY_IN_GROUP,
+
+    /// <summary>
+    /// The specified user cannot be remove from the gorup because is not a member.
+    /// </summary>
+    USER_NOT_IN_GROUP,
 }

@@ -11,28 +11,28 @@ public interface IGroupService
     /// Retrieves a group by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the group.</param>
-    /// <returns>The group if found; otherwise, <see langword="null"/>.</returns>
-    Task<GroupDto> GetGroupByIdAsync(int id);
+    /// <returns>The requested group details.</returns>
+    Task<GroupDto> GetByIdAsync(int id);
 
     /// <summary>
     /// Creates new group.
     /// </summary>
-    /// <returns>The group if created; otherwise, <see langword="null"/>.</returns>
-    Task<GroupDto> CreateGroupAsync();
+    /// <returns>The created group details.</returns>
+    Task<GroupDto> CreateAsync();
 
     /// <summary>
-    /// Adds the user to the group.
+    /// Adds the specified user to the group using a joining code.
     /// </summary>
-    /// <param name="code">The unique joining code to the group.</param>
+    /// <param name="joiningCode">The unique joining code of the group.</param>
     /// <param name="userId">The unique identifier of the group.</param>
-    /// <returns>The group if user joined; otherwise, <see langword="null"/>.</returns>
-    Task<GroupDto> AddUserViaCodeAsync(string code, int userId);
+    /// <returns>The updated group details.</returns>
+    Task<GroupDto> AddUserByCodeAsync(string joiningCode, int userId);
 
     /// <summary>
-    /// Removes the user from the group.
+    /// Removes the specified user from the group.
     /// </summary>
-    /// <param name="id">The unique identifier of the group.</param>
+    /// <param name="groupId">The unique identifier of the group.</param>
     /// <param name="userId">The unique identifier of the user.</param>
-    /// <returns>The user if found; otherwise, <see langword="null"/>.</returns>
-    Task<GroupDto> RemoveUserFromGroupAsync(int id, int userId);
+    /// <returns>The updated group details.</returns>
+    Task<GroupDto> RemoveUserAsync(int groupId, int userId);
 }

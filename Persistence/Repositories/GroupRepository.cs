@@ -9,6 +9,7 @@ namespace Persistence.Repositories;
 /// </summary>
 public class GroupRepository : IGroupRepository
 {
+    private static readonly Random Random = new();
     private readonly DatabaseContext databaseContext;
 
     /// <summary>
@@ -25,7 +26,7 @@ public class GroupRepository : IGroupRepository
     /// </summary>
     /// <param name="id">Group's id.</param>
     /// <returns>Group's data from database.</returns>
-    public async Task<Group?> GetGroupByIdAsync(int id)
+    public async Task<Group?> GetByIdAsync(int id)
     {
         return await this.databaseContext.Groups
             .Include(g => g.GroupMembers)
@@ -38,7 +39,7 @@ public class GroupRepository : IGroupRepository
     /// </summary>
     /// <param name="code">Group's joining code.</param>
     /// <returns>Group's data from database.</returns>
-    public async Task<Group?> GetGroupByCodeAsync(string code)
+    public async Task<Group?> GetByCodeAsync(string code)
     {
         return await this.databaseContext.Groups
             .Include(g => g.GroupMembers)
@@ -47,33 +48,33 @@ public class GroupRepository : IGroupRepository
     }
 
     /// <inheritdoc/>
-    public async Task<Group> CreateGroupAsync()
+    public async Task AddAsync(Group group)
     {
-        Group group = new Group
-        {
-            JoiningCode = await this.GenerateUniqueJoiningCodeAsync(),
-            Routes = new List<Route>(),
-            LiveLocations = new List<Location>(),
-            GroupMembers = new List<User>(),
-        };
-
-        // Adding group
         _ = await this.databaseContext.Groups.AddAsync(group);
-
         _ = await this.databaseContext.SaveChangesAsync();
 
-        return group;
+        return;
     }
 
     /// <inheritdoc/>
-    public async void SaveAsync()
+    public async Task AddUserAsync(Group group, User user)
     {
+        group.GroupMembers.Add(user);
         _ = await this.databaseContext.SaveChangesAsync();
+        return;
     }
 
-    private async Task<string> GenerateUniqueJoiningCodeAsync()
+    /// <inheritdoc/>
+    public async Task RemoveUserAsync(Group group, User user)
     {
-        var random = new Random();
+        _ = group.GroupMembers.Remove(user);
+        _ = await this.databaseContext.SaveChangesAsync();
+        return;
+    }
+
+    /// <inheritdoc/>
+    public async Task<string> GenerateUniqueJoiningCodeAsync()
+    {
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         string joiningCode;
 
@@ -82,7 +83,7 @@ public class GroupRepository : IGroupRepository
         do
         {
             joiningCode = new string(Enumerable.Range(0, 6)
-                .Select(_ => chars[random.Next(chars.Length)])
+                .Select(_ => chars[Random.Next(chars.Length)])
                 .ToArray());
 
             isUnique = !await this.databaseContext.Groups.AnyAsync(g => g.JoiningCode == joiningCode);
