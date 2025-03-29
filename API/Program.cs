@@ -73,6 +73,7 @@ builder.Services
     .AddControllers(options =>
     {
         options.Filters.Add(new AuthorizeFilter());
+        options.Conventions.Add(new UnauthorizedProducesResponseConvention());
     })
     .AddJsonOptions(options =>
     {

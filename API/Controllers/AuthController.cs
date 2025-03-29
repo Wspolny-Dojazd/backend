@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using API.Models.Errors;
 using API.Models.Errors.Auth;
 using Application.DTOs.Auth;
@@ -76,11 +76,9 @@ public class AuthController(IAuthService authService) : ControllerBase
     /// </summary>
     /// <returns>The authenticated user's data and token.</returns>
     /// <response code="200">The user profile has been retrieved successfully.</response>
-    /// <response code="401">The user is not authenticated.</response>
     /// <response code="404">The authenticated user was not found.</response>
     [HttpGet("me")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse<AuthErrorCode>), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorResponse<UserErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<AuthResponseDto>> Me()
     {
