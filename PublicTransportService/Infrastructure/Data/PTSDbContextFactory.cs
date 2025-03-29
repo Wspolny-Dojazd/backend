@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using PublicTransportService.Infrastructure.Data;
+
+namespace PublicTransportService.Infrastructure.Data;
 
 /// <summary>
 /// Represents a database context factory for the public transport system.

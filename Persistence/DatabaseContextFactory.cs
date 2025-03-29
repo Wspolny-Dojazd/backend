@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Persistence;
+
+namespace Persistence;
 
 /// <summary>
 /// Provides a design-time factory for creating <see cref="DatabaseContext"/> instances during EF Core operations.
