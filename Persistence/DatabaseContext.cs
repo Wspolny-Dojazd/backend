@@ -26,7 +26,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
     /// <summary>
     /// Gets or sets the <see cref="DbSet{TEntity}"/> representing user configurations.
     /// </summary>
-    public DbSet<UserConfiguration> UserConfiguration { get; set; }
+    public DbSet<UserConfiguration> UserConfigurations { get; set; }
 
     /// <summary>
     /// Gets or sets the <see cref="DbSet{TEntity}"/> representing messages.
@@ -126,6 +126,13 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
                 .HasConversion(
                     v => v.ToString(),
                     v => (DistanceUnit)Enum.Parse(typeof(DistanceUnit), v));
+
+            _ = entity.Property(p => p.Theme)
+                .HasColumnName("theme")
+                .HasColumnType("ENUM('Dark', 'Light')")
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (Theme)Enum.Parse(typeof(Theme), v));
         });
 
         _ = modelBuilder.Entity<Route>(entity =>

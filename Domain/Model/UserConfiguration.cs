@@ -31,4 +31,9 @@ public class UserConfiguration
     /// Gets or sets the preferred distance unit.
     /// </summary>
     public DistanceUnit DistanceUnit { get; set; }
+
+    /// <summary>
+    /// Gets or sets the preferred display theme.
+    /// </summary>
+    public Theme Theme { get; set; }
 }
