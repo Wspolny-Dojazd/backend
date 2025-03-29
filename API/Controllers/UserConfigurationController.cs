@@ -26,7 +26,7 @@ public class UserConfigurationController(IUserConfigurationService userConfigura
     /// <response code="404">The user configuration was not found.</response>
     [HttpGet]
     [ProducesResponseType(typeof(UserConfigurationDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(UserConfigurationDto), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse<UserConfigurationErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserConfigurationDto>> Get()
     {
         var userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -38,13 +38,12 @@ public class UserConfigurationController(IUserConfigurationService userConfigura
     /// Updates user configuration.
     /// </summary>
     /// <param name="dto">The user configuration fields to update with.</param>
-    /// <returns>Nothing.</returns>
-    /// <response code="200">The user configuration was updated successfully.</response>
+    /// <returns>An <see cref="ActionResult"/> representing the result of the operation.</returns>
+    /// <response code="204">The user configuration was updated successfully.</response>
     /// <response code="400">The user configuration data had invalid format.</response>
     [HttpPut]
-    [ProducesResponseType(typeof(UserConfigurationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse<UserConfigurationErrorCode>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ErrorResponse<UserConfigurationErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Put([FromBody] UserConfigurationDto dto)
     {
         if (!this.ModelState.IsValid)
@@ -54,6 +53,6 @@ public class UserConfigurationController(IUserConfigurationService userConfigura
 
         var userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         await userConfigurationService.UpdateAsync(userId, dto);
-        return this.Ok();
+        return this.NoContent();
     }
 }
