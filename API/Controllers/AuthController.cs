@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using API.Models.Errors;
 using API.Models.Errors.Auth;
 using Application.DTOs.Auth;
@@ -24,6 +24,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     /// <returns>The authenticated user's data and a JWT token.</returns>
     /// <response code="200">The user has been authenticated successfully.</response>
     /// <response code="400">The request payload is invalid.</response>
+    [AllowAnonymous]
     [HttpPost("login")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<LoginErrorCode>), StatusCodes.Status400BadRequest)]
@@ -50,6 +51,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     /// <response code="200">The user has been registered successfully.</response>
     /// <response code="400">The request payload is invalid.</response>
     /// <response code="409">The email address is already in use.</response>
+    [AllowAnonymous]
     [HttpPost("register")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<RegisterErrorCode>), StatusCodes.Status400BadRequest)]
@@ -76,7 +78,6 @@ public class AuthController(IAuthService authService) : ControllerBase
     /// <response code="200">The user profile has been retrieved successfully.</response>
     /// <response code="401">The user is not authenticated.</response>
     /// <response code="404">The authenticated user was not found.</response>
-    [Authorize]
     [HttpGet("me")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<AuthErrorCode>), StatusCodes.Status401Unauthorized)]
