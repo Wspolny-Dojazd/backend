@@ -8,12 +8,10 @@ namespace Application.Interfaces;
 public interface IUserConfigurationService
 {
     /// <summary>
-    /// Retrieves a user configuration by its unique identifier.
+    /// Retrieves a user configuration by the unique identifier of the user.
     /// </summary>
     /// <param name="userId">The ID of the user to retrieve configuration for.</param>
-    /// <returns>
-    /// The user configuration if found; otherwise, <c>null</c>.
-    /// </returns>
+    /// <returns>The user configuration.</returns>
     Task<UserConfigurationDto> GetByUserIdAsync(int userId);
 
     /// <summary>
@@ -21,8 +19,6 @@ public interface IUserConfigurationService
     /// </summary>
     /// <param name="userId">The ID of the user to retrieve configuration for.</param>
     /// <param name="dto">The configuration data to update.</param>
-    /// <returns>
-    /// A task representing the asynchronous update operation. This method does not return any value.
-    /// </returns>
+    /// <returns>A <see cref=Task"/> representing the asynchronous update operation.</returns>
     Task UpdateAsync(int userId, UserConfigurationDto dto);
 }

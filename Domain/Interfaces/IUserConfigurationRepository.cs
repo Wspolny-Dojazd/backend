@@ -3,7 +3,7 @@ using Domain.Model;
 namespace Domain.Interfaces;
 
 /// <summary>
-/// Defines data access operations for <see cref="UserConfiguration"/> entities.
+/// Defines a contract for user configuration data access operations.
 /// </summary>
 public interface IUserConfigurationRepository
 {
@@ -11,17 +11,13 @@ public interface IUserConfigurationRepository
     /// Retrieves a user configuration by its unique identifier.
     /// </summary>
     /// <param name="userId">The ID of the user to retrieve configuration for.</param>
-    /// <returns>
-    /// The user configuration if found; otherwise, <c>null</c>.
-    /// </returns>
+    /// <returns>The user configuration if found; otherwise, <see langword="null"/>.</returns>
     Task<UserConfiguration?> GetByUserIdAsync(int userId);
 
     /// <summary>
     /// Updates user configuration in database.
     /// </summary>
     /// <param name="configuration">The updated user configuration data to be saved in the database.</param>
-    /// <returns>
-    /// A task representing the asynchronous update operation. This method does not return any value.
-    /// </returns>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task UpdateAsync(UserConfiguration configuration);
 }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Persistence.Repositories;
 
 /// <summary>
-/// Repository class that provides data access operations for <see cref="UserConfiguration"/> entities.
+/// Provides data access operations for <see cref="UserConfiguration"/> entities.
 /// </summary>
 /// <param name="databaseContext">The database context used to access user configuration data.</param>
 public class UserConfigurationRepository(DatabaseContext databaseContext)
@@ -15,8 +15,7 @@ public class UserConfigurationRepository(DatabaseContext databaseContext)
     public async Task<UserConfiguration?> GetByUserIdAsync(int userId)
     {
         return await databaseContext.UserConfigurations
-            .Where(conf => conf.UserId == userId)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(conf => conf.UserId == userId);
     }
 
     /// <inheritdoc/>

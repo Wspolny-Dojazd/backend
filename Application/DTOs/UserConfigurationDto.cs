@@ -4,32 +4,31 @@ using Domain.Enums;
 namespace Application.DTOs;
 
 /// <summary>
-/// Represents the user configuration settings, including time system, distance unit, language, and theme preferences.
-/// This class is used for managing and updating user-specific settings in the system.
+/// Represents the data transfer object used for returning user configuration data in API responses.
 /// </summary>
 public class UserConfigurationDto
 {
     /// <summary>
-    /// Gets or sets the time system preference of the user.
+    /// Gets the time system preference of the user.
     /// </summary>
     [Required]
-    public required TimeSystem TimeSystem { get; set; }
+    public TimeSystem TimeSystem { get; init; }
 
     /// <summary>
-    /// Gets or sets the unit of distance preferred by the user.
+    /// Gets the unit of distance preferred by the user.
     /// </summary>
     [Required]
-    public required DistanceUnit DistanceUnit { get; set; }
+    public DistanceUnit DistanceUnit { get; init; }
 
     /// <summary>
-    /// Gets or sets the language preference of the user.
+    /// Gets the language preference of the user.
     /// </summary>
     [Required]
-    public required Language Language { get; set; }
+    public Language Language { get; init; }
 
     /// <summary>
-    /// Gets or sets the theme preference of the user.
+    /// Gets the theme preference of the user.
     /// </summary>
     [Required]
-    public required Theme Theme { get; set; }
+    public Theme Theme { get; init; }
 }

@@ -6,6 +6,11 @@ namespace API.Models.Errors;
 public enum UserConfigurationErrorCode
 {
     /// <summary>
+    /// The user configuration was not found.
+    /// </summary>
+    USER_CONFIGURATION_NOT_FOUND,
+
+    /// <summary>
     /// The user configuration format was invalid.
     /// </summary>
     VALIDATION_ERROR,
