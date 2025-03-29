@@ -1,7 +1,7 @@
 namespace Application.Exceptions;
 
 /// <summary>
-/// Represents an exception thrown when a user is not found.
+/// Represents an exception thrown when a user is already a member of a group.
 /// </summary>
 /// <param name="groupId">The unique identifier of the group.</param>
 /// <param name="userId">The unique identifier of the user.</param>
