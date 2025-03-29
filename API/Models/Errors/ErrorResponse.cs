@@ -32,8 +32,14 @@ public class ErrorResponse
     /// </summary>
     public string Code { get; set; }
 
+#pragma warning disable IDE0079
+#pragma warning disable SA1623
+
     /// <summary>
-    /// Gets or sets the human-readable error message.
+    /// The human-readable error message.
     /// </summary>
     public string? Message { get; set; }
+
+#pragma warning restore SA1623
+#pragma warning restore IDE0079
 }
