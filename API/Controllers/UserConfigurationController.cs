@@ -1,4 +1,4 @@
-using System.Security.Claims;
+using API.Extensions;
 using API.Models.Errors;
 using Application.DTOs;
 using Application.Interfaces;
@@ -27,7 +27,7 @@ public class UserConfigurationController(IUserConfigurationService userConfigura
     [ProducesResponseType(typeof(ErrorResponse<UserConfigurationErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserConfigurationDto>> Get()
     {
-        var userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var userId = this.User.GetUserId();
         var configuration = await userConfigurationService.GetByUserIdAsync(userId);
         return this.Ok(configuration);
     }
@@ -49,7 +49,7 @@ public class UserConfigurationController(IUserConfigurationService userConfigura
             return this.BadRequest(new ErrorResponse(UserConfigurationErrorCode.VALIDATION_ERROR, "User Configuration was invalid."));
         }
 
-        var userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var userId = this.User.GetUserId();
         await userConfigurationService.UpdateAsync(userId, dto);
         return this.NoContent();
     }

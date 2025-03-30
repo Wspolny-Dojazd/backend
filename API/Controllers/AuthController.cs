@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+﻿using API.Extensions;
 using API.Models.Errors;
 using API.Models.Errors.Auth;
 using Application.DTOs.Auth;
@@ -82,7 +82,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse<UserErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<AuthResponseDto>> Me()
     {
-        var userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var userId = this.User.GetUserId();
         var result = await authService.GetMeAsync(userId);
         return this.Ok(result);
     }
