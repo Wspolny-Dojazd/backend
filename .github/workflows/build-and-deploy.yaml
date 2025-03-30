@@ -3,10 +3,14 @@ name: Build and Deploy to K3s
 on:
   workflow_dispatch:
 
+env:
+  ConnectionStrings__AppDbConnectionString: Server=myServerAddress;Database=myDataBase;Uid=myUsername;Pwd=myPassword;
+  DB_SERVER_VERSION: 8.0.43
+
 jobs:
   build-and-push:
     name: Build and push ⛏
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm64
 
     steps:
       - name: Checkout repository
@@ -16,17 +20,27 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore dependencies
-        run: dotnet restore Backend.sln
-
       - name: Install EF tooling
         run: dotnet tool install --global dotnet-ef
 
-      - name: Create EF Migrations Bundle
-        run: dotnet ef migrations bundle
+      - name: Restore dependencies
+        run: dotnet restore Backend.sln --ucr
+
+      - name: Build
+        run: dotnet build --ucr -c Debug --no-restore
+
+      - name: Create EF Migrations Bundle for DatabaseContext
+        run: |
+          cp ./Persistence/bin/Debug/net8.0/linux-*/* ./Persistence/bin/Debug/net8.0/
+          dotnet ef migrations bundle --project Persistence/Persistence.csproj --context DatabaseContext -o DatabaseContextBundle --self-contained --no-build
+
+      - name: Create EF Migrations Bundle for PTSDbContext
+        run: |
+          cp ./PublicTransportService/bin/Debug/net8.0/linux-*/* ./PublicTransportService/bin/Debug/net8.0/
+          dotnet ef migrations bundle --project PublicTransportService/PublicTransportService.csproj --context PTSDbContext -o PTSDbContextBundle --self-contained --no-build
 
       - name: Publish
-        run: dotnet publish --ucr --artifacts-path artifacts
+        run: dotnet publish --ucr --artifacts-path artifacts --nologo --self-contained --no-build
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
