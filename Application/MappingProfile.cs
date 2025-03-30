@@ -1,4 +1,4 @@
-﻿using Application.DTOs;
+using Application.DTOs;
 using AutoMapper;
 using Domain.Model;
 
@@ -15,6 +15,7 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         _ = this.CreateMap<User, UserDto>();
+        _ = this.CreateMap<Group, GroupDto>();
         _ = this.CreateMap<UserConfiguration, UserConfigurationDto>();
     }
 }
