@@ -1,4 +1,4 @@
-using System.Security.Claims;
+using API.Extensions;
 using API.Models.Errors;
 using Application.DTOs;
 using Application.Interfaces;
@@ -56,7 +56,7 @@ public class GroupsController(IGroupService groupService) : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<GroupDto>> JoinByCode(string code)
     {
-        var userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var userId = this.User.GetUserId();
         var group = await groupService.AddUserByCodeAsync(code, userId);
         return this.Ok(group);
     }
@@ -73,7 +73,7 @@ public class GroupsController(IGroupService groupService) : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<GroupDto>> Leave(int id)
     {
-        var userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var userId = this.User.GetUserId();
         var group = await groupService.RemoveUserAsync(id, userId);
         return this.Ok(group);
     }
