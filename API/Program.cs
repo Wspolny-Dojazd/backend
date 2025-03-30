@@ -79,6 +79,7 @@ builder.Services
     {
         options.Filters.Add(new AuthorizeFilter());
         options.Conventions.Add(new UnauthorizedProducesResponseConvention());
+        options.Conventions.Add(new InternalServerErrorProducesResponseConvention());
     })
     .AddJsonOptions(options =>
     {

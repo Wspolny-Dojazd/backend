@@ -1,10 +1,8 @@
 using System.Security.Claims;
 using API.Models.Errors;
-using API.Models.Errors.Auth;
 using Application.DTOs;
 using Application.Interfaces;
 using Domain.Model;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
