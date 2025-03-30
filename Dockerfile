@@ -1,18 +1,17 @@
-# Use the official .NET SDK image as the base image
-FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim-arm64v8 AS build
+# Use alpine image as the base image for small image size
+FROM alpine:latest
 
 # Set the working directory inside the container
 WORKDIR /app
 
 # Copy the entire source code into the container
-COPY . .
+COPY ./artifacts .
 
-# Setup env variables to speedup publish process
-ENV DOTNET_NUGET_SIGNATURE_VERIFICATION=false
-ENV NUGET_CERT_REVOCATION_MODE=offline
+# Copy the DatabaseContext bundle into the container
+COPY ./DatabaseContextBundle .
 
-# Create build for current runtime
-RUN dotnet publish --ucr --artifacts-path artifacts
+# Copy the PTSDbContext bundle into the container
+COPY ./PTSDbContextBundle .
 
 # Run the application
-CMD ["./artifacts/publish/API/release/API", "--urls", "http://*:80"]
+CMD ["./DatabaseContextBundle;","./PTSDbContextBundle;","./artifacts/publish/API/release/API", "--urls", "http://*:80"]
