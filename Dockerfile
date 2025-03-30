@@ -1,5 +1,5 @@
 # Use alpine image as the base image for small image size
-FROM alpine:latest
+FROM --platform=arm64 alpine:latest
 
 # Set the working directory inside the container
 WORKDIR /app
