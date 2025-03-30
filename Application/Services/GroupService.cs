@@ -10,7 +10,14 @@ namespace Application.Services;
 /// <summary>
 /// Represents group operations with group repository.
 /// </summary>
-public class GroupService(IGroupRepository groupRepository, IUserRepository userRepository, IMapper mapper) : IGroupService
+/// /// <param name="groupRepository">The repository for accessing group data.</param>
+/// <param name="userRepository">The repository for accessing user data.</param>
+/// <param name="mapper">The object mapper.</param>
+public class GroupService(
+    IGroupRepository groupRepository,
+    IUserRepository userRepository,
+    IMapper mapper)
+    : IGroupService
 {
     /// <inheritdoc/>
     public async Task<GroupDto> GetByIdAsync(int id)
@@ -27,9 +34,9 @@ public class GroupService(IGroupRepository groupRepository, IUserRepository user
         var group = new Group
         {
             JoiningCode = await groupRepository.GenerateUniqueJoiningCodeAsync(),
-            Routes = new List<Route>(),
-            LiveLocations = new List<Location>(),
-            GroupMembers = new List<User>(),
+            Routes = [],
+            LiveLocations = [],
+            GroupMembers = [],
         };
         await groupRepository.AddAsync(group);
 

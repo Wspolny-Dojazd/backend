@@ -7,7 +7,9 @@ namespace Persistence.Repositories;
 /// <summary>
 /// Represents crud operations for group.
 /// </summary>
-public class GroupRepository(DatabaseContext databaseContext) : IGroupRepository
+/// <param name="databaseContext">The database context used to access group data.</param>
+public class GroupRepository(DatabaseContext databaseContext)
+    : IGroupRepository
 {
     private static readonly Random Random = new();
 

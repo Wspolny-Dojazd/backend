@@ -15,7 +15,7 @@ public interface IGroupService
     Task<GroupDto> GetByIdAsync(int id);
 
     /// <summary>
-    /// Creates new group.
+    /// Creates a new group.
     /// </summary>
     /// <returns>The created group details.</returns>
     Task<GroupDto> CreateAsync();
@@ -24,7 +24,7 @@ public interface IGroupService
     /// Adds the specified user to the group using a joining code.
     /// </summary>
     /// <param name="joiningCode">The unique joining code of the group.</param>
-    /// <param name="userId">The unique identifier of the group.</param>
+    /// <param name="userId">The unique identifier of the user to add.</param>
     /// <returns>The updated group details.</returns>
     Task<GroupDto> AddUserByCodeAsync(string joiningCode, int userId);
 
@@ -32,7 +32,7 @@ public interface IGroupService
     /// Removes the specified user from the group.
     /// </summary>
     /// <param name="groupId">The unique identifier of the group.</param>
-    /// <param name="userId">The unique identifier of the user.</param>
+    /// <param name="userId">The unique identifier of the user to remove.</param>
     /// <returns>The updated group details.</returns>
     Task<GroupDto> RemoveUserAsync(int groupId, int userId);
 }

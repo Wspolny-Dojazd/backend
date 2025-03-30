@@ -25,7 +25,7 @@ public interface IGroupRepository
     /// Adds a new group to the context.
     /// </summary>
     /// <param name="group">The group to add.</param>
-    /// /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task AddAsync(Group group);
 
     /// <summary>
@@ -33,7 +33,7 @@ public interface IGroupRepository
     /// </summary>
     /// <param name="group">The group to update.</param>
     /// <param name="user">The user to add.</param>
-    /// /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task AddUserAsync(Group group, User user);
 
     /// <summary>
@@ -41,12 +41,12 @@ public interface IGroupRepository
     /// </summary>
     /// <param name="group">The group to update.</param>
     /// <param name="user">The user to remove.</param>
-    /// /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task RemoveUserAsync(Group group, User user);
 
     /// <summary>
     /// Generates unique joinign code.
     /// </summary>
-    /// /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task<string> GenerateUniqueJoiningCodeAsync();
 }
