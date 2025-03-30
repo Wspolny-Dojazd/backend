@@ -39,7 +39,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
-            var body = new ErrorResponse("INTERNAL_ERROR", "Unexpected server error occurred.");
+            var body = new ErrorResponse(InternalErrorCode.INTERNAL_ERROR, "Unexpected server error occurred.");
             await context.Response.WriteAsJsonAsync(body);
         }
     }
