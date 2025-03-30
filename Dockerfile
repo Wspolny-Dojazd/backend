@@ -1,5 +1,5 @@
 # Use alpine image as the base image for small image size
-FROM ubuntu:latest
+FROM --platform=arm64 ubuntu:latest
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -17,4 +17,5 @@ COPY ./PTSDbContextBundle .
 RUN apt-get update && apt-get install -y libicu-dev
 
 # Run the application
-CMD ["./DatabaseContextBundle;","./PTSDbContextBundle;","./artifacts/publish/API/release/API", "--urls", "http://*:80"]
+# CMD ["./DatabaseContextBundle;","./PTSDbContextBundle;","./artifacts/publish/API/release/API", "--urls", "http://*:80"]
+CMD ["./DatabaseContextBundle"]
