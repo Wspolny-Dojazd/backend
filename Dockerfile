@@ -17,4 +17,4 @@ COPY ./PTSDbContextBundle .
 RUN apt-get update && apt-get install -y libicu-dev
 
 # Run the application
-CMD ./DatabaseContextBundle && ./PTSDbContextBundle && ./artifacts/publish/API/release/API --urls http://*:80
+CMD ./DatabaseContextBundle && ./PTSDbContextBundle && ./publish/API/release/API --urls http://*:80
