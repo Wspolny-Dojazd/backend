@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 namespace API.Conventions;
 
 /// <summary>
-/// Applies a <c>501 Internal Server Error</c> Swagger response type to all controller actions
+/// Applies a <c>500 Internal Server Error</c> Swagger response type to all controller actions
 /// unless they already define the response.
 /// </summary>
 /// <remarks>
