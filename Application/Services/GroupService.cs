@@ -8,9 +8,9 @@ using Domain.Model;
 namespace Application.Services;
 
 /// <summary>
-/// Represents group operations with group repository.
+/// Provides group-related operations.
 /// </summary>
-/// /// <param name="groupRepository">The repository for accessing group data.</param>
+/// <param name="groupRepository">The repository for accessing group data.</param>
 /// <param name="userRepository">The repository for accessing user data.</param>
 /// <param name="mapper">The object mapper.</param>
 public class GroupService(
@@ -38,8 +38,8 @@ public class GroupService(
             LiveLocations = [],
             GroupMembers = [],
         };
-        await groupRepository.AddAsync(group);
 
+        await groupRepository.AddAsync(group);
         return mapper.Map<Group, GroupDto>(group);
     }
 
@@ -47,9 +47,10 @@ public class GroupService(
     public async Task<GroupDto> AddUserByCodeAsync(string code, int userId)
     {
         var group = await groupRepository.GetByCodeAsync(code)
-                    ?? throw new GroupNotFoundException(code);
+            ?? throw new GroupNotFoundException(code);
+
         var user = await userRepository.GetByIdAsync(userId)
-                    ?? throw new UserNotFoundException(userId);
+            ?? throw new UserNotFoundException(userId);
 
         if (group.GroupMembers.Contains(user))
         {
@@ -64,9 +65,11 @@ public class GroupService(
     public async Task<GroupDto> RemoveUserAsync(int id, int userId)
     {
         var group = await groupRepository.GetByIdAsync(id)
-                    ?? throw new GroupNotFoundException(id);
+            ?? throw new GroupNotFoundException(id);
+
         var user = await userRepository.GetByIdAsync(userId)
-                    ?? throw new UserNotFoundException(userId);
+            ?? throw new UserNotFoundException(userId);
+
         if (!group.GroupMembers.Contains(user))
         {
             throw new UserNotInGroupException(id, userId);
