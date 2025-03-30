@@ -21,9 +21,9 @@ public class UsersController(IUserService userService) : ControllerBase
     /// <returns>The user data.</returns>
     /// <response code="200">The user was found.</response>
     /// <response code="404">The user was not found.</response>
+    [HttpGet("{id}")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<UserErrorCode>), StatusCodes.Status404NotFound)]
-    [HttpGet("{id}")]
     public async Task<ActionResult<UserDto>> GetUserById(int id)
     {
         var user = await userService.GetByIdAsync(id);
