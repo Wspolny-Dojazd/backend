@@ -40,7 +40,7 @@ jobs:
           dotnet ef migrations bundle --project PublicTransportService/PublicTransportService.csproj --context PTSDbContext -o PTSDbContextBundle --self-contained --no-build
 
       - name: Publish
-        run: dotnet publish --ucr --artifacts-path artifacts --nologo --self-contained --no-build
+        run: dotnet publish --ucr --artifacts-path artifacts --nologo --self-contained
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
