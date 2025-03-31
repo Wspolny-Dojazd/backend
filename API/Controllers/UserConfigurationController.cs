@@ -36,11 +36,11 @@ public class UserConfigurationController(IUserConfigurationService userConfigura
     /// Updates user configuration.
     /// </summary>
     /// <param name="dto">The user configuration fields to update with.</param>
-    /// <returns>An <see cref="ActionResult"/> representing the result of the operation.</returns>
-    /// <response code="204">The user configuration was updated successfully.</response>
+    /// <returns>The user configuration.</returns>
+    /// <response code="200">The user configuration was updated successfully.</response>
     /// <response code="400">The user configuration data had invalid format.</response>
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(UserConfigurationDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<UserConfigurationErrorCode>), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Put([FromBody] UserConfigurationDto dto)
     {
@@ -51,6 +51,6 @@ public class UserConfigurationController(IUserConfigurationService userConfigura
 
         var userId = this.User.GetUserId();
         await userConfigurationService.UpdateAsync(userId, dto);
-        return this.NoContent();
+        return this.Ok(dto);
     }
 }
