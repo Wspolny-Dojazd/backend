@@ -4,8 +4,11 @@ FROM --platform=arm64 ubuntu:latest
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the entire source code into the container
-COPY ./artifacts .
+# Make folder for publish
+RUN mkdir ./publish
+
+# Copy the publish into the container
+COPY ./artifacts/publish ./publish
 
 # Copy the DatabaseContext bundle into the container
 COPY ./DatabaseContextBundle .
