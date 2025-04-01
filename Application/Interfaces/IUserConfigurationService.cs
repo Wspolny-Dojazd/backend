@@ -19,6 +19,6 @@ public interface IUserConfigurationService
     /// </summary>
     /// <param name="userId">The ID of the user to retrieve configuration for.</param>
     /// <param name="dto">The configuration data to update.</param>
-    /// <returns>A <see cref=Task"/> representing the asynchronous update operation.</returns>
-    Task UpdateAsync(int userId, UserConfigurationDto dto);
+    /// <returns>The updated user configuration.</returns>
+    Task<UserConfigurationDto> UpdateAsync(int userId, UserConfigurationDto dto);
 }
