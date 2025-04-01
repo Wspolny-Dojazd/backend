@@ -36,7 +36,7 @@ public class UserConfigurationController(IUserConfigurationService userConfigura
     /// Updates user configuration.
     /// </summary>
     /// <param name="dto">The user configuration fields to update with.</param>
-    /// <returns>The user configuration.</returns>
+    /// <returns>The updated user configuration.</returns>
     /// <response code="200">The user configuration was updated successfully.</response>
     /// <response code="400">The user configuration data had invalid format.</response>
     [HttpPut]
@@ -46,11 +46,13 @@ public class UserConfigurationController(IUserConfigurationService userConfigura
     {
         if (!this.ModelState.IsValid)
         {
-            return this.BadRequest(new ErrorResponse(UserConfigurationErrorCode.VALIDATION_ERROR, "User Configuration was invalid."));
+            return this.BadRequest(new ErrorResponse(
+                UserConfigurationErrorCode.VALIDATION_ERROR,
+                "Invalid user configuration data format."));
         }
 
         var userId = this.User.GetUserId();
-        await userConfigurationService.UpdateAsync(userId, dto);
-        return this.Ok(dto);
+        var updatedDto = await userConfigurationService.UpdateAsync(userId, dto);
+        return this.Ok(updatedDto);
     }
 }

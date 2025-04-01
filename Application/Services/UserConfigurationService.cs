@@ -25,15 +25,14 @@ public class UserConfigurationService(IUserConfigurationRepository repository, I
     }
 
     /// <inheritdoc/>
-    public async Task UpdateAsync(int userId, UserConfigurationDto dto)
+    public async Task<UserConfigurationDto> UpdateAsync(int userId, UserConfigurationDto dto)
     {
         var conf = await repository.GetByUserIdAsync(userId);
 
-        if (conf == null)
+        conf ??= new UserConfiguration
         {
-            conf = new UserConfiguration();
-            conf.UserId = userId;
-        }
+            UserId = userId,
+        };
 
         conf.DistanceUnit = dto.DistanceUnit;
         conf.Language = dto.Language;
@@ -41,5 +40,7 @@ public class UserConfigurationService(IUserConfigurationRepository repository, I
         conf.TimeSystem = dto.TimeSystem;
 
         await repository.UpdateAsync(conf);
+
+        return mapper.Map<UserConfiguration, UserConfigurationDto>(conf);
     }
 }
