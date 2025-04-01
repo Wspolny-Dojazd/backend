@@ -16,7 +16,7 @@ public class UserConfigurationService(IUserConfigurationRepository repository, I
     : IUserConfigurationService
 {
     /// <inheritdoc/>
-    public async Task<UserConfigurationDto> GetByUserIdAsync(int userId)
+    public async Task<UserConfigurationDto> GetByUserIdAsync(Guid userId)
     {
         var configuration = await repository.GetByUserIdAsync(userId)
             ?? throw new UserConfigurationNotFoundException(userId);
@@ -25,7 +25,7 @@ public class UserConfigurationService(IUserConfigurationRepository repository, I
     }
 
     /// <inheritdoc/>
-    public async Task<UserConfigurationDto> UpdateAsync(int userId, UserConfigurationDto dto)
+    public async Task<UserConfigurationDto> UpdateAsync(Guid userId, UserConfigurationDto dto)
     {
         var conf = await repository.GetByUserIdAsync(userId);
 

@@ -26,7 +26,7 @@ public interface IGroupService
     /// <param name="joiningCode">The unique joining code of the group.</param>
     /// <param name="userId">The unique identifier of the user to add.</param>
     /// <returns>The updated group details.</returns>
-    Task<GroupDto> AddUserByCodeAsync(string joiningCode, int userId);
+    Task<GroupDto> AddUserByCodeAsync(string joiningCode, Guid userId);
 
     /// <summary>
     /// Removes the specified user from the group.
@@ -34,5 +34,5 @@ public interface IGroupService
     /// <param name="groupId">The unique identifier of the group.</param>
     /// <param name="userId">The unique identifier of the user to remove.</param>
     /// <returns>The updated group details.</returns>
-    Task<GroupDto> RemoveUserAsync(int groupId, int userId);
+    Task<GroupDto> RemoveUserAsync(int groupId, Guid userId);
 }
