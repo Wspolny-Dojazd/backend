@@ -12,7 +12,7 @@ public class UserConfigurationRepository(DatabaseContext databaseContext)
     : IUserConfigurationRepository
 {
     /// <inheritdoc/>
-    public async Task<UserConfiguration?> GetByUserIdAsync(int userId)
+    public async Task<UserConfiguration?> GetByUserIdAsync(Guid userId)
     {
         return await databaseContext.UserConfigurations
             .FirstOrDefaultAsync(conf => conf.UserId == userId);

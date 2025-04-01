@@ -55,7 +55,7 @@ public class AuthService(
     }
 
     /// <inheritdoc/>
-    public async Task<AuthResponseDto> GetMeAsync(int userId)
+    public async Task<AuthResponseDto> GetMeAsync(Guid userId)
     {
         var user = await userRepository.GetByIdAsync(userId)
             ?? throw new UserNotFoundException(userId);

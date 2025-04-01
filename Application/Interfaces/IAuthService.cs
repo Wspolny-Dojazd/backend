@@ -26,5 +26,5 @@ public interface IAuthService
     /// </summary>
     /// <param name="userId">The unique identifier of the user.</param>
     /// <returns>The authentication response.</returns>
-    Task<AuthResponseDto> GetMeAsync(int userId);
+    Task<AuthResponseDto> GetMeAsync(Guid userId);
 }

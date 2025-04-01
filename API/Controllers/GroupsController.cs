@@ -91,7 +91,7 @@ public class GroupsController(IGroupService groupService) : ControllerBase
     [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GroupDto>> Kick(int id, int userId)
+    public async Task<ActionResult<GroupDto>> Kick(int id, Guid userId)
     {
         var group = await groupService.RemoveUserAsync(id, userId);
         return this.Ok(group);

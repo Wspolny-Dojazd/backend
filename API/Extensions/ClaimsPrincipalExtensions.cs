@@ -13,7 +13,7 @@ public static class ClaimsPrincipalExtensions
     /// <param name="claimsPrincipal">The ClaimsPrincipal object representing the authenticated user.</param>
     /// <returns>The User ID as an integer.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the User ID claim is missing or invalid.</exception>
-    public static int GetUserId(this ClaimsPrincipal claimsPrincipal)
+    public static Guid GetUserId(this ClaimsPrincipal claimsPrincipal)
     {
         ArgumentNullException.ThrowIfNull(claimsPrincipal);
 
@@ -21,7 +21,7 @@ public static class ClaimsPrincipalExtensions
 
         return string.IsNullOrEmpty(userIdClaim)
             ? throw new InvalidOperationException("User ID claim is missing.")
-            : !int.TryParse(userIdClaim, out var userId)
+            : !Guid.TryParse(userIdClaim, out var userId)
             ? throw new InvalidOperationException("User ID claim is not a valid integer.")
             : userId;
     }

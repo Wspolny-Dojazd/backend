@@ -18,7 +18,7 @@ public class Message
     /// <summary>
     /// Gets or sets the identifier of the user who sent the message.
     /// </summary>
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     /// <summary>
     /// Gets or sets the content of the message.

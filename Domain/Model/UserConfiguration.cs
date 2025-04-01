@@ -15,7 +15,7 @@ public class UserConfiguration
     /// <summary>
     /// Gets or sets the identifier of the user to whom the configuration belongs.
     /// </summary>
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     /// <summary>
     /// Gets or sets the preferred application language.

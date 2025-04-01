@@ -12,7 +12,7 @@ public interface IUserConfigurationRepository
     /// </summary>
     /// <param name="userId">The ID of the user to retrieve configuration for.</param>
     /// <returns>The user configuration if found; otherwise, <see langword="null"/>.</returns>
-    Task<UserConfiguration?> GetByUserIdAsync(int userId);
+    Task<UserConfiguration?> GetByUserIdAsync(Guid userId);
 
     /// <summary>
     /// Updates user configuration in database.

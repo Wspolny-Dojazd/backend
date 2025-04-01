@@ -44,7 +44,7 @@ public class GroupService(
     }
 
     /// <inheritdoc/>
-    public async Task<GroupDto> AddUserByCodeAsync(string code, int userId)
+    public async Task<GroupDto> AddUserByCodeAsync(string code, Guid userId)
     {
         var group = await groupRepository.GetByCodeAsync(code)
             ?? throw new GroupNotFoundException(code);
@@ -62,7 +62,7 @@ public class GroupService(
     }
 
     /// <inheritdoc/>
-    public async Task<GroupDto> RemoveUserAsync(int id, int userId)
+    public async Task<GroupDto> RemoveUserAsync(int id, Guid userId)
     {
         var group = await groupRepository.GetByIdAsync(id)
             ?? throw new GroupNotFoundException(id);
