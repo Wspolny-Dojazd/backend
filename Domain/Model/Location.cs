@@ -13,7 +13,7 @@ public class Location
     /// <summary>
     /// Gets or sets the identifier of the user associated with the location.
     /// </summary>
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     /// <summary>
     /// Gets or sets the latitude coordinate.

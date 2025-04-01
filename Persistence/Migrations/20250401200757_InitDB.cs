@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Dbinit : Migration
+    public partial class InitDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,9 +23,10 @@ namespace Persistence.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     joining_code = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    status = table.Column<int>(type: "int", nullable: false),
-                    destination_lat = table.Column<int>(type: "int", nullable: false),
-                    destination_lon = table.Column<int>(type: "int", nullable: false)
+                    status = table.Column<string>(type: "ENUM('NotStarted', 'Started')", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    destination_lat = table.Column<double>(type: "double", nullable: false),
+                    destination_lon = table.Column<double>(type: "double", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -37,15 +38,14 @@ namespace Persistence.Migrations
                 name: "users",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     email = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     nickname = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     password_hash = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    created_at = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
@@ -61,15 +61,15 @@ namespace Persistence.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     tip = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    lat = table.Column<int>(type: "int", nullable: false),
-                    lon = table.Column<int>(type: "int", nullable: false),
+                    lat = table.Column<double>(type: "double", nullable: false),
+                    lon = table.Column<double>(type: "double", nullable: false),
                     group_id = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Route", x => x.id);
                     table.ForeignKey(
-                        name: "FK_routes_groups_group_id",
+                        name: "fk_routes_groups_group_id",
                         column: x => x.group_id,
                         principalTable: "groups",
                         principalColumn: "id");
@@ -80,20 +80,20 @@ namespace Persistence.Migrations
                 name: "friends",
                 columns: table => new
                 {
-                    friend_id = table.Column<int>(type: "int", nullable: false),
-                    user_id = table.Column<int>(type: "int", nullable: false)
+                    friend_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    user_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_friends", x => new { x.friend_id, x.user_id });
+                    table.PrimaryKey("pk_friends", x => new { x.friend_id, x.user_id });
                     table.ForeignKey(
-                        name: "FK_friends_users_friend_id",
+                        name: "fk_friends_users_friend_id",
                         column: x => x.friend_id,
                         principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_friends_users_user_id",
+                        name: "fk_friends_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -106,19 +106,19 @@ namespace Persistence.Migrations
                 columns: table => new
                 {
                     group_id = table.Column<int>(type: "int", nullable: false),
-                    user_id = table.Column<int>(type: "int", nullable: false)
+                    user_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_group_members", x => new { x.group_id, x.user_id });
+                    table.PrimaryKey("pk_group_members", x => new { x.group_id, x.user_id });
                     table.ForeignKey(
-                        name: "FK_group_members_groups_group_id",
+                        name: "fk_group_members_groups_group_id",
                         column: x => x.group_id,
                         principalTable: "groups",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_group_members_users_user_id",
+                        name: "fk_group_members_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -132,21 +132,21 @@ namespace Persistence.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    user_id = table.Column<int>(type: "int", nullable: false),
-                    lat = table.Column<int>(type: "int", nullable: false),
-                    lon = table.Column<int>(type: "int", nullable: false),
+                    user_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    lat = table.Column<double>(type: "double", nullable: false),
+                    lon = table.Column<double>(type: "double", nullable: false),
                     group_id = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Location", x => x.id);
                     table.ForeignKey(
-                        name: "FK_locations_groups_group_id",
+                        name: "fk_locations_groups_group_id",
                         column: x => x.group_id,
                         principalTable: "groups",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_locations_users_user_id",
+                        name: "fk_locations_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -161,7 +161,7 @@ namespace Persistence.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     group_id = table.Column<int>(type: "int", nullable: false),
-                    user_id = table.Column<int>(type: "int", nullable: false),
+                    user_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     content = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
@@ -169,13 +169,13 @@ namespace Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Message", x => x.id);
                     table.ForeignKey(
-                        name: "FK_messages_groups_group_id",
+                        name: "fk_messages_groups_group_id",
                         column: x => x.group_id,
                         principalTable: "groups",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_messages_users_user_id",
+                        name: "fk_messages_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -184,24 +184,26 @@ namespace Persistence.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "userConfigurations",
+                name: "user_configurations",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    user_id = table.Column<int>(type: "int", nullable: false),
-                    language = table.Column<string>(type: "ENUM('English', 'Polish', 'German')", nullable: false)
+                    user_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    language = table.Column<string>(type: "ENUM('English', 'Polish')", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    time_system = table.Column<string>(type: "ENUM('AMPM', 'TwentyFourHour')", nullable: false)
+                    time_system = table.Column<string>(type: "ENUM('TwelveHour', 'TwentyFourHour')", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     distance_unit = table.Column<string>(type: "ENUM('Kilometers', 'Miles')", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    theme = table.Column<string>(type: "ENUM('Dark', 'Light')", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserConfiguration", x => x.id);
                     table.ForeignKey(
-                        name: "FK_userConfigurations_users_user_id",
+                        name: "fk_user_configurations_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -210,43 +212,43 @@ namespace Persistence.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_friends_user_id",
+                name: "ix_friends_user_id",
                 table: "friends",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_group_members_user_id",
+                name: "ix_group_members_user_id",
                 table: "group_members",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_locations_group_id",
+                name: "ix_locations_group_id",
                 table: "locations",
                 column: "group_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_locations_user_id",
+                name: "ix_locations_user_id",
                 table: "locations",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_messages_group_id",
+                name: "ix_messages_group_id",
                 table: "messages",
                 column: "group_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_messages_user_id",
+                name: "ix_messages_user_id",
                 table: "messages",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_routes_group_id",
+                name: "ix_routes_group_id",
                 table: "routes",
                 column: "group_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_userConfigurations_user_id",
-                table: "userConfigurations",
+                name: "ix_user_configurations_user_id",
+                table: "user_configurations",
                 column: "user_id",
                 unique: true);
         }
@@ -270,7 +272,7 @@ namespace Persistence.Migrations
                 name: "routes");
 
             migrationBuilder.DropTable(
-                name: "userConfigurations");
+                name: "user_configurations");
 
             migrationBuilder.DropTable(
                 name: "groups");

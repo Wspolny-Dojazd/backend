@@ -56,7 +56,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             _ = entity.ToTable("users");
             _ = entity.HasKey(p => p.Id).HasName("PK_User");
 
-            _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
+            _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("char(36)");
             _ = entity.Property(p => p.Nickname).HasColumnName("nickname");
             _ = entity.Property(p => p.Email).HasColumnName("email");
             _ = entity.Property(p => p.PasswordHash).HasColumnName("password_hash");
@@ -104,7 +104,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
 
             _ = entity.Property(p => p.UserId)
                 .HasColumnName("user_id")
-                .HasColumnType("int");
+                .HasColumnType("char(36)");
 
             _ = entity.Property(p => p.Language)
                .HasColumnName("language")
@@ -152,7 +152,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             _ = entity.HasKey(p => p.Id).HasName("PK_Location");
 
             _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
-            _ = entity.Property(p => p.UserId).HasColumnName("user_id").HasColumnType("int");
+            _ = entity.Property(p => p.UserId).HasColumnName("user_id").HasColumnType("char(36)");
             _ = entity.Property(p => p.Lat).HasColumnName("lat").HasColumnType("double");
             _ = entity.Property(p => p.Lon).HasColumnName("lon").HasColumnType("double");
 
@@ -168,7 +168,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
 
             _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
             _ = entity.Property(p => p.GroupId).HasColumnName("group_id").HasColumnType("int");
-            _ = entity.Property(p => p.UserId).HasColumnName("user_id").HasColumnType("int");
+            _ = entity.Property(p => p.UserId).HasColumnName("user_id").HasColumnType("char(36)");
             _ = entity.Property(p => p.Content).HasColumnName("content");
 
             _ = entity.HasOne(m => m.Group)
