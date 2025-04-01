@@ -11,6 +11,7 @@ using Application.Services;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -80,6 +81,7 @@ builder.Services
         options.Filters.Add(new AuthorizeFilter());
         options.Conventions.Add(new UnauthorizedProducesResponseConvention());
         options.Conventions.Add(new InternalServerErrorProducesResponseConvention());
+        options.Conventions.Add(new RouteTokenTransformerConvention(new KebabCaseParameterTransformer()));
     })
     .AddJsonOptions(options =>
     {
@@ -94,10 +96,10 @@ builder.Services.AddDbContext<PTSDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
 .AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
