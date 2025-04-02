@@ -98,15 +98,12 @@ public class GroupsController(IGroupService groupService) : ControllerBase
     }
 
     /// <summary>
-    /// Retrieves all groups that a user is a member of.
+    /// Retrieves all groups that the currently logged user is a member of.
     /// </summary>
-    /// <param name="userId">The unique identifier of the user.</param>
-    /// <returns>A list of groups the user belongs to.</returns>
+    /// <returns>A list of groups the currently logged user belongs to.</returns>
     /// <response code="200">Successfully retrieved the user's groups.</response>
-    /// <response code="404">The user was not found.</response>
     [HttpGet]
     [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<GroupDto>>> GetGroupsForCurrentUser()
     {
         var userId = this.User.GetUserId();
