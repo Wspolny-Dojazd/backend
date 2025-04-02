@@ -102,7 +102,7 @@ public class GroupsController(IGroupService groupService) : ControllerBase
     /// </summary>
     /// <returns>A list of groups the currently logged user belongs to.</returns>
     /// <response code="200">Successfully retrieved the user's groups.</response>
-    /// <response code="404">The user was not found. </response>
+    /// <response code="404">The user was not found.</response>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<GroupDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<UserErrorCode>), StatusCodes.Status404NotFound)]
