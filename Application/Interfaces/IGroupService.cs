@@ -35,4 +35,11 @@ public interface IGroupService
     /// <param name="userId">The unique identifier of the user to remove.</param>
     /// <returns>The updated group details.</returns>
     Task<GroupDto> RemoveUserAsync(int groupId, Guid userId);
+
+    /// <summary>
+    /// Retrieves all groups that the specified user is a member of.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user.</param>
+    /// <returns>The list of groups that the user is a member of.</returns>
+    Task<IEnumerable<GroupDto>> GetGroupsForUserAsync(Guid userId);
 }

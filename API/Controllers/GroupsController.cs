@@ -96,4 +96,20 @@ public class GroupsController(IGroupService groupService) : ControllerBase
         var group = await groupService.RemoveUserAsync(id, userId);
         return this.Ok(group);
     }
+
+    /// <summary>
+    /// Retrieves all groups that the currently logged user is a member of.
+    /// </summary>
+    /// <returns>A list of groups the currently logged user belongs to.</returns>
+    /// <response code="200">Successfully retrieved the user's groups.</response>
+    /// <response code="404">The user was not found.</response>
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<GroupDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<UserErrorCode>), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<GroupDto>>> GetGroupsForCurrentUser()
+    {
+        var userId = this.User.GetUserId();
+        var groups = await groupService.GetGroupsForUserAsync(userId);
+        return this.Ok(groups);
+    }
 }

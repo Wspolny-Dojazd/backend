@@ -49,4 +49,11 @@ public interface IGroupRepository
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task<string> GenerateUniqueJoiningCodeAsync();
+
+    /// <summary>
+    /// Retrieves all groups that the specified user is a member of.
+    /// </summary>
+    /// <param name="userId">The unique identifier of a user.</param>
+    /// <returns>The list of groups the user is a member of.</returns>
+    Task<List<Group>> GetGroupsByUserIdAsync(Guid userId);
 }

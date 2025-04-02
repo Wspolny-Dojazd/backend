@@ -78,4 +78,14 @@ public class GroupService(
         await groupRepository.RemoveUserAsync(group, user);
         return mapper.Map<Group, GroupDto>(group);
     }
+
+    /// <inheritdoc/>
+    public async Task<IEnumerable<GroupDto>> GetGroupsForUserAsync(Guid userId)
+    {
+        var user = await userRepository.GetByIdAsync(userId)
+            ?? throw new UserNotFoundException(userId);
+
+        var groups = await groupRepository.GetGroupsByUserIdAsync(userId);
+        return mapper.Map<IEnumerable<Group>, IEnumerable<GroupDto>>(groups);
+    }
 }
