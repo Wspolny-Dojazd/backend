@@ -51,9 +51,9 @@ public interface IGroupRepository
     Task<string> GenerateUniqueJoiningCodeAsync();
 
     /// <summary>
-    /// Retrives all groups that the currently logged user is a member of.
+    /// Retrieves all groups that the specified user is a member of.
     /// </summary>
     /// <param name="userId">The unique identifier of a user.</param>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    /// <returns>The list of groups the user is a member of.</returns>
     Task<List<Group>> GetGroupsByUserIdAsync(Guid userId);
 }
