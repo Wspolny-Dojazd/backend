@@ -69,4 +69,14 @@ public class GroupRepository(DatabaseContext databaseContext)
 
         return joiningCode;
     }
+
+    /// <inheritdoc/>
+    public async Task<List<Group>> GetGroupsByUserIdAsync(Guid userId)
+    {
+        return await databaseContext.Users
+            .Where(u => u.Id == userId)
+            .SelectMany(u => u.Groups)
+            .Distinct()
+            .ToListAsync();
+    }
 }
