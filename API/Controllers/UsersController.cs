@@ -1,4 +1,5 @@
-﻿using API.Models.Errors;
+﻿using API.Extensions;
+using API.Models.Errors;
 using Application.DTOs;
 using Application.Interfaces;
 using Domain.Model;
@@ -10,9 +11,11 @@ namespace API.Controllers;
 /// Provides API endpoints for managing and retrieving user-related data.
 /// </summary>
 /// <param name="userService">The user service that handles user data operations.</param>
+/// <param name="userLocationService">The service that handles user location operations.</param>
 [Route("api/[controller]")]
 [ApiController]
-public class UsersController(IUserService userService) : ControllerBase
+public class UsersController(IUserService userService, IUserLocationService userLocationService)
+    : ControllerBase
 {
     /// <summary>
     /// Retrieves a user by their unique identifier.
@@ -28,5 +31,29 @@ public class UsersController(IUserService userService) : ControllerBase
     {
         var user = await userService.GetByIdAsync(id);
         return this.Ok(user);
+    }
+
+    /// <summary>
+    /// Updates the current user's location.
+    /// </summary>
+    /// <param name="userLocationDto">The location data containing latitude and longitude.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <response code="200">The location was updated successfully.</response>
+    /// <response code="400">The request was invalid.</response>
+    [HttpPost("me/location")]
+    [ProducesResponseType(typeof(UserLocationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<UserLocationErrorCode>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateUserLocation([FromBody] UserLocationDto userLocationDto)
+    {
+        if (!this.ModelState.IsValid)
+        {
+            return this.BadRequest(new ErrorResponse(
+                UserLocationErrorCode.INVALID_COORDINATES,
+                "Invalid user location data format."));
+        }
+
+        var userId = this.User.GetUserId();
+        var updatedUserLocation = await userLocationService.UpdateAsync(userId, userLocationDto);
+        return this.Ok(updatedUserLocation);
     }
 }

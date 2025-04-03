@@ -38,11 +38,6 @@ public class Group
     public required List<Route> Routes { get; set; }
 
     /// <summary>
-    /// Gets or sets the live locations of group members.
-    /// </summary>
-    public required List<Location> LiveLocations { get; set; }
-
-    /// <summary>
     /// Gets or sets the users who are members of the group.
     /// </summary>
     public required List<User> GroupMembers { get; set; }

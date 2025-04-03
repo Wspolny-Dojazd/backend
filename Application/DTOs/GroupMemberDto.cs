@@ -7,6 +7,8 @@ namespace Application.DTOs;
 /// </summary>
 /// <param name="Id">The unique identifier of the group member.</param>
 /// <param name="Nickname">The nickname of the group member.</param>
+/// <param name="Location">The location of the user, can be null.</param>
 public record GroupMemberDto(
     [property: Required] Guid Id,
-    [property: Required] string Nickname);
+    [property: Required] string Nickname,
+    UserLocationDto? Location);
