@@ -40,6 +40,13 @@ public interface IGroupService
     /// Retrieves all groups that the specified user is a member of.
     /// </summary>
     /// <param name="userId">The unique identifier of the user.</param>
-    /// <returns>The list of groups that the user is a member of.</returns>
+    /// <returns>A collection of groups that the user belongs to.</returns>
     Task<IEnumerable<GroupDto>> GetGroupsForUserAsync(Guid userId);
+
+    /// <summary>
+    /// Retrieves all members of the specified group.
+    /// </summary>
+    /// <param name="groupId">The unique identifier of the group.</param>
+    /// <returns>A collection representing users who are members of the specified group.</returns>
+    Task<IEnumerable<GroupMemberDto>> GetGroupMembersAsync(int groupId);
 }

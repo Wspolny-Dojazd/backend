@@ -82,10 +82,18 @@ public class GroupService(
     /// <inheritdoc/>
     public async Task<IEnumerable<GroupDto>> GetGroupsForUserAsync(Guid userId)
     {
-        var user = await userRepository.GetByIdAsync(userId)
-            ?? throw new UserNotFoundException(userId);
-
         var groups = await groupRepository.GetGroupsByUserIdAsync(userId);
         return mapper.Map<IEnumerable<Group>, IEnumerable<GroupDto>>(groups);
+    }
+
+    /// <inheritdoc/>
+    public async Task<IEnumerable<GroupMemberDto>> GetGroupMembersAsync(int groupId)
+    {
+        var group = await groupRepository.GetByIdAsync(groupId)
+            ?? throw new GroupNotFoundException(groupId);
+
+        var members = group.GroupMembers;
+        return members.Select(user => new GroupMemberDto(
+            user.Id, user.Nickname));
     }
 }
