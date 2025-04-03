@@ -1,5 +1,5 @@
 # Use alpine image as the base image for small image size
-FROM --platform=arm64 ubuntu:latest
+FROM --platform=arm64 alpine:latest
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY ./DatabaseContextBundle .
 COPY ./PTSDbContextBundle .
 
 # Install required lib in order to support globalization
-RUN apt-get update && apt-get install -y libicu-dev
+RUN apk add --no-cache icu-dev
 
 # Run the application
-CMD ./DatabaseContextBundle && ./PTSDbContextBundle && ./publish/API/release/API --urls http://*:80
+CMD ["./DatabaseContextBundle && ./PTSDbContextBundle && ./publish/API/release/API --urls http://*:80"]
