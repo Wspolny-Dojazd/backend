@@ -44,4 +44,9 @@ public class User
     /// Gets or sets the configuration of the user.
     /// </summary>
     public required UserConfiguration UserConfiguration { get; set; }
+
+    /// <summary>
+    /// Gets or sets the location of the user.
+    /// </summary>
+    public UserLocation? UserLocation { get; set; }
 }

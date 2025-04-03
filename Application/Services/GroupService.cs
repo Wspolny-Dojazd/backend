@@ -35,7 +35,6 @@ public class GroupService(
         {
             JoiningCode = await groupRepository.GenerateUniqueJoiningCodeAsync(),
             Routes = [],
-            LiveLocations = [],
             GroupMembers = [],
         };
 
@@ -94,6 +93,6 @@ public class GroupService(
 
         var members = group.GroupMembers;
         return members.Select(user => new GroupMemberDto(
-            user.Id, user.Nickname));
+            user.Id, user.Nickname, mapper.Map<UserLocation?, UserLocationDto?>(user.UserLocation)));
     }
 }
