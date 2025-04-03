@@ -44,7 +44,7 @@ public class GroupService(
     }
 
     /// <inheritdoc/>
-    public async Task<GroupDto> AddUserByCodeAsync(string code, int userId)
+    public async Task<GroupDto> AddUserByCodeAsync(string code, Guid userId)
     {
         var group = await groupRepository.GetByCodeAsync(code)
             ?? throw new GroupNotFoundException(code);
@@ -62,7 +62,7 @@ public class GroupService(
     }
 
     /// <inheritdoc/>
-    public async Task<GroupDto> RemoveUserAsync(int id, int userId)
+    public async Task<GroupDto> RemoveUserAsync(int id, Guid userId)
     {
         var group = await groupRepository.GetByIdAsync(id)
             ?? throw new GroupNotFoundException(id);
@@ -77,5 +77,23 @@ public class GroupService(
 
         await groupRepository.RemoveUserAsync(group, user);
         return mapper.Map<Group, GroupDto>(group);
+    }
+
+    /// <inheritdoc/>
+    public async Task<IEnumerable<GroupDto>> GetGroupsForUserAsync(Guid userId)
+    {
+        var groups = await groupRepository.GetGroupsByUserIdAsync(userId);
+        return mapper.Map<IEnumerable<Group>, IEnumerable<GroupDto>>(groups);
+    }
+
+    /// <inheritdoc/>
+    public async Task<IEnumerable<GroupMemberDto>> GetGroupMembersAsync(int groupId)
+    {
+        var group = await groupRepository.GetByIdAsync(groupId)
+            ?? throw new GroupNotFoundException(groupId);
+
+        var members = group.GroupMembers;
+        return members.Select(user => new GroupMemberDto(
+            user.Id, user.Nickname));
     }
 }

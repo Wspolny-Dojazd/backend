@@ -12,7 +12,7 @@ public interface IUserConfigurationService
     /// </summary>
     /// <param name="userId">The ID of the user to retrieve configuration for.</param>
     /// <returns>The user configuration.</returns>
-    Task<UserConfigurationDto> GetByUserIdAsync(int userId);
+    Task<UserConfigurationDto> GetByUserIdAsync(Guid userId);
 
     /// <summary>
     /// Updates user configuration.
@@ -20,5 +20,5 @@ public interface IUserConfigurationService
     /// <param name="userId">The ID of the user to retrieve configuration for.</param>
     /// <param name="dto">The configuration data to update.</param>
     /// <returns>The updated user configuration.</returns>
-    Task<UserConfigurationDto> UpdateAsync(int userId, UserConfigurationDto dto);
+    Task<UserConfigurationDto> UpdateAsync(Guid userId, UserConfigurationDto dto);
 }

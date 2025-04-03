@@ -8,7 +8,7 @@ public class User
     /// <summary>
     /// Gets or sets the unique identifier of the user.
     /// </summary>
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     /// <summary>
     /// Gets or sets the email address of the user.

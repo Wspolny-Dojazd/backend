@@ -12,7 +12,7 @@ public class UserRepository(DatabaseContext databaseContext)
     : IUserRepository
 {
     /// <inheritdoc/>
-    public async Task<User?> GetByIdAsync(int id)
+    public async Task<User?> GetByIdAsync(Guid id)
     {
         return await databaseContext.Users
             .Where(u => u.Id == id)

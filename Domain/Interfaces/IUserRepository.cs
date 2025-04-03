@@ -12,7 +12,7 @@ public interface IUserRepository
     /// </summary>
     /// <param name="id">The unique identifier of the user.</param>
     /// <returns>The user if found; otherwise, <see langword="null"/>.</returns>
-    Task<User?> GetByIdAsync(int id);
+    Task<User?> GetByIdAsync(Guid id);
 
     /// <summary>
     /// Retrieves a user by its email address.

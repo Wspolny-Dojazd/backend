@@ -91,9 +91,41 @@ public class GroupsController(IGroupService groupService) : ControllerBase
     [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GroupDto>> Kick(int id, int userId)
+    public async Task<ActionResult<GroupDto>> Kick(int id, Guid userId)
     {
         var group = await groupService.RemoveUserAsync(id, userId);
         return this.Ok(group);
+    }
+
+    /// <summary>
+    /// Retrieves all groups that the currently logged user is a member of.
+    /// </summary>
+    /// <returns>A list of groups the currently logged user belongs to.</returns>
+    /// <response code="200">Successfully retrieved the user's groups.</response>
+    /// <response code="404">The user was not found.</response>
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<GroupDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<UserErrorCode>), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<GroupDto>>> GetGroupsForCurrentUser()
+    {
+        var userId = this.User.GetUserId();
+        var groups = await groupService.GetGroupsForUserAsync(userId);
+        return this.Ok(groups);
+    }
+
+    /// <summary>
+    /// Retrieves all members of the specified group.
+    /// </summary>
+    /// <param name="id">The unique identifier of the group.</param>
+    /// <returns>A list of users who are members of the specified group.</returns>
+    /// <response code="200">Successfully retrieved the members of the group.</response>
+    /// <response code="404">The group was not found.</response>
+    [HttpGet("{id}/members")]
+    [ProducesResponseType(typeof(IEnumerable<GroupMemberDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<GroupMemberDto>>> GetGroupMembers(int id)
+    {
+        var members = await groupService.GetGroupMembersAsync(id);
+        return this.Ok(members);
     }
 }

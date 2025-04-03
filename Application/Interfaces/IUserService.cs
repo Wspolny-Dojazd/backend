@@ -12,5 +12,5 @@ public interface IUserService
     /// </summary>
     /// <param name="id">The ID of the user to retrieve.</param>
     /// <returns>The user data.</returns>
-    Task<UserDto> GetByIdAsync(int id);
+    Task<UserDto> GetByIdAsync(Guid id);
 }

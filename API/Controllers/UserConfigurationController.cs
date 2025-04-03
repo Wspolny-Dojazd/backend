@@ -11,7 +11,7 @@ namespace API.Controllers;
 /// Provides API endpoints for managing and retrieving data related to a user configuration.
 /// </summary>
 /// <param name="userConfigurationService">The user configuration service that handles configuration data operations.</param>
-[Route("api/user-configuration")]
+[Route("api/[controller]")]
 [ApiController]
 public class UserConfigurationController(IUserConfigurationService userConfigurationService)
     : ControllerBase
