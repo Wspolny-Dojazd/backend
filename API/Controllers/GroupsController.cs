@@ -112,4 +112,20 @@ public class GroupsController(IGroupService groupService) : ControllerBase
         var groups = await groupService.GetGroupsForUserAsync(userId);
         return this.Ok(groups);
     }
+
+    /// <summary>
+    /// Retrieves all members of the specified group.
+    /// </summary>
+    /// <param name="id">The unique identifier of the group.</param>
+    /// <returns>A list of users who are members of the specified group.</returns>
+    /// <response code="200">Successfully retrieved the members of the group.</response>
+    /// <response code="404">The group was not found.</response>
+    [HttpGet("{id}/members")]
+    [ProducesResponseType(typeof(IEnumerable<GroupMemberDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<GroupMemberDto>>> GetGroupMembers(int id)
+    {
+        var members = await groupService.GetGroupMembersAsync(id);
+        return this.Ok(members);
+    }
 }
