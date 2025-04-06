@@ -198,7 +198,6 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             _ = entity.Property(p => p.UpdatedAt)
                 .HasColumnName("updated_at")
                 .HasColumnType("datetime")
-                .ValueGeneratedOnAddOrUpdate()
                 .HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
         });
 

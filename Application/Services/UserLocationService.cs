@@ -34,6 +34,7 @@ public class UserLocationService(IUserLocationRepository userLocationRepository,
 
         newLocation.Latitude = dto.Latitude;
         newLocation.Longitude = dto.Longitude;
+        newLocation.UpdatedAt = DateTime.UtcNow;
         await userLocationRepository.UpdateAsync(newLocation);
 
         return mapper.Map<UserLocationDto>(newLocation);
