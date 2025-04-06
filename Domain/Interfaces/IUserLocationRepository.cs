@@ -15,16 +15,9 @@ public interface IUserLocationRepository
     Task<UserLocation?> GetByUserIdAsync(Guid userId);
 
     /// <summary>
-    /// Adds a new user location entry.
+    /// Inserts a new user location or updates the existing one.
     /// </summary>
-    /// <param name="userLocation">The user location to add.</param>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    Task AddAsync(UserLocation userLocation);
-
-    /// <summary>
-    /// Updates an existing user location entry.
-    /// </summary>
-    /// <param name="userLocation">The user location to update.</param>
+    /// <param name="userLocation">The user location to insert or update.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task UpdateAsync(UserLocation userLocation);
 }

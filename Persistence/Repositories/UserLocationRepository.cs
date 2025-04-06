@@ -19,13 +19,6 @@ public class UserLocationRepository(DatabaseContext databaseContext)
     }
 
     /// <inheritdoc/>
-    public async Task AddAsync(UserLocation userLocation)
-    {
-        _ = await databaseContext.UserLocations.AddAsync(userLocation);
-        _ = await databaseContext.SaveChangesAsync();
-    }
-
-    /// <inheritdoc/>
     public async Task UpdateAsync(UserLocation userLocation)
     {
         _ = databaseContext.UserLocations.Update(userLocation);

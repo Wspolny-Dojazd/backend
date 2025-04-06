@@ -26,23 +26,16 @@ public class UserLocationService(IUserLocationRepository userLocationRepository,
     /// <inheritdoc/>
     public async Task<UserLocationDto> UpdateAsync(Guid userId, UserLocationRequestDto dto)
     {
-        var userLocation = new UserLocation
-        {
-            UserId = userId,
-            Latitude = dto.Latitude,
-            Longitude = dto.Longitude,
-        };
-        var existingLocation = await userLocationRepository.GetByUserIdAsync(userId);
+        var newLocation = await userLocationRepository.GetByUserIdAsync(userId)
+            ?? new UserLocation
+            {
+                UserId = userId,
+            };
 
-        if (existingLocation is null)
-        {
-            await userLocationRepository.AddAsync(userLocation);
-        }
-        else
-        {
-            await userLocationRepository.UpdateAsync(userLocation);
-        }
+        newLocation.Latitude = dto.Latitude;
+        newLocation.Longitude = dto.Longitude;
+        await userLocationRepository.UpdateAsync(newLocation);
 
-        return mapper.Map<UserLocationDto>(userLocation);
+        return mapper.Map<UserLocationDto>(newLocation);
     }
 }
