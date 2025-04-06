@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Application.Exceptions;
 
-namespace Application.Exceptions;
-internal class UserLocationNotFound
-{
-}
+/// <summary>
+/// Represents an exception thrown when a user location is not found.
+/// </summary>
+/// <param name="userId">The unique identifier of the user whose location was not found.</param>
+public class UserLocationNotFoundException(Guid userId)
+    : AppException(404, "LOCATION_NOT_FOUND", $"The location with ID {userId} was not found.");

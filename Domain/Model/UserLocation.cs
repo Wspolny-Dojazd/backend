@@ -11,8 +11,7 @@ public class UserLocation
     public int Id { get; set; }
 
     /// <summary>
-    /// Gets or sets the user ID associated with this location.
-    /// This also serves as the primary key.
+    /// Gets or sets the user unique identifier associated with this location.
     /// </summary>
     public Guid UserId { get; set; }
 

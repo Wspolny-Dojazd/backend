@@ -1,6 +1,7 @@
 ﻿using API.Extensions;
 using API.Models.Errors;
 using Application.DTOs;
+using Application.DTOs.UserLocation;
 using Application.Interfaces;
 using Domain.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -41,9 +42,9 @@ public class UsersController(IUserService userService, IUserLocationService user
     /// <response code="200">The location was updated successfully.</response>
     /// <response code="400">The request was invalid.</response>
     [HttpPost("me/location")]
-    [ProducesResponseType(typeof(UserLocationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserLocationRequestDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<UserLocationErrorCode>), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateUserLocation([FromBody] UserLocationDto userLocationDto)
+    public async Task<IActionResult> UpdateUserLocation([FromBody] UserLocationRequestDto userLocationDto)
     {
         if (!this.ModelState.IsValid)
         {

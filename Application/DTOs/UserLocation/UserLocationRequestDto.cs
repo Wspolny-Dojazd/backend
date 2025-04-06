@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Application.DTOs;
+namespace Application.DTOs.UserLocation;
 
 /// <summary>
 /// Represents the data transfer object used for user location information.
 /// </summary>
-public class UserLocationDto
+public class UserLocationRequestDto
 {
     /// <summary>
     /// Gets the latitude of the user's location.
