@@ -13,12 +13,12 @@ public interface IUserLocationService
     /// <param name="userId">The unique identifier of the user.</param>
     /// <param name="dto">The location data of the user.</param>
     /// <returns>The updated user location.</returns>
-    Task<UserLocationRequestDto> UpdateAsync(Guid userId, UserLocationRequestDto dto);
+    Task<UserLocationDto> UpdateAsync(Guid userId, UserLocationRequestDto dto);
 
     /// <summary>
     /// Retrieves the location of the specified user.
     /// </summary>
     /// <param name="userId">The unique identifier of the user.</param>
     /// <returns>The location of the user.</returns>
-    Task<UserLocationRequestDto> GetByUserIdAsync(Guid userId);
+    Task<UserLocationDto> GetByUserIdAsync(Guid userId);
 }

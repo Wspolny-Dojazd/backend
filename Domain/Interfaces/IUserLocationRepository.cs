@@ -8,23 +8,23 @@ namespace Domain.Interfaces;
 public interface IUserLocationRepository
 {
     /// <summary>
-    /// Retrieves a current location of the user by their unique identifier.
+    /// Retrieves the current location of the user by their unique identifier.
     /// </summary>
     /// <param name="userId">The unique identifier of the user.</param>
-    /// <returns>The user location if found; otherwise <see langword="null"/>.</returns>
+    /// <returns>The user location if found; otherwise, <see langword="null"/>.</returns>
     Task<UserLocation?> GetByUserIdAsync(Guid userId);
 
     /// <summary>
-    /// Sets a user's location.
+    /// Adds a new user location entry.
     /// </summary>
-    /// <param name="userLocation">The user location to set.</param>"
+    /// <param name="userLocation">The user location to add.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task AddAsync(UserLocation userLocation);
 
     /// <summary>
-    /// Updates or creates a user's location.
+    /// Updates an existing user location entry.
     /// </summary>
-    /// <param name="userLocation">The user location to update or create.</param>
+    /// <param name="userLocation">The user location to update.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task UpdateAsync(UserLocation userLocation);
 }

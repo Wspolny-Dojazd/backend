@@ -21,25 +21,14 @@ public class UserLocationRepository(DatabaseContext databaseContext)
     /// <inheritdoc/>
     public async Task AddAsync(UserLocation userLocation)
     {
-        _ = await databaseContext.AddAsync(userLocation);
+        _ = await databaseContext.UserLocations.AddAsync(userLocation);
         _ = await databaseContext.SaveChangesAsync();
     }
 
     /// <inheritdoc/>
     public async Task UpdateAsync(UserLocation userLocation)
     {
-        var existingLocation = await this.GetByUserIdAsync(userLocation.UserId);
-
-        if (existingLocation == null)
-        {
-            _ = await databaseContext.UserLocations.AddAsync(userLocation);
-        }
-        else
-        {
-            existingLocation.Latitude = userLocation.Latitude;
-            existingLocation.Longitude = userLocation.Longitude;
-        }
-
+        _ = databaseContext.UserLocations.Update(userLocation);
         _ = await databaseContext.SaveChangesAsync();
     }
 }

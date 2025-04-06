@@ -15,16 +15,16 @@ namespace Application.Services;
 public class UserLocationService(IUserLocationRepository userLocationRepository, IMapper mapper) : IUserLocationService
 {
     /// <inheritdoc/>
-    public async Task<UserLocationRequestDto> GetByUserIdAsync(Guid userId)
+    public async Task<UserLocationDto> GetByUserIdAsync(Guid userId)
     {
         var userLocation = await userLocationRepository.GetByUserIdAsync(userId)
             ?? throw new UserLocationNotFoundException(userId);
 
-        return mapper.Map<UserLocationRequestDto>(userLocation);
+        return mapper.Map<UserLocationDto>(userLocation);
     }
 
     /// <inheritdoc/>
-    public async Task<UserLocationRequestDto> UpdateAsync(Guid userId, UserLocationRequestDto dto)
+    public async Task<UserLocationDto> UpdateAsync(Guid userId, UserLocationRequestDto dto)
     {
         var userLocation = new UserLocation
         {
@@ -34,7 +34,7 @@ public class UserLocationService(IUserLocationRepository userLocationRepository,
         };
         var existingLocation = await userLocationRepository.GetByUserIdAsync(userId);
 
-        if (existingLocation == null)
+        if (existingLocation is null)
         {
             await userLocationRepository.AddAsync(userLocation);
         }
@@ -43,6 +43,6 @@ public class UserLocationService(IUserLocationRepository userLocationRepository,
             await userLocationRepository.UpdateAsync(userLocation);
         }
 
-        return mapper.Map<UserLocationRequestDto>(userLocation);
+        return mapper.Map<UserLocationDto>(userLocation);
     }
 }

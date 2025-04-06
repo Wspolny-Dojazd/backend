@@ -38,13 +38,13 @@ public class UsersController(IUserService userService, IUserLocationService user
     /// Updates the current user's location.
     /// </summary>
     /// <param name="userLocationDto">The location data containing latitude and longitude.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <returns>The updated user location.</returns>
     /// <response code="200">The location was updated successfully.</response>
     /// <response code="400">The request was invalid.</response>
     [HttpPost("me/location")]
-    [ProducesResponseType(typeof(UserLocationRequestDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserLocationDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<UserLocationErrorCode>), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateUserLocation([FromBody] UserLocationRequestDto userLocationDto)
+    public async Task<ActionResult<UserLocationDto>> UpdateUserLocation([FromBody] UserLocationRequestDto userLocationDto)
     {
         if (!this.ModelState.IsValid)
         {
