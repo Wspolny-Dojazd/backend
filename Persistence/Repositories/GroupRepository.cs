@@ -18,6 +18,7 @@ public class GroupRepository(DatabaseContext databaseContext)
     {
         return await databaseContext.Groups
             .Include(g => g.GroupMembers)
+                .ThenInclude(gm => gm.UserLocation)
             .FirstOrDefaultAsync(g => g.Id == id);
     }
 
