@@ -12,7 +12,7 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250403204202_AddUserLocations")]
+    [Migration("20250408183457_AddUserLocations")]
     partial class AddUserLocations
     {
         /// <inheritdoc />
@@ -222,12 +222,10 @@ namespace Persistence.Migrations
                         .HasColumnName("longitude");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasColumnName("updated_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedAt"));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)")
@@ -374,8 +372,7 @@ namespace Persistence.Migrations
                     b.Navigation("UserConfiguration")
                         .IsRequired();
 
-                    b.Navigation("UserLocation")
-                        .IsRequired();
+                    b.Navigation("UserLocation");
                 });
 #pragma warning restore 612, 618
         }

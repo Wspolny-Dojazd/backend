@@ -219,12 +219,10 @@ namespace Persistence.Migrations
                         .HasColumnName("longitude");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasColumnName("updated_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedAt"));
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)")
@@ -371,8 +369,7 @@ namespace Persistence.Migrations
                     b.Navigation("UserConfiguration")
                         .IsRequired();
 
-                    b.Navigation("UserLocation")
-                        .IsRequired();
+                    b.Navigation("UserLocation");
                 });
 #pragma warning restore 612, 618
         }

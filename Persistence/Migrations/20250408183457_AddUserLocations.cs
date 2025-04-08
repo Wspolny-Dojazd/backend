@@ -25,7 +25,6 @@ namespace Persistence.Migrations
                     latitude = table.Column<double>(type: "double", nullable: true),
                     longitude = table.Column<double>(type: "double", nullable: true),
                     updated_at = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
                 },
                 constraints: table =>
                 {
