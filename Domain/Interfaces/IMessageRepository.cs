@@ -8,7 +8,7 @@ namespace Domain.Interfaces;
 public interface IMessageRepository
 {
     /// <summary>
-    /// Retrieves all messages for a specified group.
+    /// Retrieves all messages for the specified group.
     /// </summary>
     /// <param name="groupId">The unique identifier of the group.</param>
     /// <returns>The messages for the group.</returns>

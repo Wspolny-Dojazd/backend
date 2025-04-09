@@ -8,7 +8,7 @@ namespace Application.Interfaces;
 public interface IMessageService
 {
     /// <summary>
-    /// Retrieves all messages for a specified group.
+    /// Retrieves all messages for the specified group.
     /// </summary>
     /// <param name="userId">The unique identifier of the user trying to get the messages.</param>
     /// <param name="groupId">The unique identifier of the group.</param>
@@ -16,7 +16,7 @@ public interface IMessageService
     Task<IEnumerable<MessageDto>> GetAllByGroupIdAsync(Guid userId, int groupId);
 
     /// <summary>
-    /// Sends a message to a specified group.
+    /// Sends a message to the specified group.
     /// </summary>
     /// <param name="userId">The unique identifier of the message author.</param>
     /// <param name="groupId">The unique identifier of the group.</param>

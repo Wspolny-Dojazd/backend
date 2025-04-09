@@ -141,6 +141,7 @@ public class GroupsController(IGroupService groupService, IMessageService messag
         return this.Ok(message);
     }
 
+    /// <summary>
     /// Retrieves all groups that the currently logged user is a member of.
     /// </summary>
     /// <returns>A list of groups the currently logged user belongs to.</returns>
