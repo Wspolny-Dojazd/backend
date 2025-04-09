@@ -169,6 +169,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
             _ = entity.Property(p => p.GroupId).HasColumnName("group_id").HasColumnType("int");
             _ = entity.Property(p => p.UserId).HasColumnName("user_id").HasColumnType("char(36)");
+            _ = entity.Property(p => p.CreatedAt).HasColumnName("created_at").HasColumnType("datetime");
             _ = entity.Property(p => p.Content).HasColumnName("content");
 
             _ = entity.HasOne(m => m.Group)

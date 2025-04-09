@@ -1,6 +1,7 @@
 using API.Extensions;
 using API.Models.Errors;
 using Application.DTOs;
+using Application.DTOs.Message;
 using Application.Interfaces;
 using Domain.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,11 @@ namespace API.Controllers;
 /// Provides API endpoints for managing groups and user membership within groups.
 /// </summary>
 /// <param name="groupService">The service that handles group-related logic.</param>
+/// <param name="messageService">The service that handles message logic.</param>
 [Route("api/[controller]")]
 [ApiController]
-public class GroupsController(IGroupService groupService) : ControllerBase
+public class GroupsController(IGroupService groupService, IMessageService messageService)
+    : ControllerBase
 {
     /// <summary>
     /// Retrieves a group by its unique identifier.
@@ -95,5 +98,46 @@ public class GroupsController(IGroupService groupService) : ControllerBase
     {
         var group = await groupService.RemoveUserAsync(id, userId);
         return this.Ok(group);
+    }
+
+    /// <summary>
+    /// Retrieves all messages for a specified group.
+    /// </summary>
+    /// <param name="id">The unique identifier of the group.</param>
+    /// <returns>The messages for the group with details.</returns>
+    /// <response code="200">The messages for the group was successfully retrieved.</response>
+    /// <response code="403">The user is not a member of the group.</response>
+    /// <response code="404">The group or the user was not found.</response>
+    [HttpGet("{id}/messages")]
+    [ProducesResponseType(typeof(IEnumerable<MessageDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<MessageDto>>> GetMessages(int id)
+    {
+        var userId = this.User.GetUserId();
+        var messages = await messageService.GetAllByGroupIdAsync(userId, id);
+        return this.Ok(messages);
+    }
+
+    /// <summary>
+    /// Sends a message to a specified group.
+    /// </summary>
+    /// <param name="payload">The request payload that contains the message content.</param>
+    /// <param name="id">The unique identifier of the group.</param>
+    /// <returns>The data transfer object of the sent message with details.</returns>
+    /// <response code="200">The message was successfully sent.</response>
+    /// <response code="400">The message was empty.</response>
+    /// <response code="403">The user is not a member of the group.</response>
+    /// <response code="404">The group or the user was not found.</response>
+    [HttpPost("{id}/messages")]
+    [ProducesResponseType(typeof(MessageDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<MessageErrorCode>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MessageDto>> SendMessage([FromBody] MessagePayloadDto payload, int id)
+    {
+        var userId = this.User.GetUserId();
+        var message = await messageService.SendAsync(userId, id, payload.Content);
+        return this.Ok(message);
     }
 }

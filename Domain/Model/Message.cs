@@ -21,6 +21,11 @@ public class Message
     public Guid UserId { get; set; }
 
     /// <summary>
+    /// Gets or sets the date and time when the message was sent.
+    /// </summary>
+    public DateTime CreatedAt { get; set; }
+
+    /// <summary>
     /// Gets or sets the content of the message.
     /// </summary>
     public required string Content { get; set; }
@@ -28,10 +33,10 @@ public class Message
     /// <summary>
     /// Gets or sets the group associated with the message.
     /// </summary>
-    public required Group Group { get; set; }
+    public Group Group { get; set; } = default!;
 
     /// <summary>
     /// Gets or sets the user who sent the message.
     /// </summary>
-    public required User User { get; set; }
+    public User User { get; set; } = default!;
 }
