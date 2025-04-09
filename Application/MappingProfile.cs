@@ -1,4 +1,5 @@
 using Application.DTOs;
+using Application.DTOs.Message;
 using Application.DTOs.UserLocation;
 using AutoMapper;
 using Domain.Model;
@@ -19,5 +20,6 @@ public class MappingProfile : Profile
         _ = this.CreateMap<Group, GroupDto>();
         _ = this.CreateMap<UserConfiguration, UserConfigurationDto>();
         _ = this.CreateMap<UserLocation, UserLocationDto>();
+        _ = this.CreateMap<Message, MessageDto>();
     }
 }

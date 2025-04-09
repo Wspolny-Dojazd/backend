@@ -24,4 +24,9 @@ public enum GroupErrorCode
     /// The specified user is not a member.
     /// </summary>
     USER_NOT_IN_GROUP,
+
+    /// <summary>
+    /// The specified user does not have access.
+    /// </summary>
+    ACCESS_DENIED,
 }

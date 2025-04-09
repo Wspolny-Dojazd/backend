@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250409121738_AddCreatedAtToMessage")]
+    partial class AddCreatedAtToMessage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,6 +56,43 @@ namespace Persistence.Migrations
                         .HasName("PK_Group");
 
                     b.ToTable("groups", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Model.Location", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Lat")
+                        .HasColumnType("double")
+                        .HasColumnName("lat");
+
+                    b.Property<double>("Lon")
+                        .HasColumnType("double")
+                        .HasColumnName("lon");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("user_id");
+
+                    b.Property<int?>("group_id")
+                        .HasColumnType("int")
+                        .HasColumnName("group_id");
+
+                    b.HasKey("Id")
+                        .HasName("PK_Location");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_locations_user_id");
+
+                    b.HasIndex("group_id")
+                        .HasDatabaseName("ix_locations_group_id");
+
+                    b.ToTable("locations", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Model.Message", b =>
@@ -205,43 +245,6 @@ namespace Persistence.Migrations
                     b.ToTable("user_configurations", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Model.UserLocation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<double?>("Latitude")
-                        .HasColumnType("double")
-                        .HasColumnName("latitude");
-
-                    b.Property<double?>("Longitude")
-                        .HasColumnType("double")
-                        .HasColumnName("longitude");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasColumnName("updated_at")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id")
-                        .HasName("PK_user_locations");
-
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_user_locations_user_id");
-
-                    b.ToTable("user_locations", (string)null);
-                });
-
             modelBuilder.Entity("friends", b =>
                 {
                     b.Property<Guid>("friend_id")
@@ -278,6 +281,23 @@ namespace Persistence.Migrations
                         .HasDatabaseName("ix_group_members_user_id");
 
                     b.ToTable("group_members", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Model.Location", b =>
+                {
+                    b.HasOne("Domain.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_locations_users_user_id");
+
+                    b.HasOne("Domain.Model.Group", null)
+                        .WithMany("LiveLocations")
+                        .HasForeignKey("group_id")
+                        .HasConstraintName("fk_locations_groups_group_id");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Model.Message", b =>
@@ -319,16 +339,6 @@ namespace Persistence.Migrations
                         .HasConstraintName("fk_user_configurations_users_user_id");
                 });
 
-            modelBuilder.Entity("Domain.Model.UserLocation", b =>
-                {
-                    b.HasOne("Domain.Model.User", null)
-                        .WithOne("UserLocation")
-                        .HasForeignKey("Domain.Model.UserLocation", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_locations_users_user_id");
-                });
-
             modelBuilder.Entity("friends", b =>
                 {
                     b.HasOne("Domain.Model.User", null)
@@ -365,6 +375,8 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Model.Group", b =>
                 {
+                    b.Navigation("LiveLocations");
+
                     b.Navigation("Routes");
                 });
 
@@ -372,8 +384,6 @@ namespace Persistence.Migrations
                 {
                     b.Navigation("UserConfiguration")
                         .IsRequired();
-
-                    b.Navigation("UserLocation");
                 });
 #pragma warning restore 612, 618
         }
