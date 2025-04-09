@@ -18,6 +18,7 @@ public class GroupRepository(DatabaseContext databaseContext)
     {
         return await databaseContext.Groups
             .Include(g => g.GroupMembers)
+                .ThenInclude(gm => gm.UserLocation)
             .FirstOrDefaultAsync(g => g.Id == id);
     }
 
@@ -53,20 +54,27 @@ public class GroupRepository(DatabaseContext databaseContext)
     /// <inheritdoc/>
     public async Task<string> GenerateUniqueJoiningCodeAsync()
     {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        const string digits = "0123456789";
         string joiningCode;
-
         bool isUnique;
 
         do
         {
-            joiningCode = new string(Enumerable.Range(0, 6)
-                .Select(_ => chars[Random.Next(chars.Length)])
-                .ToArray());
-
+            joiningCode = new string([.. Enumerable.Range(0, 6).Select(_ => digits[Random.Next(digits.Length)])]);
             isUnique = !await databaseContext.Groups.AnyAsync(g => g.JoiningCode == joiningCode);
-        } while (!isUnique);
+        }
+        while (!isUnique);
 
         return joiningCode;
+    }
+
+    /// <inheritdoc/>
+    public async Task<List<Group>> GetGroupsByUserIdAsync(Guid userId)
+    {
+        return await databaseContext.Users
+            .Where(u => u.Id == userId)
+            .SelectMany(u => u.Groups)
+            .Distinct()
+            .ToListAsync();
     }
 }

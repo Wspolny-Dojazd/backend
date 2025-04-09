@@ -1,4 +1,5 @@
 ﻿using Application.DTOs;
+using Application.DTOs.UserLocation;
 using Application.Exceptions;
 using Application.Interfaces;
 using AutoMapper;
@@ -35,7 +36,6 @@ public class GroupService(
         {
             JoiningCode = await groupRepository.GenerateUniqueJoiningCodeAsync(),
             Routes = [],
-            LiveLocations = [],
             GroupMembers = [],
         };
 
@@ -77,5 +77,23 @@ public class GroupService(
 
         await groupRepository.RemoveUserAsync(group, user);
         return mapper.Map<Group, GroupDto>(group);
+    }
+
+    /// <inheritdoc/>
+    public async Task<IEnumerable<GroupDto>> GetGroupsForUserAsync(Guid userId)
+    {
+        var groups = await groupRepository.GetGroupsByUserIdAsync(userId);
+        return mapper.Map<IEnumerable<Group>, IEnumerable<GroupDto>>(groups);
+    }
+
+    /// <inheritdoc/>
+    public async Task<IEnumerable<GroupMemberDto>> GetGroupMembersAsync(int groupId)
+    {
+        var group = await groupRepository.GetByIdAsync(groupId)
+            ?? throw new GroupNotFoundException(groupId);
+
+        var members = group.GroupMembers;
+        return members.Select(user => new GroupMemberDto(
+            user.Id, user.Nickname, mapper.Map<UserLocation?, UserLocationDto?>(user.UserLocation)));
     }
 }

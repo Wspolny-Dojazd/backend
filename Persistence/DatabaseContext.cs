@@ -34,14 +34,14 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
     public DbSet<Message> Messages { get; set; }
 
     /// <summary>
-    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing locations.
-    /// </summary>
-    public DbSet<Location> Locations { get; set; }
-
-    /// <summary>
     /// Gets or sets the <see cref="DbSet{TEntity}"/> representing routes.
     /// </summary>
     public DbSet<Route> Routes { get; set; }
+
+    /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing user locations.
+    /// </summary>
+    public DbSet<UserLocation> UserLocations { get; set; }
 
     /// <summary>
     /// Configures the entity model and relationships for the database schema.
@@ -85,10 +85,6 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
                     v => (Status)Enum.Parse(typeof(Status), v));
 
             _ = entity.HasMany(g => g.Routes)
-                .WithOne()
-                .HasForeignKey("group_id");
-
-            _ = entity.HasMany(g => g.LiveLocations)
                 .WithOne()
                 .HasForeignKey("group_id");
         });
@@ -146,21 +142,6 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             _ = entity.Property(p => p.Lon).HasColumnName("lon").HasColumnType("double");
         });
 
-        _ = modelBuilder.Entity<Location>(entity =>
-        {
-            _ = entity.ToTable("locations");
-            _ = entity.HasKey(p => p.Id).HasName("PK_Location");
-
-            _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
-            _ = entity.Property(p => p.UserId).HasColumnName("user_id").HasColumnType("char(36)");
-            _ = entity.Property(p => p.Lat).HasColumnName("lat").HasColumnType("double");
-            _ = entity.Property(p => p.Lon).HasColumnName("lon").HasColumnType("double");
-
-            _ = entity.HasOne(l => l.User)
-                .WithMany()
-                .HasForeignKey(l => l.UserId);
-        });
-
         _ = modelBuilder.Entity<Message>(entity =>
         {
             _ = entity.ToTable("messages");
@@ -201,5 +182,29 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             .HasOne(u => u.UserConfiguration)
             .WithOne()
             .HasForeignKey<UserConfiguration>(uc => uc.UserId);
+
+        _ = modelBuilder.Entity<UserLocation>(entity =>
+        {
+            _ = entity.ToTable("user_locations");
+            _ = entity.HasKey(p => p.Id).HasName("PK_user_locations");
+
+            _ = entity.Property(p => p.Id)
+                .HasColumnName("id")
+                .HasColumnType("int").ValueGeneratedOnAdd();
+
+            _ = entity.Property(p => p.UserId).HasColumnName("user_id").HasColumnType("char(36)");
+            _ = entity.Property(p => p.Latitude).HasColumnName("latitude").HasColumnType("double");
+            _ = entity.Property(p => p.Longitude).HasColumnName("longitude").HasColumnType("double");
+
+            _ = entity.Property(p => p.UpdatedAt)
+                .HasColumnName("updated_at")
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+        });
+
+        _ = modelBuilder.Entity<User>()
+            .HasOne(u => u.UserLocation)
+            .WithOne()
+            .HasForeignKey<UserLocation>(ul => ul.UserId);
     }
 }
