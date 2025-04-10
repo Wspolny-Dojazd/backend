@@ -44,6 +44,11 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
     public DbSet<Route> Routes { get; set; }
 
     /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing group members.
+    /// </summary>
+    public DbSet<GroupMember> GroupMembers { get; set; }
+
+    /// <summary>
     /// Configures the entity model and relationships for the database schema.
     /// </summary>
     /// <param name="modelBuilder">The builder used to construct the model for this context.</param>
@@ -73,6 +78,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             _ = entity.HasKey(p => p.Id).HasName("PK_Group");
 
             _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
+            _ = entity.Property(p => p.CreatorId).HasColumnName("creator_id").HasColumnType("char(36)");
             _ = entity.Property(p => p.JoiningCode).HasColumnName("joining_code");
             _ = entity.Property(p => p.DestinationLat).HasColumnName("destination_lat").HasColumnType("double");
             _ = entity.Property(p => p.DestinationLon).HasColumnName("destination_lon").HasColumnType("double");
@@ -91,6 +97,10 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             _ = entity.HasMany(g => g.LiveLocations)
                 .WithOne()
                 .HasForeignKey("group_id");
+
+            _ = entity.HasOne(g => g.Creator)
+                .WithMany()
+                .HasForeignKey(g => g.CreatorId);
         });
 
         _ = modelBuilder.Entity<UserConfiguration>(entity =>
@@ -188,13 +198,29 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
                 j => j.HasOne<User>().WithMany().HasForeignKey("friend_id"),
                 j => j.HasOne<User>().WithMany().HasForeignKey("user_id"));
 
-        _ = modelBuilder.Entity<User>()
-            .HasMany(u => u.Groups)
-            .WithMany(g => g.GroupMembers)
-            .UsingEntity<Dictionary<string, object>>(
-                "group_members",
-                j => j.HasOne<Group>().WithMany().HasForeignKey("group_id"),
-                j => j.HasOne<User>().WithMany().HasForeignKey("user_id"));
+        _ = modelBuilder.Entity<GroupMember>(entity =>
+        {
+            _ = entity.ToTable("group_members");
+            _ = entity.HasKey(e => new { e.GroupId, e.UserId });
+            _ = entity.Property(e => e.GroupId)
+                  .HasColumnName("group_id");
+            _ = entity.Property(e => e.UserId)
+                  .HasColumnName("user_id")
+                  .HasColumnType("char(36)");
+            _ = entity.Property(e => e.IsCreator)
+                  .HasColumnName("is_creator")
+                  .HasDefaultValue(false);
+
+            _ = entity.HasOne<Group>()
+                  .WithMany(g => g.GroupMembers)
+                  .HasForeignKey(e => e.GroupId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            _ = entity.HasOne<User>()
+                  .WithMany(u => u.GroupMemberships)
+                  .HasForeignKey(e => e.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
 
         _ = modelBuilder.Entity<User>()
             .HasOne(u => u.UserConfiguration)

@@ -66,6 +66,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 builder.Services.AddScoped<IUserConfigurationRepository, UserConfigurationRepository>();
+builder.Services.AddScoped<IGroupMemberRepository, GroupMemberRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGroupService, GroupService>();

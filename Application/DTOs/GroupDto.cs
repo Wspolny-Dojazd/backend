@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Application.DTOs;
 
@@ -7,6 +8,8 @@ namespace Application.DTOs;
 /// </summary>
 /// <param name="Id">The unique identifier of the group.</param>
 /// <param name="JoiningCode">The joining code of the group.</param>
+/// <param name="GroupMembers">The list of current group members.</param>
 public record GroupDto(
     [property: Required] int Id,
-    [property: Required] string JoiningCode);
+    [property: Required] string JoiningCode,
+    [property: Required] IEnumerable<GroupMemberDto> GroupMembers);

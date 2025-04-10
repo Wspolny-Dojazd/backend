@@ -48,6 +48,7 @@ public class AuthService(
             Friends = [],
             Groups = [],
             UserConfiguration = new UserConfiguration(),
+            GroupMemberships = [],
         };
 
         await userRepository.AddAsync(user);

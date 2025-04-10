@@ -37,16 +37,16 @@ public class GroupRepository(DatabaseContext databaseContext)
     }
 
     /// <inheritdoc/>
-    public async Task AddUserAsync(Group group, User user)
+    public async Task AddGroupMemberAsync(Group group, GroupMember groupmember)
     {
-        group.GroupMembers.Add(user);
+        group.GroupMembers.Add(groupmember);
         _ = await databaseContext.SaveChangesAsync();
     }
 
     /// <inheritdoc/>
-    public async Task RemoveUserAsync(Group group, User user)
+    public async Task RemoveGroupMemberAsync(Group group, GroupMember groupmember)
     {
-        _ = group.GroupMembers.Remove(user);
+        _ = group.GroupMembers.Remove(groupmember);
         _ = await databaseContext.SaveChangesAsync();
     }
 

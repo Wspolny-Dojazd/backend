@@ -16,6 +16,7 @@ namespace Application.Services;
 public class GroupService(
     IGroupRepository groupRepository,
     IUserRepository userRepository,
+    IGroupMemberRepository groupmemberRepository,
     IMapper mapper)
     : IGroupService
 {
@@ -29,16 +30,20 @@ public class GroupService(
     }
 
     /// <inheritdoc/>
-    public async Task<GroupDto> CreateAsync()
+    public async Task<GroupDto> CreateAsync(Guid creatorId)
     {
+        var creator = await userRepository.GetByIdAsync(creatorId)
+            ?? throw new UserNotFoundException(creatorId);
+
         var group = new Group
         {
             JoiningCode = await groupRepository.GenerateUniqueJoiningCodeAsync(),
             Routes = [],
             LiveLocations = [],
             GroupMembers = [],
+            CreatorId = creatorId,
+            Creator = creator,
         };
-
         await groupRepository.AddAsync(group);
         return mapper.Map<Group, GroupDto>(group);
     }
@@ -49,15 +54,15 @@ public class GroupService(
         var group = await groupRepository.GetByCodeAsync(code)
             ?? throw new GroupNotFoundException(code);
 
-        var user = await userRepository.GetByIdAsync(userId)
+        var groupmember = await groupmemberRepository.GetGroupMemberbyIdAsync(userId, group.Id)
             ?? throw new UserNotFoundException(userId);
 
-        if (group.GroupMembers.Contains(user))
+        if (group.GroupMembers.Any(gm => gm.UserId == userId))
         {
             throw new UserAlreadyInGroupException(group.Id, userId);
         }
 
-        await groupRepository.AddUserAsync(group, user);
+        await groupRepository.AddGroupMemberAsync(group, groupmember);
         return mapper.Map<Group, GroupDto>(group);
     }
 
@@ -67,15 +72,15 @@ public class GroupService(
         var group = await groupRepository.GetByIdAsync(id)
             ?? throw new GroupNotFoundException(id);
 
-        var user = await userRepository.GetByIdAsync(userId)
+        var groupmember = await groupmemberRepository.GetGroupMemberbyIdAsync(userId, id)
             ?? throw new UserNotFoundException(userId);
 
-        if (!group.GroupMembers.Contains(user))
+        if (!group.GroupMembers.Any(gm => gm.UserId == userId))
         {
             throw new UserNotInGroupException(id, userId);
         }
 
-        await groupRepository.RemoveUserAsync(group, user);
+        await groupRepository.RemoveGroupMemberAsync(group, groupmember);
         return mapper.Map<Group, GroupDto>(group);
     }
 
@@ -93,7 +98,6 @@ public class GroupService(
             ?? throw new GroupNotFoundException(groupId);
 
         var members = group.GroupMembers;
-        return members.Select(user => new GroupMemberDto(
-            user.Id, user.Nickname));
+        return mapper.Map<IEnumerable<GroupMember>, IEnumerable<GroupMemberDto>>(members);
     }
 }

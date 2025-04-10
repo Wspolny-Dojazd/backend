@@ -13,6 +13,16 @@ public class Group
     public int Id { get; set; }
 
     /// <summary>
+    /// Gets or sets the unique identifier of the creator.
+    /// </summary>
+    public Guid CreatorId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the user, that created the group.
+    /// </summary>
+    public required User Creator { get; set; }
+
+    /// <summary>
     /// Gets or sets the code used to join the group.
     /// </summary>
     public required string JoiningCode { get; set; }
@@ -45,5 +55,5 @@ public class Group
     /// <summary>
     /// Gets or sets the users who are members of the group.
     /// </summary>
-    public required List<User> GroupMembers { get; set; }
+    public required List<GroupMember> GroupMembers { get; set; }
 }

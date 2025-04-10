@@ -7,6 +7,8 @@ namespace Application.DTOs;
 /// </summary>
 /// <param name="Id">The unique identifier of the group member.</param>
 /// <param name="Nickname">The nickname of the group member.</param>
+/// /// <param name="IsCreator">Whether the user is the creator of the group.</param>
 public record GroupMemberDto(
     [property: Required] Guid Id,
-    [property: Required] string Nickname);
+    [property: Required] string Nickname,
+    [property: Required] bool IsCreator);

@@ -29,20 +29,20 @@ public interface IGroupRepository
     Task AddAsync(Group group);
 
     /// <summary>
-    /// Adds a user to a group.
+    /// Adds a new group member.
     /// </summary>
     /// <param name="group">The group to update.</param>
-    /// <param name="user">The user to add.</param>
+    /// <param name="groupmember">The user to add.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    Task AddUserAsync(Group group, User user);
+    Task AddGroupMemberAsync(Group group, GroupMember groupmember);
 
     /// <summary>
-    /// Removes a user from a group.
+    /// Removes a group member.
     /// </summary>
     /// <param name="group">The group to update.</param>
-    /// <param name="user">The user to remove.</param>
+    /// <param name="groupmember">The user to remove.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    Task RemoveUserAsync(Group group, User user);
+    Task RemoveGroupMemberAsync(Group group, GroupMember groupmember);
 
     /// <summary>
     /// Generates unique joinign code.

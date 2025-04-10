@@ -40,7 +40,8 @@ public class GroupsController(IGroupService groupService) : ControllerBase
     [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<GroupDto>> Create()
     {
-        var group = await groupService.CreateAsync();
+        var creatorId = this.User.GetUserId();
+        var group = await groupService.CreateAsync(creatorId);
         return this.Ok(group);
     }
 

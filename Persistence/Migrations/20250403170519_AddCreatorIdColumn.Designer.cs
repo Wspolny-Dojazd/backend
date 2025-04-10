@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250403170519_AddCreatorIdColumn")]
+    partial class AddCreatorIdColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,45 +56,13 @@ namespace Persistence.Migrations
                         .HasColumnType("ENUM('NotStarted', 'Started')")
                         .HasColumnName("status");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("user_id");
-
                     b.HasKey("Id")
                         .HasName("PK_Group");
 
                     b.HasIndex("CreatorId")
                         .HasDatabaseName("ix_groups_creator_id");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_groups_user_id");
-
                     b.ToTable("groups", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Model.GroupMember", b =>
-                {
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int")
-                        .HasColumnName("group_id");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("user_id");
-
-                    b.Property<bool>("IsCreator")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint(1)")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_creator");
-
-                    b.HasKey("GroupId", "UserId")
-                        .HasName("pk_group_members");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_group_members_user_id");
-
-                    b.ToTable("group_members", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Model.Location", b =>
@@ -296,6 +267,25 @@ namespace Persistence.Migrations
                     b.ToTable("friends", (string)null);
                 });
 
+            modelBuilder.Entity("group_members", b =>
+                {
+                    b.Property<int>("group_id")
+                        .HasColumnType("int")
+                        .HasColumnName("group_id");
+
+                    b.Property<Guid>("user_id")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("group_id", "user_id")
+                        .HasName("pk_group_members");
+
+                    b.HasIndex("user_id")
+                        .HasDatabaseName("ix_group_members_user_id");
+
+                    b.ToTable("group_members", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Model.Group", b =>
                 {
                     b.HasOne("Domain.Model.User", "Creator")
@@ -305,29 +295,7 @@ namespace Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_groups_users_creator_id");
 
-                    b.HasOne("Domain.Model.User", null)
-                        .WithMany("Groups")
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("fk_groups_users_user_id");
-
                     b.Navigation("Creator");
-                });
-
-            modelBuilder.Entity("Domain.Model.GroupMember", b =>
-                {
-                    b.HasOne("Domain.Model.Group", null)
-                        .WithMany("GroupMembers")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_group_members_groups_group_id");
-
-                    b.HasOne("Domain.Model.User", null)
-                        .WithMany("GroupMemberships")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_group_members_users_user_id");
                 });
 
             modelBuilder.Entity("Domain.Model.Location", b =>
@@ -403,10 +371,25 @@ namespace Persistence.Migrations
                         .HasConstraintName("fk_friends_users_user_id");
                 });
 
+            modelBuilder.Entity("group_members", b =>
+                {
+                    b.HasOne("Domain.Model.Group", null)
+                        .WithMany()
+                        .HasForeignKey("group_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_members_groups_group_id");
+
+                    b.HasOne("Domain.Model.User", null)
+                        .WithMany()
+                        .HasForeignKey("user_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_members_users_user_id");
+                });
+
             modelBuilder.Entity("Domain.Model.Group", b =>
                 {
-                    b.Navigation("GroupMembers");
-
                     b.Navigation("LiveLocations");
 
                     b.Navigation("Routes");
@@ -414,10 +397,6 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Model.User", b =>
                 {
-                    b.Navigation("GroupMemberships");
-
-                    b.Navigation("Groups");
-
                     b.Navigation("UserConfiguration")
                         .IsRequired();
                 });

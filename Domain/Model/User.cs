@@ -41,6 +41,11 @@ public class User
     public required List<Group> Groups { get; set; }
 
     /// <summary>
+    /// Gets or sets the group memberships of the user.
+    /// </summary>
+    public required List<GroupMember> GroupMemberships { get; set; }
+
+    /// <summary>
     /// Gets or sets the configuration of the user.
     /// </summary>
     public required UserConfiguration UserConfiguration { get; set; }
