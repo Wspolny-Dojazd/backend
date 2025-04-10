@@ -57,6 +57,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             _ = entity.HasKey(p => p.Id).HasName("PK_User");
 
             _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("char(36)");
+            _ = entity.Property(p => p.Username).HasColumnName("username").HasMaxLength(32);
             _ = entity.Property(p => p.Nickname).HasColumnName("nickname");
             _ = entity.Property(p => p.Email).HasColumnName("email");
             _ = entity.Property(p => p.PasswordHash).HasColumnName("password_hash");

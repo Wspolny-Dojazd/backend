@@ -11,6 +11,7 @@ namespace Application.DTOs.Auth;
 /// <param name="Token">The authentication token.</param>
 public record AuthResponseDto(
     [property: Required] Guid Id,
+    [property: Required] string Username,
     [property: Required] string Nickname,
     [property: Required] string Email,
     [property: Required] string Token);

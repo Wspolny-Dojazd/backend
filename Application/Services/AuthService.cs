@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Auth;
+﻿using System.Text.RegularExpressions;
+using Application.DTOs.Auth;
 using Application.Exceptions;
 using Application.Interfaces;
 using Domain.Interfaces;
@@ -32,15 +33,28 @@ public class AuthService(
     /// <inheritdoc/>
     public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto request)
     {
-        var existing = await userRepository.GetByEmailAsync(request.Email);
-
-        if (existing is not null)
+        var existingEmail = await userRepository.GetByEmailAsync(request.Email);
+        if (existingEmail is not null)
         {
             throw new EmailAlreadyUsedException();
         }
 
+        var existingUsername = await userRepository.GetByUsernameAsync(request.Username);
+        if (existingUsername is not null)
+        {
+            throw new AppException(409, "USERNAME_ALREADY_USED", "Username is already used.");
+        }
+
+        var isValidUsername = request.Username.Length < 3 || request.Username.Length > 32 || !Regex.IsMatch(request.Username, "^[a-z0-9_]+$");
+
+        if (isValidUsername)
+        {
+            throw new AppException(400, "USERNAME_VALIDATION_ERROR", "Username must be between 3 and 32 characters and can only contain lowercase letters, numbers, and underscores.");
+        }
+
         var user = new User
         {
+            Username = request.Username,
             Email = request.Email,
             Nickname = request.Nickname,
             PasswordHash = passwordHasher.Hash(request.Password),
@@ -66,6 +80,6 @@ public class AuthService(
     private AuthResponseDto CreateAuthResponse(User user)
     {
         var token = jwtTokenService.GenerateToken(user);
-        return new AuthResponseDto(user.Id, user.Nickname, user.Email, token);
+        return new AuthResponseDto(user.Id, user.Username, user.Nickname, user.Email, token);
     }
 }

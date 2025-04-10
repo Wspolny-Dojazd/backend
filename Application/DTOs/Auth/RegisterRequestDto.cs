@@ -8,6 +8,16 @@ namespace Application.DTOs.Auth;
 public class RegisterRequestDto
 {
     /// <summary>
+    /// Gets the unique identifier of the user.
+    /// </summary>
+    [Required]
+    [MinLength(3)]
+    [MaxLength(32)]
+    [RegularExpression("^[a-z0-9_]+$")]
+
+    public required string Username { get; init; }
+
+    /// <summary>
     /// Gets the email address of the user.
     /// </summary>
     [Required]
