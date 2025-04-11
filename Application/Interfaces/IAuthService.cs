@@ -35,5 +35,4 @@ public interface IAuthService
     /// <param name="request">The change-password request.</param>
     /// <returns>The authentication response.</returns>
     Task<AuthResponseDto> ChangePasswordAsync(Guid userId, ChangePasswordRequestDto request);
-
 }
