@@ -3,7 +3,7 @@
 namespace Application.DTOs.Auth;
 
 /// <summary>
-/// Represents the data transfer object used for user registration requests.
+/// Represents the data transfer object used for password change requests.
 /// </summary>
 public class ChangePasswordRequestDto
 {
