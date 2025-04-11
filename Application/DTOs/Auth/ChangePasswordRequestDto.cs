@@ -8,7 +8,7 @@ namespace Application.DTOs.Auth;
 public class ChangePasswordRequestDto
 {
     /// <summary>
-    /// Gets the current email address of the user.
+    /// Gets the current password of the user.
     /// </summary>
     [Required]
     public required string CurrentPassword { get; init; }
