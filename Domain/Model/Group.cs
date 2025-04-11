@@ -18,6 +18,11 @@ public class Group
     public required string JoiningCode { get; set; }
 
     /// <summary>
+    /// Gets or sets the unique identifier of the group creator.
+    /// </summary>
+    public required Guid CreatorId { get; set; }
+
+    /// <summary>
     /// Gets or sets the current status of the group.
     /// </summary>
     public Status Status { get; set; }
@@ -31,6 +36,11 @@ public class Group
     /// Gets or sets the destination longitude of the group.
     /// </summary>
     public double DestinationLon { get; set; }
+
+    /// <summary>
+    /// Gets or sets the group creator.
+    /// </summary>
+    public User Creator { get; set; } = default!;
 
     /// <summary>
     /// Gets or sets the routes associated with the group.

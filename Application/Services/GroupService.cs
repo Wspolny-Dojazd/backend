@@ -12,11 +12,11 @@ namespace Application.Services;
 /// Provides group-related operations.
 /// </summary>
 /// <param name="groupRepository">The repository for accessing group data.</param>
-/// <param name="userRepository">The repository for accessing user data.</param>
+/// <param name="userService">The service that handles user-related logic.</param>
 /// <param name="mapper">The object mapper.</param>
 public class GroupService(
     IGroupRepository groupRepository,
-    IUserRepository userRepository,
+    IUserService userService,
     IMapper mapper)
     : IGroupService
 {
@@ -30,13 +30,16 @@ public class GroupService(
     }
 
     /// <inheritdoc/>
-    public async Task<GroupDto> CreateAsync()
+    public async Task<GroupDto> CreateAsync(Guid creatorId)
     {
+        var creator = await userService.GetEntityByIdAsync(creatorId);
+
         var group = new Group
         {
             JoiningCode = await groupRepository.GenerateUniqueJoiningCodeAsync(),
+            CreatorId = creatorId,
             Routes = [],
-            GroupMembers = [],
+            GroupMembers = [creator],
         };
 
         await groupRepository.AddAsync(group);
@@ -49,8 +52,7 @@ public class GroupService(
         var group = await groupRepository.GetByCodeAsync(code)
             ?? throw new GroupNotFoundException(code);
 
-        var user = await userRepository.GetByIdAsync(userId)
-            ?? throw new UserNotFoundException(userId);
+        var user = await userService.GetEntityByIdAsync(userId);
 
         if (group.GroupMembers.Contains(user))
         {
@@ -67,8 +69,7 @@ public class GroupService(
         var group = await groupRepository.GetByIdAsync(id)
             ?? throw new GroupNotFoundException(id);
 
-        var user = await userRepository.GetByIdAsync(userId)
-            ?? throw new UserNotFoundException(userId);
+        var user = await userService.GetEntityByIdAsync(userId);
 
         if (!group.GroupMembers.Contains(user))
         {
@@ -82,6 +83,8 @@ public class GroupService(
     /// <inheritdoc/>
     public async Task<IEnumerable<GroupDto>> GetGroupsForUserAsync(Guid userId)
     {
+        _ = await userService.GetEntityByIdAsync(userId);
+
         var groups = await groupRepository.GetGroupsByUserIdAsync(userId);
         return mapper.Map<IEnumerable<Group>, IEnumerable<GroupDto>>(groups);
     }
@@ -94,6 +97,7 @@ public class GroupService(
 
         var members = group.GroupMembers;
         return members.Select(user => new GroupMemberDto(
-            user.Id, user.Nickname, mapper.Map<UserLocation?, UserLocationDto?>(user.UserLocation)));
+            user.Id, user.Nickname, mapper.Map<UserLocation?, UserLocationDto?>(user.UserLocation))
+            { IsCreator = group.CreatorId == user.Id });
     }
 }

@@ -17,8 +17,9 @@ public interface IGroupService
     /// <summary>
     /// Creates a new group.
     /// </summary>
+    /// <param name="creatorId">The unique identifier of the group creator.</param>
     /// <returns>The created group details.</returns>
-    Task<GroupDto> CreateAsync();
+    Task<GroupDto> CreateAsync(Guid creatorId);
 
     /// <summary>
     /// Adds the specified user to the group using a joining code.
