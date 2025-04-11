@@ -44,6 +44,16 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
     public DbSet<UserLocation> UserLocations { get; set; }
 
     /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing user locations.
+    /// </summary>
+    public DbSet<FriendInvitation> FriendInvitations { get; set; }
+
+    /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing user locations.
+    /// </summary>
+    public DbSet<Friend> Friends { get; set; }
+
+    /// <summary>
     /// Configures the entity model and relationships for the database schema.
     /// </summary>
     /// <param name="modelBuilder">The builder used to construct the model for this context.</param>
@@ -163,13 +173,35 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
                 .HasForeignKey(m => m.UserId);
         });
 
-        _ = modelBuilder.Entity<User>()
-            .HasMany(u => u.Friends)
-            .WithMany()
-            .UsingEntity<Dictionary<string, object>>(
-                "friends",
-                j => j.HasOne<User>().WithMany().HasForeignKey("friend_id"),
-                j => j.HasOne<User>().WithMany().HasForeignKey("user_id"));
+        _ = modelBuilder.Entity<Friend>(entity =>
+        {
+            entity.ToTable("friends");
+
+            entity.HasKey(e => new { e.UserId, e.FriendId });
+
+            entity.Property(e => e.UserId)
+                .HasColumnName("user_id");
+
+            entity.Property(e => e.FriendId)
+                .HasColumnName("friend_id");
+
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.FriendUser)
+                .WithMany()
+                .HasForeignKey(e => e.FriendId)
+                .HasConstraintName("fk_friends_users_friend_id")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.FriendUser)
+                .WithMany()
+                .HasForeignKey(e => e.FriendId)
+                .HasConstraintName("fk_friends_users_user_id")
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
         _ = modelBuilder.Entity<User>()
             .HasMany(u => u.Groups)
@@ -207,5 +239,38 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             .HasOne(u => u.UserLocation)
             .WithOne()
             .HasForeignKey<UserLocation>(ul => ul.UserId);
+
+        _ = modelBuilder.Entity<FriendInvitation>(entity =>
+        {
+            entity.ToTable("friend_invitations");
+
+            entity.HasKey(e => e.InvitationId);
+
+            entity.Property(e => e.InvitationId)
+                .HasColumnName("invitation_id")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.SenderId)
+                .HasColumnName("sender_id")
+                .IsRequired();
+
+            entity.Property(e => e.ReceiverId)
+                .HasColumnName("receiver_id")
+                .IsRequired();
+
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
+                .IsRequired();
+
+            entity.HasOne(e => e.Sender)
+                .WithMany()
+                .HasForeignKey(e => e.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Receiver)
+                .WithMany()
+                .HasForeignKey(e => e.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
     }
 }

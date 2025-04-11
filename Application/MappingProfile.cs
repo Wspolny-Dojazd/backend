@@ -21,5 +21,6 @@ public class MappingProfile : Profile
         _ = this.CreateMap<UserConfiguration, UserConfigurationDto>();
         _ = this.CreateMap<UserLocation, UserLocationDto>();
         _ = this.CreateMap<Message, MessageDto>();
+        _ = this.CreateMap<FriendInvitation, FriendInvitationDto>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.InvitationId));
     }
 }
