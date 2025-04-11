@@ -22,6 +22,13 @@ public interface IUserRepository
     Task<User?> GetByEmailAsync(string email);
 
     /// <summary>
+    /// Retrieves a user by its username.
+    /// </summary>
+    /// <param name="username">The username of the user.</param>
+    /// <returns>The user if found; otherwise, <see langword="null"/>.</returns>
+    Task<User?> GetByUsernameAsync(string username);
+
+    /// <summary>
     /// Adds a new user to the database.
     /// </summary>
     /// <param name="user">The user to add.</param>

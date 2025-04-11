@@ -62,7 +62,8 @@ public class AuthController(IAuthService authService) : ControllerBase
         {
             var code = HasInvalidEmail(this.ModelState)
                 ? RegisterErrorCode.INVALID_EMAIL_FORMAT
-                : RegisterErrorCode.VALIDATION_ERROR;
+                : HasInvalidUsername(this.ModelState) ? RegisterErrorCode.USERNAME_VALIDATION_ERROR :
+                RegisterErrorCode.VALIDATION_ERROR;
 
             return this.BadRequest(new ErrorResponse(code));
         }
@@ -91,5 +92,11 @@ public class AuthController(IAuthService authService) : ControllerBase
     {
         return modelState["Email"]?.Errors
             .Any(e => e.ErrorMessage.Contains("email", StringComparison.OrdinalIgnoreCase)) == true;
+    }
+
+    private static bool HasInvalidUsername(ModelStateDictionary modelState)
+    {
+        return modelState["Username"]?.Errors
+            .Any(e => e.ErrorMessage.Contains("username", StringComparison.OrdinalIgnoreCase)) == true;
     }
 }

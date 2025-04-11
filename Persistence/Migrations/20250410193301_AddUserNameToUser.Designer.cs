@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250410193301_AddUserNameToUser")]
+    partial class AddUserNameToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,10 +33,6 @@ namespace Persistence.Migrations
                         .HasColumnName("id");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("creator_id");
 
                     b.Property<double>("DestinationLat")
                         .HasColumnType("double")
@@ -55,9 +54,6 @@ namespace Persistence.Migrations
 
                     b.HasKey("Id")
                         .HasName("PK_Group");
-
-                    b.HasIndex("CreatorId")
-                        .HasDatabaseName("ix_groups_creator_id");
 
                     b.ToTable("groups", (string)null);
                 });
@@ -291,18 +287,6 @@ namespace Persistence.Migrations
                         .HasDatabaseName("ix_group_members_user_id");
 
                     b.ToTable("group_members", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Model.Group", b =>
-                {
-                    b.HasOne("Domain.Model.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_groups_users_creator_id");
-
-                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("Domain.Model.Message", b =>
