@@ -87,6 +87,28 @@ public class AuthController(IAuthService authService) : ControllerBase
         return this.Ok(result);
     }
 
+    /// <summary>
+    /// Changes the password of the currently authenticated user.
+    /// </summary>
+    /// <param name="request">The change-password request containing email, nickname, and password.</param>
+    /// <returns>The authenticated user's data and token.</returns>
+    /// <response code="400">The request payload is invalid.</response>
+    [HttpPost("change-password")]
+    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<AuthErrorCode>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse<AuthErrorCode>), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<AuthResponseDto>> ChangePassword([FromBody] ChangePasswordRequestDto request)
+    {
+        if (!this.ModelState.IsValid)
+        {
+            return this.BadRequest(new ErrorResponse(AuthErrorCode.INVALID_PASSWORD));
+        }
+
+        var userId = this.User.GetUserId();
+        var result = await authService.ChangePasswordAsync(userId, request);
+        return this.Ok(result);
+    }
+
     private static bool HasInvalidEmail(ModelStateDictionary modelState)
     {
         return modelState["Email"]?.Errors

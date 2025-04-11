@@ -19,4 +19,9 @@ public enum AuthErrorCode
     /// The token has expired and is no longer valid.
     /// </summary>
     EXPIRED_TOKEN,
+
+    /// <summary>
+    /// The user is not authorized to access the requested resource.
+    /// </summary>
+    INVALID_PASSWORD,
 }

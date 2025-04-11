@@ -27,4 +27,11 @@ public interface IUserRepository
     /// <param name="user">The user to add.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
     Task AddAsync(User user);
+
+    /// <summary>
+    /// Updates an existing user in the database.
+    /// </summary>
+    /// <param name="user">The user to add.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task UpdateAsync(User user);
 }

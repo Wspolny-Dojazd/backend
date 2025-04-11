@@ -27,4 +27,13 @@ public interface IAuthService
     /// <param name="userId">The unique identifier of the user.</param>
     /// <returns>The authentication response.</returns>
     Task<AuthResponseDto> GetMeAsync(Guid userId);
+
+    /// <summary>
+    /// Changes the password of the authenticated user.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user.</param>
+    /// <param name="request">The change-password request.</param>
+    /// <returns>The authentication response.</returns>
+    Task<AuthResponseDto> ChangePasswordAsync(Guid userId, ChangePasswordRequestDto request);
+
 }
