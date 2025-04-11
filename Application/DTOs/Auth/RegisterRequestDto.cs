@@ -14,7 +14,6 @@ public class RegisterRequestDto
     [MinLength(3)]
     [MaxLength(32)]
     [RegularExpression("^[a-z0-9_]+$")]
-
     public required string Username { get; init; }
 
     /// <summary>
