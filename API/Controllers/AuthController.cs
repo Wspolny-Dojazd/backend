@@ -92,6 +92,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     /// </summary>
     /// <param name="request">The change-password request containing email, nickname, and password.</param>
     /// <returns>The authenticated user's data and token.</returns>
+    /// <response code="200">The user password has been changed successfully.</response>
     /// <response code="400">The request payload is invalid.</response>
     [HttpPost("change-password")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
