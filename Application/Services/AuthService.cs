@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Application.DTOs.Auth;
+﻿using Application.DTOs.Auth;
 using Application.Exceptions;
 using Application.Interfaces;
 using Domain.Interfaces;
@@ -43,13 +42,6 @@ public class AuthService(
         if (existingUsername is not null)
         {
             throw new AppException(409, "USERNAME_ALREADY_USED", "Username is already used.");
-        }
-
-        var isValidUsername = request.Username.Length < 3 || request.Username.Length > 32 || !Regex.IsMatch(request.Username, "^[a-z0-9_]+$");
-
-        if (isValidUsername)
-        {
-            throw new AppException(400, "USERNAME_VALIDATION_ERROR", "Username must be between 3 and 32 characters and can only contain lowercase letters, numbers, and underscores.");
         }
 
         var user = new User

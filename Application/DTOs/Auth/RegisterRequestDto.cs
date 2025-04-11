@@ -8,7 +8,7 @@ namespace Application.DTOs.Auth;
 public class RegisterRequestDto
 {
     /// <summary>
-    /// Gets the unique identifier of the user.
+    /// Gets the unique username of the user.
     /// </summary>
     [Required]
     [MinLength(3)]
