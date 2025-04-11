@@ -32,15 +32,21 @@ public class AuthService(
     /// <inheritdoc/>
     public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto request)
     {
-        var existing = await userRepository.GetByEmailAsync(request.Email);
-
-        if (existing is not null)
+        var existingEmail = await userRepository.GetByEmailAsync(request.Email);
+        if (existingEmail is not null)
         {
             throw new EmailAlreadyUsedException();
         }
 
+        var existingUsername = await userRepository.GetByUsernameAsync(request.Username);
+        if (existingUsername is not null)
+        {
+            throw new AppException(409, "USERNAME_ALREADY_USED", "Username is already used.");
+        }
+
         var user = new User
         {
+            Username = request.Username,
             Email = request.Email,
             Nickname = request.Nickname,
             PasswordHash = passwordHasher.Hash(request.Password),
@@ -66,6 +72,6 @@ public class AuthService(
     private AuthResponseDto CreateAuthResponse(User user)
     {
         var token = jwtTokenService.GenerateToken(user);
-        return new AuthResponseDto(user.Id, user.Nickname, user.Email, token);
+        return new AuthResponseDto(user.Id, user.Username, user.Nickname, user.Email, token);
     }
 }

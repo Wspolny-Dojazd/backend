@@ -23,6 +23,7 @@ public class JWTTokenService(IConfiguration configuration)
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim("username", user.Username),
             new Claim("nickname", user.Nickname),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };

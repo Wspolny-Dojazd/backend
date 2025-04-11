@@ -94,6 +94,6 @@ public class GroupService(
 
         var members = group.GroupMembers;
         return members.Select(user => new GroupMemberDto(
-            user.Id, user.Nickname, mapper.Map<UserLocation?, UserLocationDto?>(user.UserLocation)));
+            user.Id, user.Username, user.Nickname, mapper.Map<UserLocation?, UserLocationDto?>(user.UserLocation)));
     }
 }
