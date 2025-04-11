@@ -21,7 +21,11 @@ public enum AuthErrorCode
     EXPIRED_TOKEN,
 
     /// <summary>
-    /// The user is not authorized to access the requested resource.
+    /// The provided current password is incorrect.
     /// </summary>
-    INVALID_PASSWORD,
+    /// <remarks>
+    /// Used when the user attempts to change their password and the provided current password
+    /// does not match the stored password.
+    /// </remarks>
+    INVALID_CURRENT_PASSWORD,
 }

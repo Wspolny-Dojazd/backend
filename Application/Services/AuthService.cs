@@ -71,7 +71,7 @@ public class AuthService(
         var isPasswordValid = passwordHasher.Verify(user.PasswordHash, request.CurrentPassword);
         if (!isPasswordValid)
         {
-            throw new AppException(400, "INVALID_PASSWORD", "Invalid password.");
+            throw new AppException(400, "INVALID_CURRENT_PASSWORD", "Invalid password.");
         }
 
         user.PasswordHash = passwordHasher.Hash(request.NewPassword);

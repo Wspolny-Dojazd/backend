@@ -102,7 +102,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     {
         if (!this.ModelState.IsValid)
         {
-            return this.BadRequest(new ErrorResponse(AuthErrorCode.INVALID_PASSWORD));
+            return this.BadRequest(new ErrorResponse(AuthErrorCode.INVALID_CURRENT_PASSWORD));
         }
 
         var userId = this.User.GetUserId();
