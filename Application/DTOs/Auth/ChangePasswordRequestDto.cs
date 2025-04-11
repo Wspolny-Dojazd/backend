@@ -3,12 +3,12 @@
 namespace Application.DTOs.Auth;
 
 /// <summary>
-/// Represents the data transfer object used for user registration requests.
+/// Represents the data transfer object used for password change requests.
 /// </summary>
 public class ChangePasswordRequestDto
 {
     /// <summary>
-    /// Gets the current email address of the user.
+    /// Gets the current password of the user.
     /// </summary>
     [Required]
     public required string CurrentPassword { get; init; }

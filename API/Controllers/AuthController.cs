@@ -90,7 +90,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     /// <summary>
     /// Changes the password of the currently authenticated user.
     /// </summary>
-    /// <param name="request">The change-password request containing email, nickname, and password.</param>
+    /// <param name="request">The change-password request containing current and new password.</param>
     /// <returns>The authenticated user's data and token.</returns>
     /// <response code="200">The user password has been changed successfully.</response>
     /// <response code="400">The request payload is invalid.</response>
