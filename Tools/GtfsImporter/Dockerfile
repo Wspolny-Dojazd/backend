@@ -8,6 +8,7 @@ WORKDIR /app
 COPY artifacts/publish .
 
 # Install required lib in order to support globalization
+# Install required lib in order to support HTTPS GET requests
 RUN apt-get update && apt-get install -y libicu-dev && apt-get install -y ca-certificates && update-ca-certificates
 
 # Run the application
