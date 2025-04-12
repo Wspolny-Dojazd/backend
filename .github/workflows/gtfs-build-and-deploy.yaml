@@ -31,7 +31,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build --platform arm64 -t ${{ secrets.DOCKER_USERNAME }}/wspolny-dojazd:gtfs-importer ./Tools/GtfsImporter/Dockerfile
+          docker build --platform arm64 -t ${{ secrets.DOCKER_USERNAME }}/wspolny-dojazd:gtfs-importer ./Tools/GtfsImporter
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
