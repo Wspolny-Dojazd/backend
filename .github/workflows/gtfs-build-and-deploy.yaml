@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Publish
-        run: dotnet publish ./Tools/GtfsImporter/GtfsImporter.csproj --ucr --artifacts-path artifacts --nologo --self-contained
+        run: dotnet publish ./Tools/GtfsImporter/GtfsImporter.csproj --ucr --artifacts-path Tools/GtfsImporter/artifacts --nologo --self-contained
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
