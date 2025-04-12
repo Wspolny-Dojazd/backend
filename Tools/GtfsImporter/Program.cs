@@ -10,7 +10,7 @@ var host = Host.CreateDefaultBuilder(args)
     {
         var configPath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
         Console.WriteLine($"Loading config from: {configPath}");
-        _ = config.AddJsonFile(configPath, optional: false);
+        _ = config.AddJsonFile(configPath, optional: true);
     })
     .ConfigureServices((context, services) =>
     {
