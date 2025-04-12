@@ -3,6 +3,7 @@ using Application.Exceptions;
 using Application.Interfaces;
 using Domain.Interfaces;
 using Domain.Model;
+using PublicTransportService.Application.Constants;
 
 namespace Application.Services;
 
@@ -42,6 +43,11 @@ public class AuthService(
         if (existingUsername is not null)
         {
             throw new AppException(409, "USERNAME_ALREADY_USED", "Username is already used.");
+        }
+
+        if (ReservedUsernames.List.Contains(request.Username))
+        {
+            throw new AppException(400, "USERNAME_RESERVED", "This username is reserved.");
         }
 
         var user = new User
