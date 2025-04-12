@@ -71,10 +71,9 @@ public class GroupRepository(DatabaseContext databaseContext)
     /// <inheritdoc/>
     public async Task<List<Group>> GetGroupsByUserIdAsync(Guid userId)
     {
-        return await databaseContext.Users
-            .Where(u => u.Id == userId)
-            .SelectMany(u => u.Groups)
-            .Distinct()
+        return await databaseContext.Groups
+            .Where(g => g.GroupMembers.Any(m => m.Id == userId))
+            .Include(g => g.GroupMembers)
             .ToListAsync();
     }
 }
