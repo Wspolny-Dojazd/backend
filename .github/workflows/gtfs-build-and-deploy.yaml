@@ -8,6 +8,7 @@ on:
       - edited
       - submitted
       - closed
+      - synchronize
   workflow_dispatch:
 
 env:
