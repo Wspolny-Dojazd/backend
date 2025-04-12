@@ -21,6 +21,11 @@ public enum AuthErrorCode
     EXPIRED_TOKEN,
 
     /// <summary>
+    /// The specified user was not found.
+    /// </summary>
+    USER_NOT_FOUND,
+
+    /// <summary>
     /// The provided current password is incorrect.
     /// </summary>
     /// <remarks>

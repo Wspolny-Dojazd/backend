@@ -94,17 +94,13 @@ public class AuthController(IAuthService authService) : ControllerBase
     /// <returns>The authenticated user's data and token.</returns>
     /// <response code="200">The user password has been changed successfully.</response>
     /// <response code="400">The request payload is invalid.</response>
+    /// <responce code="404">The authenticated user was not found.</responce>
     [HttpPost("change-password")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<AuthErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<AuthErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<AuthResponseDto>> ChangePassword([FromBody] ChangePasswordRequestDto request)
     {
-        if (!this.ModelState.IsValid)
-        {
-            return this.BadRequest(new ErrorResponse(AuthErrorCode.INVALID_CURRENT_PASSWORD));
-        }
-
         var userId = this.User.GetUserId();
         var result = await authService.ChangePasswordAsync(userId, request);
         return this.Ok(result);
