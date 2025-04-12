@@ -17,9 +17,14 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         _ = this.CreateMap<User, UserDto>();
-        _ = this.CreateMap<Group, GroupDto>();
+        _ = this.CreateMap<User, GroupMemberDto>();
         _ = this.CreateMap<UserConfiguration, UserConfigurationDto>();
         _ = this.CreateMap<UserLocation, UserLocationDto>();
         _ = this.CreateMap<Message, MessageDto>();
+        _ = this.CreateMap<Group, GroupDto>()
+            .AfterMap((src, dest) =>
+            {
+                dest.GroupMembers.First(m => m.Id == src.CreatorId).IsCreator = true;
+            });
     }
 }

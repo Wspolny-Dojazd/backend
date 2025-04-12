@@ -14,4 +14,11 @@ public record GroupMemberDto(
     [property: Required] Guid Id,
     [property: Required] string Username,
     [property: Required] string Nickname,
-    UserLocationDto? Location);
+    UserLocationDto? Location = null)
+{
+    /// <summary>
+    /// Gets or sets a value indicating whether the member is the group creator.
+    /// </summary>
+    [Required]
+    public bool IsCreator { get; set; }
+}

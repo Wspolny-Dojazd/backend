@@ -75,6 +75,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
 
             _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
             _ = entity.Property(p => p.JoiningCode).HasColumnName("joining_code");
+            _ = entity.Property(p => p.CreatorId).HasColumnName("creator_id").HasColumnType("char(36)");
             _ = entity.Property(p => p.DestinationLat).HasColumnName("destination_lat").HasColumnType("double");
             _ = entity.Property(p => p.DestinationLon).HasColumnName("destination_lon").HasColumnType("double");
 
@@ -88,6 +89,10 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             _ = entity.HasMany(g => g.Routes)
                 .WithOne()
                 .HasForeignKey("group_id");
+
+            _ = entity.HasOne(c => c.Creator)
+                .WithMany()
+                .HasForeignKey(g => g.CreatorId);
         });
 
         _ = modelBuilder.Entity<UserConfiguration>(entity =>
