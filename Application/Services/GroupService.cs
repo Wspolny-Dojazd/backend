@@ -38,7 +38,6 @@ public class GroupService(
         {
             JoiningCode = await groupRepository.GenerateUniqueJoiningCodeAsync(),
             CreatorId = creatorId,
-            Routes = [],
             GroupMembers = [creator],
         };
 

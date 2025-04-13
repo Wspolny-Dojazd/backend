@@ -1,4 +1,4 @@
-﻿namespace PublicTransportService.Infrastructure.Services.GtfsImport.CsvModels;
+﻿namespace PublicTransportService.Infrastructure.Models.GtfsCsv;
 
 #pragma warning disable IDE1006, SA1300
 

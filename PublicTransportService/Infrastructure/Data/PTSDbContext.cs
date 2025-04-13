@@ -13,22 +13,27 @@ public class PTSDbContext(DbContextOptions<PTSDbContext> options)
     /// <summary>
     /// Gets or sets the <see cref="DbSet{TEntity}"/> representing GTFS routes.
     /// </summary>
-    internal DbSet<Route> Routes { get; set; }
+    public DbSet<Route> Routes { get; set; }
 
     /// <summary>
     /// Gets or sets the <see cref="DbSet{TEntity}"/> representing GTFS shapes.
     /// </summary>
-    internal DbSet<Shape> Shapes { get; set; }
+    public DbSet<Shape> Shapes { get; set; }
 
     /// <summary>
     /// Gets or sets the <see cref="DbSet{TEntity}"/> representing GTFS stops.
     /// </summary>
-    internal DbSet<Stop> Stops { get; set; }
+    public DbSet<Stop> Stops { get; set; }
 
     /// <summary>
     /// Gets or sets the <see cref="DbSet{TEntity}"/> representing GTFS stop times.
     /// </summary>
-    internal DbSet<StopTime> StopTimes { get; set; }
+    public DbSet<StopTime> StopTimes { get; set; }
+
+    /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing GTFS trips.
+    /// </summary>
+    public DbSet<Trip> Trips { get; set; }
 
     /// <inheritdoc/>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -47,5 +52,8 @@ public class PTSDbContext(DbContextOptions<PTSDbContext> options)
 
         _ = modelBuilder.Entity<Stop>()
             .ToTable("pts_stops");
+
+        _ = modelBuilder.Entity<Trip>()
+            .ToTable("pts_trips");
     }
 }

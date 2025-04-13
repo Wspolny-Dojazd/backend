@@ -5,8 +5,8 @@
 /// </summary>
 /// <param name="statusCode">The associated HTTP status code.</param>
 /// <param name="code">The machine-readable error code.</param>
-/// <param name="message">The optional error message associated with the exception.</param>
-public class AppException(int statusCode, string code, string? message)
+/// <param name="message">The error message associated with the exception.</param>
+public class AppException(int statusCode, string code, string message = "")
     : Exception(message)
 {
     /// <summary>
