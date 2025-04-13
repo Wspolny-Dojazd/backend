@@ -90,10 +90,10 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     /// <summary>
-    /// Refreshes the authentication token using the provided refresh token.
+    /// Refreshes the access token using the provided refresh token.
     /// </summary>
     /// <param name="request">The request containing token and refresh token.</param>
-    /// <returns>A new authentication token and user data.</returns>
+    /// <returns>A new access token and user data.</returns>
     /// <response code="200">The token has been refreshed successfully.</response>
     /// <response code="400">The request payload is invalid.</response>
     /// <response code="404">The user was not found.</response>

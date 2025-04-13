@@ -15,6 +15,7 @@ namespace Application.Services;
 /// <param name="userRepository">The repository for accessing user data.</param>
 /// <param name="jwtTokenService">The JWT token service.</param
 /// <param name="passwordHasher">The password hashing service.</param>
+/// <param name="mapper">The object mapper.</param>
 public class AuthService(
     IUserRepository userRepository,
     IJWTTokenService jwtTokenService,

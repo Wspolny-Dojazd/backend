@@ -58,7 +58,9 @@ public class JWTTokenService(IConfiguration configuration)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!)),
             ClockSkew = TimeSpan.Zero,
         };
+
         var tokenHandler = new JwtSecurityTokenHandler();
+
         try
         {
             return tokenHandler.ValidateToken(token, tokenValidationParameters, out _);

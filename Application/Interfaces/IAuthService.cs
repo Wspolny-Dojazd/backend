@@ -30,7 +30,7 @@ public interface IAuthService
     Task<UserDto> GetMeAsync(Guid userId);
 
     /// <summary>
-    /// Refreshes the authentication token using the provided refresh token.
+    /// Refreshes the access token using the provided refresh token.
     /// </summary>
     /// <param name="request">The refresh token request.</param>
     /// <returns>The authentication response.</returns>

@@ -9,7 +9,7 @@ namespace Application.DTOs.Auth;
 /// <param name="Username">The username of the user.</param>
 /// <param name="Nickname">The nickname of the user.</param>
 /// <param name="Email">The email address of the user.</param>
-/// <param name="Token">The authentication token.</param>
+/// <param name="Token">The access token.</param>
 /// <param name="RefreshToken">The refresh token.</param>
 public record AuthResponseDto(
     [property: Required] Guid Id,

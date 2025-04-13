@@ -3,7 +3,7 @@
 namespace Application.DTOs;
 
 /// <summary>
-/// Represents the data transfer object used for refresh token information.
+/// Represents the data transfer object used to refresh an access token using a refresh token.
 /// </summary>
 public class RefreshTokenRequestDto
 {
