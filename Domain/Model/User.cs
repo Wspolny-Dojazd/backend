@@ -31,6 +31,16 @@ public class User
     public required string PasswordHash { get; set; }
 
     /// <summary>
+    /// Gets or sets the refresh token used for token renewal.
+    /// </summary>
+    public required string RefreshToken { get; set; }
+
+    /// <summary>
+    /// Gets or sets the expiration date and time of the current refresh token.
+    /// </summary>
+    public DateTime RefreshTokenExpiryTime { get; set; }
+
+    /// <summary>
     /// Gets or sets the date and time when the user was created.
     /// </summary>
     public DateTime CreatedAt { get; set; }

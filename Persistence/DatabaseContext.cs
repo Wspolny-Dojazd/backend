@@ -61,6 +61,8 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             _ = entity.Property(p => p.Nickname).HasColumnName("nickname");
             _ = entity.Property(p => p.Email).HasColumnName("email");
             _ = entity.Property(p => p.PasswordHash).HasColumnName("password_hash");
+            _ = entity.Property(p => p.RefreshToken).HasColumnName("refresh_token");
+            _ = entity.Property(p => p.RefreshTokenExpiryTime).HasColumnName("refresh_token_expiry_time").HasColumnType("datetime");
 
             _ = entity.Property(p => p.CreatedAt)
                 .HasColumnName("created_at")
