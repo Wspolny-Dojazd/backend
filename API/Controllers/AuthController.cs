@@ -1,6 +1,7 @@
 ﻿using API.Extensions;
 using API.Models.Errors;
 using API.Models.Errors.Auth;
+using Application.DTOs;
 using Application.DTOs.Auth;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -75,16 +76,35 @@ public class AuthController(IAuthService authService) : ControllerBase
     /// <summary>
     /// Retrieves the currently authenticated user's profile and JWT token.
     /// </summary>
-    /// <returns>The authenticated user's data and token.</returns>
+    /// <returns>The authenticated user's data.</returns>
     /// <response code="200">The user profile has been retrieved successfully.</response>
     /// <response code="404">The authenticated user was not found.</response>
     [HttpGet("me")]
-    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<UserErrorCode>), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<AuthResponseDto>> Me()
+    public async Task<ActionResult<UserDto>> Me()
     {
         var userId = this.User.GetUserId();
         var result = await authService.GetMeAsync(userId);
+        return this.Ok(result);
+    }
+
+    /// <summary>
+    /// Refreshes the authentication token using the provided refresh token.
+    /// </summary>
+    /// <param name="request">The refresh request containing token and refresh token.</param>
+    /// <returns>A new authentication token and user data.</returns>
+    /// <response code="200">The token has been refreshed successfully.</response>
+    /// <response code="400">The request payload is invalid.</response>
+    /// <response code="404">The refresh token was not found.</response>
+    [AllowAnonymous]
+    [HttpPost("refresh")]
+    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<AuthErrorCode>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse<AuthErrorCode>), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<AuthResponseDto>> Refresh([FromBody] RefreshTokenRequestDto request)
+    {
+        var result = await authService.RefreshTokenAsync(request);
         return this.Ok(result);
     }
 
