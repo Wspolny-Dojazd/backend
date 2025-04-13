@@ -89,22 +89,4 @@ public class GroupPathsController(
         var path = await groupPathService.ConfirmFromProposalAsync(groupId, pathId);
         return this.Ok(path);
     }
-
-    /// <summary>
-    /// Rejects and deletes all proposed paths for the specified group.
-    /// </summary>
-    /// <param name="groupId">The identifier of the group.</param>
-    /// <returns>The status of the operation.</returns>
-    /// <response code="204">The paths were successfully rejected.</response>
-    /// <response code="400">Cannot reject paths because one has already been accepted.</response>
-    /// <response code="404">The group was not found.</response>
-    [HttpPost("reject-all")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> RejectAllPaths(int groupId)
-    {
-        await proposedPathService.RejectAllAsync(groupId);
-        return this.NoContent();
-    }
 }

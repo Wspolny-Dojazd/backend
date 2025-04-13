@@ -23,13 +23,9 @@ public interface IProposedPathService
     Task<IEnumerable<ProposedPathDto>> GetRangeAsync(int groupId);
 
     /// <summary>
-    /// Rejects and removes all proposed paths for the specified group.
+    /// Removes all proposed paths associated with the specified group.
     /// </summary>
     /// <param name="groupId">The identifier of the group.</param>
-    /// <returns>A <see langword="Task"/> representing the asynchronous operation.</returns>
-    /// <remarks>
-    /// This operation removes all proposed paths
-    /// from the database for the specified group.
-    /// </remarks>
-    Task RejectAllAsync(int groupId);
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    Task ResetAllForGroupAsync(int groupId);
 }

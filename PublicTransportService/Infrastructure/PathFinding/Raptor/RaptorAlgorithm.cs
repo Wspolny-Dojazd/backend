@@ -291,7 +291,7 @@ internal class RaptorAlgorithm(RaptorContext context, IStopRepository stopReposi
                         var stTo = ordered[i + 1];
 
                         var segDepTime = (i == idxA) ? departureTime : stFrom.DepartureTime;
-                        var segArrTime = (i + 1 == idxB) ? arrivalTime : stTo.ArrivalTime;
+                        var segArrTime = stTo.ArrivalTime;
 
                         path.Add(new PathSegment(stFrom.StopId, stTo.StopId, bp.TripId, segDepTime, segArrTime));
                     }

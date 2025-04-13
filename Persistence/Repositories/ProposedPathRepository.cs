@@ -33,21 +33,6 @@ public class ProposedPathRepository(DatabaseContext databaseContext)
             .ToListAsync();
     }
 
-    ///// <inheritdoc/>
-    //public async Task<ProposedPath?> GetAcceptedByGroupIdAsync(int groupId)
-    //{
-    //    return await databaseContext.ProposedPaths
-    //        .FirstOrDefaultAsync(p => p.GroupId == groupId && p.IsAccepted);
-    //}
-
-    ///// <inheritdoc/>
-    //public async Task<List<ProposedPath>> GetRejectedByGroupIdAsync(int groupId)
-    //{
-    //    return await databaseContext.ProposedPaths
-    //        .Where(p => p.GroupId == groupId && !p.IsAccepted)
-    //        .ToListAsync();
-    //}
-
     /// <inheritdoc/>
     public async Task UpdateAsync(ProposedPath proposedPath)
     {

@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Application.DTOs.Path;
+﻿using Application.DTOs.Path;
 using Application.Exceptions;
 using Application.Interfaces;
 using AutoMapper;

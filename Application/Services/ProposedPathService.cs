@@ -35,8 +35,7 @@ public class ProposedPathService(
             throw new AppException(400, "PATH_ALREADY_ACCEPTED", excMsg);
         }
 
-        // Remove all previously proposed paths for the group
-        await this.RejectAllAsync(groupId);
+        await this.ResetAllForGroupAsync(groupId);
 
         var userCoordinates = request.UserLocations
             .Select(x => (x.UserId, x.Latitude, x.Longitude));
@@ -98,18 +97,9 @@ public class ProposedPathService(
     }
 
     /// <inheritdoc/>
-    public async Task RejectAllAsync(int groupId)
+    public async Task ResetAllForGroupAsync(int groupId)
     {
-        _ = await groupService.GetByIdAsync(groupId);
-
-        var acceptedPath = await groupPathRepository.GetByGroupIdAsync(groupId);
-        if (acceptedPath is not null)
-        {
-            var excMsg = "Cannot generate new paths when one is already accepted.";
-            throw new AppException(400, "PATH_ALREADY_ACCEPTED", excMsg);
-        }
-
-        var paths = await proposedPathRepository.GetAllByGroupIdAsync(groupId);
-        await proposedPathRepository.RemoveRangeAsync(paths);
+        var existing = await proposedPathRepository.GetAllByGroupIdAsync(groupId);
+        await proposedPathRepository.RemoveRangeAsync(existing);
     }
 }

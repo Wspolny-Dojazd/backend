@@ -24,11 +24,4 @@ public class GroupPathRepository(DatabaseContext databaseContext)
         return await databaseContext.GroupPaths
             .FirstOrDefaultAsync(p => p.GroupId == groupId);
     }
-
-    /// <inheritdoc/>
-    public async Task RemoveAsync(GroupPath groupPath)
-    {
-        _ = databaseContext.GroupPaths.Remove(groupPath);
-        _ = await databaseContext.SaveChangesAsync();
-    }
 }

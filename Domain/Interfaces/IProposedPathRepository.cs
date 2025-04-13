@@ -28,20 +28,6 @@ public interface IProposedPathRepository
     /// <returns>The proposed paths associated with the group.</returns>
     Task<List<ProposedPath>> GetAllByGroupIdAsync(int groupId);
 
-    ///// <summary>
-    ///// Retrieves the accepted proposed path for the specified group, if any.
-    ///// </summary>
-    ///// <param name="groupId">The identifier of the group.</param>
-    ///// <returns>The accepted proposed path if exists; otherwise, <see langword="null"/>.</returns>
-    //Task<ProposedPath?> GetAcceptedByGroupIdAsync(int groupId);
-
-    ///// <summary>
-    ///// Retrieves all proposed paths for the group that have not been accepted.
-    ///// </summary>
-    ///// <param name="groupId">The identifier of the group.</param>
-    ///// <returns>The rejected (non-accepted) proposed paths.</returns>
-    //Task<List<ProposedPath>> GetRejectedByGroupIdAsync(int groupId);
-
     /// <summary>
     /// Updates an existing proposed path in the database.
     /// </summary>
