@@ -74,7 +74,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     /// <summary>
-    /// Retrieves the currently authenticated user's profile and JWT token.
+    /// Retrieves the currently authenticated user's profile.
     /// </summary>
     /// <returns>The authenticated user's data.</returns>
     /// <response code="200">The user profile has been retrieved successfully.</response>
@@ -92,11 +92,11 @@ public class AuthController(IAuthService authService) : ControllerBase
     /// <summary>
     /// Refreshes the authentication token using the provided refresh token.
     /// </summary>
-    /// <param name="request">The refresh request containing token and refresh token.</param>
+    /// <param name="request">The request containing token and refresh token.</param>
     /// <returns>A new authentication token and user data.</returns>
     /// <response code="200">The token has been refreshed successfully.</response>
     /// <response code="400">The request payload is invalid.</response>
-    /// <response code="404">The refresh token was not found.</response>
+    /// <response code="404">The user was not found.</response>
     [AllowAnonymous]
     [HttpPost("refresh")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
