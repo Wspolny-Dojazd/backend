@@ -15,6 +15,7 @@ public class UserRepository(DatabaseContext databaseContext)
     public async Task<User?> GetByIdAsync(Guid id)
     {
         return await databaseContext.Users
+            .Include(u => u.Friends)
             .Where(u => u.Id == id)
             .FirstOrDefaultAsync();
     }
@@ -45,5 +46,32 @@ public class UserRepository(DatabaseContext databaseContext)
     {
         _ = databaseContext.Users.Update(user);
         _ = await databaseContext.SaveChangesAsync();
+    }
+    
+    public async Task AddFriendAsync(Guid userId1, Guid userId2)
+    {
+        var user1 = await databaseContext.Users
+            .Include(u => u.Friends)
+            .FirstOrDefaultAsync(u => u.Id == userId1);
+        
+        var user2 = await databaseContext.Users
+            .Include(u => u.Friends)
+            .FirstOrDefaultAsync(u => u.Id == userId2);
+        
+        if (user1 == null || user2 == null)
+            return;
+        
+        // Initialize if null
+        if (user1.Friends == null)
+            user1.Friends = new List<User>();
+        
+        if (user2.Friends == null)
+            user2.Friends = new List<User>();
+        
+        // Add each other as friends
+        user1.Friends.Add(user2);
+        user2.Friends.Add(user1);
+    
+        await databaseContext.SaveChangesAsync();
     }
 }

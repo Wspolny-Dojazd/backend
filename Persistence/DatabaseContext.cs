@@ -43,6 +43,8 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
     /// </summary>
     public DbSet<UserLocation> UserLocations { get; set; }
 
+    public DbSet<FriendInvitation> FriendInvitations { get; set; }
+
     /// <summary>
     /// Configures the entity model and relationships for the database schema.
     /// </summary>
@@ -214,5 +216,35 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             .HasOne(u => u.UserLocation)
             .WithOne()
             .HasForeignKey<UserLocation>(ul => ul.UserId);
+
+        // Add FriendInvitation configuration
+        _ = modelBuilder.Entity<FriendInvitation>(entity =>
+        {
+            entity.ToTable("friend_invitations");
+
+            entity.HasKey(e => e.InvitationId);
+
+            entity.Property(e => e.InvitationId)
+                .HasColumnName("invitation_id");
+
+            entity.Property(e => e.SenderId)
+                .HasColumnName("sender_id");
+
+            entity.Property(e => e.ReceiverId)
+                .HasColumnName("receiver_id");
+
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at");
+
+            entity.HasOne(e => e.Sender)
+                .WithMany()
+                .HasForeignKey(e => e.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Receiver)
+                .WithMany()
+                .HasForeignKey(e => e.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
     }
 }

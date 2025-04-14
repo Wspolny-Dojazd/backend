@@ -41,4 +41,6 @@ public interface IUserRepository
     /// <param name="user">The user to update.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task UpdateAsync(User user);
+
+    Task AddFriendAsync(Guid userId1, Guid userId2);
 }
