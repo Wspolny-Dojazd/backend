@@ -29,11 +29,11 @@ public class FriendInvitation
     /// Gets or sets the navigation property to the user who sent the invitation.
     /// This is used for eager loading the related sender information.
     /// </summary>
-    public User Sender { get; set; }
+    public required User Sender { get; set; }
 
     /// <summary>
     /// Gets or sets the navigation property to the user who received the invitation.
     /// This is used for eager loading the related receiver information.
     /// </summary>
-    public User Receiver { get; set; }
+    public required User Receiver { get; set; }
 }

@@ -43,6 +43,14 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
     /// </summary>
     public DbSet<UserLocation> UserLocations { get; set; }
 
+    /// <summary>
+    /// Gets or sets the database set for friend invitations.
+    /// </summary>
+    /// <remarks>
+    /// This DbSet represents the friend_invitations table in the database and provides
+    /// access to invitation records. It tracks pending friend invitations between users.
+    /// Each invitation has a sender, receiver, and timestamp of creation.
+    /// </remarks>
     public DbSet<FriendInvitation> FriendInvitations { get; set; }
 
     /// <summary>
