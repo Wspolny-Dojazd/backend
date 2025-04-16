@@ -48,7 +48,7 @@ jobs:
             ${{ steps.stylecop.outputs.warnings }}
             ```
 
-            Please try to fix these issues.
+            Please try to fix these warnings.
 
       - name: Try to Create EF Migrations Bundle for DatabaseContext
         run: |
