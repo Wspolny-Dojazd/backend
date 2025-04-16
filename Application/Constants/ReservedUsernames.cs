@@ -1,4 +1,4 @@
-﻿namespace PublicTransportService.Application.Constants;
+﻿namespace Application.Constants;
 
 /// <summary>
 /// Contains reserved usernames that cannot be used for registration.
@@ -10,6 +10,10 @@ internal class ReservedUsernames
     /// </summary>
     public static readonly HashSet<string> List = new(StringComparer.OrdinalIgnoreCase)
     {
-        "admin", "auth", "api", "system", "login", "logout", "register", "support", "me", "root", "help",
+        "admin", "auth", "api", "system", "login", "logout", "register", "support",
+        "me", "root", "help", "about", "terms", "privacy", "adminpanel",
+        "owner", "staff", "dashboard", "api-docs", "swagger", "errors",
+        "static", "assets", "cdn", "images", "js", "css", "robots", "favicon",
+        "sitemap", "feed", "news", "updates", "notifications", "alerts",
     };
 }
