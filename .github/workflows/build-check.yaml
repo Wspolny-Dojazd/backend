@@ -45,7 +45,7 @@ jobs:
             
             StyleCop warnings:
             ```
-            ${{ steps.stylecop.outputs.warnings }}
+            ${{ steps.dotnet-build.outputs.warnings }}
             ```
 
             Please try to fix these warnings.
