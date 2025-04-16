@@ -36,7 +36,7 @@ jobs:
         id: dotnet-build
         run: | 
           dotnet build --ucr -c Debug --no-restore -warnaserror:false -v:minimal > build.log
-          grep -E "(?!SA0001)(SA[0-9]{4}|CS[0-9]{4})" build.log > warnings.txt
+          grep -E '(?!SA0001)(SA[0-9]{4}|CS[0-9]{4})' build.log > warnings.txt || true
           echo "warnings<<EOF" >> $GITHUB_OUTPUT
           cat warnings.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
