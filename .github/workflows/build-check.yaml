@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build Check 🤓☝️
+    name: Build Check
 
     runs-on: ubuntu-22.04-arm
     steps:
@@ -25,7 +25,7 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore Backend.sln --ucr
 
-      - name: Build nad capture warnings
+      - name: Build and capture warnings
         id: dotnet-build
         run: | 
           dotnet build --ucr -c Debug --no-restore -warnaserror:false -v:minimal > build.log
