@@ -1,14 +1,6 @@
 name: Build and Deploy GTFS importer
 
 on:
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - edited
-      - submitted
-      - closed
-      - synchronize
   workflow_dispatch:
 
 env:
