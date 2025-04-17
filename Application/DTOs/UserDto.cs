@@ -9,6 +9,6 @@ namespace Application.DTOs;
 /// <param name="Nickname">The nickname of the user.</param>
 /// <param name="Email">The email address of the user.</param>
 public record UserDto(
-    [property: Required] int Id,
+    [property: Required] Guid Id,
     [property: Required] string Nickname,
     [property: Required] string Email);
