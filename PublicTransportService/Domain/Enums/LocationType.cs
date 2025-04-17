@@ -3,7 +3,7 @@
 /// <summary>
 /// Specifies the type of physical location within a transit station, based on GTFS.
 /// </summary>
-public enum LocationType
+public enum LocationType : byte
 {
     /// <summary>
     /// A stop or platform (default).

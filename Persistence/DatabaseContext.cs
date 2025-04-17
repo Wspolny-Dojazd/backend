@@ -34,14 +34,19 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
     public DbSet<Message> Messages { get; set; }
 
     /// <summary>
-    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing routes.
-    /// </summary>
-    public DbSet<Route> Routes { get; set; }
-
-    /// <summary>
     /// Gets or sets the <see cref="DbSet{TEntity}"/> representing user locations.
     /// </summary>
     public DbSet<UserLocation> UserLocations { get; set; }
+
+    /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing accepted group paths.
+    /// </summary>
+    public DbSet<GroupPath> GroupPaths { get; set; }
+
+    /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing proposed paths.
+    /// </summary>
+    public DbSet<ProposedPath> ProposedPaths { get; set; }
 
     /// <summary>
     /// Configures the entity model and relationships for the database schema.
@@ -78,8 +83,6 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
             _ = entity.Property(p => p.JoiningCode).HasColumnName("joining_code");
             _ = entity.Property(p => p.CreatorId).HasColumnName("creator_id").HasColumnType("char(36)");
-            _ = entity.Property(p => p.DestinationLat).HasColumnName("destination_lat").HasColumnType("double");
-            _ = entity.Property(p => p.DestinationLon).HasColumnName("destination_lon").HasColumnType("double");
 
             _ = entity.Property(p => p.Status)
                 .HasColumnName("status")
@@ -87,10 +90,6 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
                 .HasConversion(
                     v => v.ToString(),
                     v => (Status)Enum.Parse(typeof(Status), v));
-
-            _ = entity.HasMany(g => g.Routes)
-                .WithOne()
-                .HasForeignKey("group_id");
 
             _ = entity.HasOne(c => c.Creator)
                 .WithMany()
@@ -139,17 +138,6 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
                     v => (Theme)Enum.Parse(typeof(Theme), v));
         });
 
-        _ = modelBuilder.Entity<Route>(entity =>
-        {
-            _ = entity.ToTable("routes");
-            _ = entity.HasKey(p => p.Id).HasName("PK_Route");
-
-            _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
-            _ = entity.Property(p => p.Tip).HasColumnName("tip");
-            _ = entity.Property(p => p.Lat).HasColumnName("lat").HasColumnType("double");
-            _ = entity.Property(p => p.Lon).HasColumnName("lon").HasColumnType("double");
-        });
-
         _ = modelBuilder.Entity<Message>(entity =>
         {
             _ = entity.ToTable("messages");
@@ -168,6 +156,65 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             _ = entity.HasOne(m => m.User)
                 .WithMany()
                 .HasForeignKey(m => m.UserId);
+        });
+
+        _ = modelBuilder.Entity<GroupPath>(entity =>
+        {
+            _ = entity.ToTable("group_paths");
+
+            _ = entity.HasKey(p => p.Id).HasName("PK_GroupPath");
+
+            _ = entity.Property(p => p.Id)
+                .HasColumnName("id")
+                .HasColumnType("char(36)");
+
+            _ = entity.Property(p => p.GroupId)
+                .HasColumnName("group_id")
+                .HasColumnType("int");
+
+            _ = entity.HasIndex(p => p.GroupId)
+                .IsUnique();
+
+            _ = entity.HasOne(p => p.Group)
+                .WithOne(g => g.CurrentPath)
+                .HasForeignKey<GroupPath>(p => p.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            _ = entity.Property(p => p.CreatedAt).
+                HasColumnName("created_at")
+                .HasColumnType("datetime");
+
+            _ = entity.Property(p => p.SerializedDto)
+                .HasColumnName("serialized_dto")
+                .HasColumnType("LONGTEXT");
+        });
+
+        _ = modelBuilder.Entity<ProposedPath>(entity =>
+        {
+            _ = entity.ToTable("proposed_paths");
+
+            _ = entity.HasKey(p => p.Id).HasName("PK_ProposedPath");
+
+            _ = entity.Property(p => p.Id)
+                .HasColumnName("id")
+                .HasColumnType("char(36)");
+
+            _ = entity.Property(p => p.GroupId)
+                .HasColumnName("group_id")
+                .HasColumnType("int");
+
+            _ = entity.HasOne(p => p.Group)
+                .WithMany(g => g.ProposedPaths)
+                .HasForeignKey(p => p.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            _ = entity.Property(p => p.CreatedAt)
+                .HasColumnName("created_at")
+                .HasColumnType("datetime");
+
+            _ = entity.Property(p => p.SerializedDto)
+                .HasColumnName("serialized_dto")
+                .HasColumnType("LONGTEXT");
         });
 
         _ = modelBuilder.Entity<User>()
