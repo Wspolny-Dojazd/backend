@@ -1,4 +1,5 @@
 using Application.DTOs;
+using Application.DTOs.FriendInvitation;
 using Application.DTOs.Message;
 using Application.DTOs.UserLocation;
 using AutoMapper;
@@ -26,5 +27,7 @@ public class MappingProfile : Profile
             {
                 dest.GroupMembers.First(m => m.Id == src.CreatorId).IsCreator = true;
             });
+        _ = this.CreateMap<FriendInvitation, FriendInvitationDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.InvitationId));
     }
 }
