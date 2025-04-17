@@ -1,0 +1,74 @@
+name: Build Check
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, reopened, synchronize, ready_for_review]
+
+concurrency:
+  group: build-${{ github.head_ref }}
+  cancel-in-progress: true
+
+permissions:
+  pull-requests: write
+
+env:
+  ConnectionStrings__AppDbConnectionString: Server=myServerAddress;Database=myDataBase;Uid=myUsername;Pwd=myPassword;
+  DB_SERVER_VERSION: 8.0.43
+
+jobs:
+  build:
+    name: Build Check
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-22.04-arm
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install EF tooling
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Restore dependencies
+        run: dotnet restore Backend.sln --ucr
+
+      - name: Build and capture warnings
+        id: dotnet-build
+        run: | 
+          dotnet build --ucr -c Debug --no-restore -warnaserror:false -v:minimal > build.log
+          grep -E '(?!SA0001)(SA[0-9]{4}|CS[0-9]{4})' build.log > warnings.txt || true
+          echo "warnings<<EOF" >> $GITHUB_OUTPUT
+          cat warnings.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Comment on PR with warnings
+        if: steps.dotnet-build.outputs.warnings != ''
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Actually there are stylistic inconsistencies 🤓☝️
+            
+            StyleCop warnings:
+            ```
+            ${{ steps.dotnet-build.outputs.warnings }}
+            ```
+
+            Please try to fix these warnings.
+
+      - name: Try to Create EF Migrations Bundle for DatabaseContext
+        run: |
+          cp ./Persistence/bin/Debug/net8.0/linux-*/* ./Persistence/bin/Debug/net8.0/
+          dotnet ef migrations bundle --project Persistence/Persistence.csproj --context DatabaseContext -o DatabaseContextBundle --self-contained --no-build
+
+      - name: Try to Create EF Migrations Bundle for PTSDbContext
+        run: |
+          cp ./PublicTransportService/bin/Debug/net8.0/linux-*/* ./PublicTransportService/bin/Debug/net8.0/
+          dotnet ef migrations bundle --project PublicTransportService/PublicTransportService.csproj --context PTSDbContext -o PTSDbContextBundle --self-contained --no-build
+      
+      - name: Try to Publish API
+        run: dotnet publish --ucr --artifacts-path artifacts --nologo --self-contained
+
+      - name: Try to Publish GTFS
+        run: dotnet publish ./Tools/GtfsImporter/GtfsImporter.csproj --ucr --artifacts-path Tools/GtfsImporter/artifacts --nologo --self-contained
