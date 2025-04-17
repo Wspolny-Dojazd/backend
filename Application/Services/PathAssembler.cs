@@ -9,6 +9,8 @@ namespace Application.Services;
 /// <summary>
 /// Provides operations for assembling or mapping path results into DTOs.
 /// </summary>
+/// <param name="tripRepository">The repository for accessing trip data.</param>
+/// <param name="routeRepository">The repository for accessing route data.</param>
 /// <param name="shapeRepository">The repository for accessing shape data.</param>
 public class PathAssembler(
     ITripRepository tripRepository,

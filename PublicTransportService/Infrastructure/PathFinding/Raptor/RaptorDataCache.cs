@@ -7,10 +7,10 @@ namespace PublicTransportService.Infrastructure.PathFinding.Raptor;
 /// <summary>
 /// Represents a cache for RAPTOR pathfinding data.
 /// </summary>
+/// <param name="scopeFactory">The scope factory used to create service scopes for data access.</param>
 /// <remarks>
 /// This cache improves performance by avoiding repetitive database access.
 /// </remarks>
-/// <param name="scopeFactory">The scope factory used to create service scopes for data access.</param>
 internal class RaptorDataCache(IServiceScopeFactory scopeFactory) : IRaptorDataCache
 {
     private RaptorContext? context;
@@ -30,7 +30,7 @@ internal class RaptorDataCache(IServiceScopeFactory scopeFactory) : IRaptorDataC
 
         var stops = await dbContext.Stops
             .AsNoTracking()
-            .Select(s => new PathFindingStop(s.Id, s.LogicalId, s.Latitude, s.Longitude))
+            .Select(s => new PathFindingStop(s.Id, s.LogicalId))
             .ToDictionaryAsync(s => s.Id);
 
         var trips = await dbContext.Trips

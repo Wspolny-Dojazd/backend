@@ -3,7 +3,7 @@
 namespace Application.DTOs.UserLocation;
 
 /// <summary>
-/// Represents a data transfer object used for location of a group member.
+/// Represents a data transfer object used for the location of a group member.
 /// </summary>
 public class MemberLocationRequestDto : UserLocationRequestDto
 {

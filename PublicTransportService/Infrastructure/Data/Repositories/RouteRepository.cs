@@ -7,6 +7,7 @@ namespace PublicTransportService.Infrastructure.Data.Repositories;
 /// <summary>
 /// Provides data access operations for <see cref="Route"/> entities.
 /// </summary>
+/// <param name="dbContext">The database context used to access route data.</param>
 internal class RouteRepository(PTSDbContext dbContext) : IRouteRepository
 {
     /// <inheritdoc/>

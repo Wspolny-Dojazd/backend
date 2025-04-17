@@ -5,4 +5,4 @@
 /// </summary>
 /// <param name="Id">The unique identifier of the stop.</param>
 /// <param name="LogicalId">The logical identifier of the stop, used for grouping or categorization.</param>
-internal sealed record PathFindingStop(string Id, string LogicalId, double Lat, double Lon);
+internal sealed record PathFindingStop(string Id, string LogicalId);

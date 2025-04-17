@@ -13,6 +13,13 @@ namespace Application.Services;
 /// <summary>
 /// Provides operations for generating and managing proposed paths.
 /// </summary>
+/// <param name="groupService">The service for validating group existence.</param>
+/// <param name="pathPlanningService">The service for computing group paths.</param>
+/// <param name="stopRepository">The repository for accessing stop data.</param>
+/// <param name="pathAssembler">The service for assembling paths from raw data.</param>
+/// <param name="groupPathRepository">The repository for accessing confirmed group paths.</param>
+/// <param name="proposedPathRepository">The repository for accessing proposed paths.</param>
+/// <param name="mapper">The object mapper.</param>
 public class ProposedPathService(
     IGroupService groupService,
     IPathPlanningService pathPlanningService,

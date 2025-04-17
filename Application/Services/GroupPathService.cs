@@ -10,6 +10,7 @@ namespace Application.Services;
 /// <summary>
 /// Provides operations for managing accepted group travel paths.
 /// </summary>
+/// <param name="proposedPathRepository">The repository for accessing <see cref="ProposedPath"/> data.</param>
 /// <param name="groupPathRepository">The repository for accessing <see cref="GroupPath"/> data.</param>
 /// <param name="groupService">The service for validating group existence.</param>
 /// <param name="mapper">The object mapper.</param>
@@ -34,11 +35,6 @@ public class GroupPathService(
         var allProposals = await proposedPathRepository.GetAllByGroupIdAsync(groupId);
         var selectedProposal = allProposals.FirstOrDefault(p => p.Id == proposalId)
             ?? throw new AppException(404, "PATH_NOT_FOUND", "The specified proposal does not exist.");
-
-        if (selectedProposal.GroupId != groupId)
-        {
-            throw new AppException(403, "PATH_NOT_IN_GROUP", "The specified proposal does not belong to the group.");
-        }
 
         var entity = new GroupPath
         {
