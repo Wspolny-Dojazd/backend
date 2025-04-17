@@ -72,15 +72,20 @@ public class GroupsController(IGroupService groupService, IMessageService messag
     /// <param name="id">The unique identifier of the group.</param>
     /// <returns>The updated group details.</returns>
     /// <response code="200">The user was successfully removed from the group.</response>
+    /// <response code="204">
+    /// The user who was the group creator was successfully removed, along with the entire group.
+    /// </response>
     /// <response code="404">The group or the user was not found.</response>
     [HttpPost("{id}/leave")]
     [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<GroupDto>> Leave(int id)
     {
         var userId = this.User.GetUserId();
         var group = await groupService.RemoveUserAsync(id, userId);
-        return this.Ok(group);
+
+        return group is null ? this.NoContent() : this.Ok(group);
     }
 
     /// <summary>

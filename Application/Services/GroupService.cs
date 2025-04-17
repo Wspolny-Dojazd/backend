@@ -63,7 +63,7 @@ public class GroupService(
     }
 
     /// <inheritdoc/>
-    public async Task<GroupDto> RemoveUserAsync(int id, Guid userId)
+    public async Task<GroupDto?> RemoveUserAsync(int id, Guid userId)
     {
         var group = await groupRepository.GetByIdAsync(id)
             ?? throw new GroupNotFoundException(id);
@@ -73,6 +73,12 @@ public class GroupService(
         if (!group.GroupMembers.Contains(user))
         {
             throw new UserNotInGroupException(id, userId);
+        }
+
+        if (group.CreatorId == userId)
+        {
+            await groupRepository.RemoveAsync(group);
+            return null;
         }
 
         await groupRepository.RemoveUserAsync(group, user);
