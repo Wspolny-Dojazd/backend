@@ -3,7 +3,7 @@
 /// <summary>
 /// Specifies the type of pickup available at a stop.
 /// </summary>
-public enum PickupType
+public enum PickupType : byte
 {
     /// <summary>
     /// Regularly scheduled pickup (default).

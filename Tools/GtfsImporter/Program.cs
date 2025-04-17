@@ -24,7 +24,7 @@ var host = Host.CreateDefaultBuilder(args)
                     .SetMinimumLevel(LogLevel.Warning)
                     .AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
             })
-            .AddInfrastructure(context.Configuration);
+            .AddPTSInfrastructure(context.Configuration);
         })
     .Build();
 

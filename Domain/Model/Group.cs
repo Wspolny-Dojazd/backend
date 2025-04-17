@@ -28,24 +28,19 @@ public class Group
     public Status Status { get; set; }
 
     /// <summary>
-    /// Gets or sets the destination latitude of the group.
-    /// </summary>
-    public double DestinationLat { get; set; }
-
-    /// <summary>
-    /// Gets or sets the destination longitude of the group.
-    /// </summary>
-    public double DestinationLon { get; set; }
-
-    /// <summary>
     /// Gets or sets the group creator.
     /// </summary>
     public User Creator { get; set; } = default!;
 
     /// <summary>
-    /// Gets or sets the routes associated with the group.
+    /// Gets or sets the accepted travel path of the group, if any.
     /// </summary>
-    public required List<Route> Routes { get; set; }
+    public GroupPath? CurrentPath { get; set; }
+
+    /// <summary>
+    /// Gets or sets the proposed paths of the group, if any.
+    /// </summary>
+    public List<ProposedPath> ProposedPaths { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the users who are members of the group.

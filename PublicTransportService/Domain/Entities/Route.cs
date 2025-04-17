@@ -1,4 +1,5 @@
-﻿using PublicTransportService.Domain.Enums;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using PublicTransportService.Domain.Enums;
 
 namespace PublicTransportService.Domain.Entities;
 
@@ -15,16 +16,19 @@ public class Route
     /// <summary>
     /// Gets the identifier of the agency that operates the route.
     /// </summary>
+    [Column("agency_id")]
     public required string AgencyId { get; init; }
 
     /// <summary>
     /// Gets the short name of the route (e.g. line number).
     /// </summary>
+    [Column("short_name")]
     public required string ShortName { get; init; }
 
     /// <summary>
     /// Gets the descriptive name of the route.
     /// </summary>
+    [Column("long_name")]
     public required string LongName { get; init; }
 
     /// <summary>
@@ -42,5 +46,6 @@ public class Route
     /// Gets the text color to be used on the route's background.
     /// </summary>
     /// <value>A hexadecimal color in the format RRGGBB.</value>
+    [Column("text_color")]
     public required string TextColor { get; init; }
 }

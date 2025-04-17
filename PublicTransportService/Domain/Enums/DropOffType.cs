@@ -3,7 +3,7 @@
 /// <summary>
 /// Specifies the type of drop-off available at a stop, based on GTFS specification.
 /// </summary>
-public enum DropOffType
+public enum DropOffType : byte
 {
     /// <summary>
     /// Regularly scheduled drop-off (default).
