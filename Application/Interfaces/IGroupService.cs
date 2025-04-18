@@ -36,7 +36,7 @@ public interface IGroupService
     /// <param name="userId">The unique identifier of the user to remove.</param>
     /// <returns>
     /// The updated group details if the user was removed;
-    /// <see langword = "null" /> if the user was the group creator and the group was deleted.
+    /// <see langword="null"/> if the user was the group creator and the group was deleted.
     /// </returns>
     Task<GroupDto?> RemoveUserAsync(int groupId, Guid userId);
 
