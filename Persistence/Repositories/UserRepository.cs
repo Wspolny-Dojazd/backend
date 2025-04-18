@@ -27,6 +27,13 @@ public class UserRepository(DatabaseContext databaseContext)
     }
 
     /// <inheritdoc/>
+    public async Task<User?> GetByUsernameAsync(string username)
+    {
+        return await databaseContext.Users
+            .FirstOrDefaultAsync(u => u.Username == username);
+    }
+
+    /// <inheritdoc/>
     public async Task AddAsync(User user)
     {
         _ = await databaseContext.Users.AddAsync(user);

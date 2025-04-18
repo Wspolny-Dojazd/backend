@@ -16,6 +16,11 @@ public enum AuthErrorCode
     INVALID_TOKEN,
 
     /// <summary>
+    /// The provided refresh token is invalid, expired or malformed.
+    /// </summary>
+    INVALID_REFRESH_TOKEN,
+
+    /// <summary>
     /// The token has expired and is no longer valid.
     /// </summary>
     EXPIRED_TOKEN,

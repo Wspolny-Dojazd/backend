@@ -11,6 +11,11 @@ public class User
     public Guid Id { get; set; }
 
     /// <summary>
+    /// Gets or sets the username of the user.
+    /// </summary>
+    public required string Username { get; set; }
+
+    /// <summary>
     /// Gets or sets the email address of the user.
     /// </summary>
     public required string Email { get; set; }
@@ -24,6 +29,16 @@ public class User
     /// Gets or sets the password hash of the user.
     /// </summary>
     public required string PasswordHash { get; set; }
+
+    /// <summary>
+    /// Gets or sets the refresh token used for token renewal.
+    /// </summary>
+    public required string RefreshToken { get; set; }
+
+    /// <summary>
+    /// Gets or sets the expiration date and time of the current refresh token.
+    /// </summary>
+    public DateTime RefreshTokenExpiryTime { get; set; }
 
     /// <summary>
     /// Gets or sets the date and time when the user was created.

@@ -3,7 +3,6 @@ using API.Models.Errors;
 using Application.DTOs;
 using Application.DTOs.Message;
 using Application.Interfaces;
-using Domain.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -39,11 +38,14 @@ public class GroupsController(IGroupService groupService, IMessageService messag
     /// </summary>
     /// <returns>The created group details.</returns>
     /// <response code="200">The group was successfully created.</response>
+    /// <response code="404">The user was not found.</response>
     [HttpPost]
     [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<GroupDto>> Create()
     {
-        var group = await groupService.CreateAsync();
+        var userId = this.User.GetUserId();
+        var group = await groupService.CreateAsync(userId);
         return this.Ok(group);
     }
 
@@ -53,7 +55,7 @@ public class GroupsController(IGroupService groupService, IMessageService messag
     /// <param name="code">The unique joining code of the group.</param>
     /// <returns>The updated group details.</returns>
     /// <response code="200">The user was successfully added to the group.</response>
-    /// <response code="404">The group was not found.</response>
+    /// <response code="404">The group or the user was not found.</response>
     [HttpPost("join/code/{code}")]
     [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
@@ -70,7 +72,7 @@ public class GroupsController(IGroupService groupService, IMessageService messag
     /// <param name="id">The unique identifier of the group.</param>
     /// <returns>The updated group details.</returns>
     /// <response code="200">The user was successfully removed from the group.</response>
-    /// <response code="404">The group was not found.</response>
+    /// <response code="404">The group or the user was not found.</response>
     [HttpPost("{id}/leave")]
     [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
@@ -89,7 +91,7 @@ public class GroupsController(IGroupService groupService, IMessageService messag
     /// <returns>The updated group details.</returns>
     /// <response code="200">The user was successfully removed from the group.</response>
     /// <response code="400">The user is not a member of the group.</response>
-    /// <response code="404">The group was not found.</response>
+    /// <response code="404">The group or the user was not found.</response>
     [HttpPost("{id}/kick/{userId}")]
     [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status400BadRequest)]

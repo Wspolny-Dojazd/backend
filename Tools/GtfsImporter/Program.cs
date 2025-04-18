@@ -10,7 +10,8 @@ var host = Host.CreateDefaultBuilder(args)
     {
         var configPath = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
         Console.WriteLine($"Loading config from: {configPath}");
-        _ = config.AddJsonFile(configPath, optional: false);
+        _ = config.AddJsonFile(configPath, optional: true)
+            .AddEnvironmentVariables();
     })
     .ConfigureServices((context, services) =>
     {
@@ -23,7 +24,7 @@ var host = Host.CreateDefaultBuilder(args)
                     .SetMinimumLevel(LogLevel.Warning)
                     .AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
             })
-            .AddInfrastructure(context.Configuration);
+            .AddPTSInfrastructure(context.Configuration);
         })
     .Build();
 

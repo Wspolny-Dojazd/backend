@@ -7,6 +7,8 @@ namespace Application.DTOs;
 /// </summary>
 /// <param name="Id">The unique identifier of the group.</param>
 /// <param name="JoiningCode">The joining code of the group.</param>
+/// <param name="GroupMembers">The members of the group.</param>
 public record GroupDto(
     [property: Required] int Id,
-    [property: Required] string JoiningCode);
+    [property: Required] string JoiningCode,
+    [property: Required] IEnumerable<GroupMemberDto> GroupMembers);

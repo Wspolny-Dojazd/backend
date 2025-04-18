@@ -31,13 +31,9 @@ namespace Persistence.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("DestinationLat")
-                        .HasColumnType("double")
-                        .HasColumnName("destination_lat");
-
-                    b.Property<double>("DestinationLon")
-                        .HasColumnType("double")
-                        .HasColumnName("destination_lon");
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("creator_id");
 
                     b.Property<string>("JoiningCode")
                         .IsRequired()
@@ -52,7 +48,40 @@ namespace Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("PK_Group");
 
+                    b.HasIndex("CreatorId")
+                        .HasDatabaseName("ix_groups_creator_id");
+
                     b.ToTable("groups", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Model.GroupPath", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int")
+                        .HasColumnName("group_id");
+
+                    b.Property<string>("SerializedDto")
+                        .IsRequired()
+                        .HasColumnType("LONGTEXT")
+                        .HasColumnName("serialized_dto");
+
+                    b.HasKey("Id")
+                        .HasName("PK_GroupPath");
+
+                    b.HasIndex("GroupId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_group_paths_group_id");
+
+                    b.ToTable("group_paths", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Model.Message", b =>
@@ -93,39 +122,33 @@ namespace Persistence.Migrations
                     b.ToTable("messages", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Model.Route", b =>
+            modelBuilder.Entity("Domain.Model.ProposedPath", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("char(36)")
                         .HasColumnName("id");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_at");
 
-                    b.Property<double>("Lat")
-                        .HasColumnType("double")
-                        .HasColumnName("lat");
-
-                    b.Property<double>("Lon")
-                        .HasColumnType("double")
-                        .HasColumnName("lon");
-
-                    b.Property<string>("Tip")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("tip");
-
-                    b.Property<int?>("group_id")
+                    b.Property<int>("GroupId")
                         .HasColumnType("int")
                         .HasColumnName("group_id");
 
+                    b.Property<string>("SerializedDto")
+                        .IsRequired()
+                        .HasColumnType("LONGTEXT")
+                        .HasColumnName("serialized_dto");
+
                     b.HasKey("Id")
-                        .HasName("PK_Route");
+                        .HasName("PK_ProposedPath");
 
-                    b.HasIndex("group_id")
-                        .HasDatabaseName("ix_routes_group_id");
+                    b.HasIndex("GroupId")
+                        .HasDatabaseName("ix_proposed_paths_group_id");
 
-                    b.ToTable("routes", (string)null);
+                    b.ToTable("proposed_paths", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Model.User", b =>
@@ -155,6 +178,21 @@ namespace Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("password_hash");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("refresh_token");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime")
+                        .HasColumnName("refresh_token_expiry_time");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("username");
 
                     b.HasKey("Id")
                         .HasName("PK_User");
@@ -280,6 +318,30 @@ namespace Persistence.Migrations
                     b.ToTable("group_members", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Model.Group", b =>
+                {
+                    b.HasOne("Domain.Model.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_groups_users_creator_id");
+
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("Domain.Model.GroupPath", b =>
+                {
+                    b.HasOne("Domain.Model.Group", "Group")
+                        .WithOne("CurrentPath")
+                        .HasForeignKey("Domain.Model.GroupPath", "GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_paths_groups_group_id");
+
+                    b.Navigation("Group");
+                });
+
             modelBuilder.Entity("Domain.Model.Message", b =>
                 {
                     b.HasOne("Domain.Model.Group", "Group")
@@ -301,12 +363,16 @@ namespace Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Model.Route", b =>
+            modelBuilder.Entity("Domain.Model.ProposedPath", b =>
                 {
-                    b.HasOne("Domain.Model.Group", null)
-                        .WithMany("Routes")
-                        .HasForeignKey("group_id")
-                        .HasConstraintName("fk_routes_groups_group_id");
+                    b.HasOne("Domain.Model.Group", "Group")
+                        .WithMany("ProposedPaths")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_proposed_paths_groups_group_id");
+
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("Domain.Model.UserConfiguration", b =>
@@ -365,7 +431,9 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Model.Group", b =>
                 {
-                    b.Navigation("Routes");
+                    b.Navigation("CurrentPath");
+
+                    b.Navigation("ProposedPaths");
                 });
 
             modelBuilder.Entity("Domain.Model.User", b =>

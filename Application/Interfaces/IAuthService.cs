@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Auth;
+﻿using Application.DTOs;
+using Application.DTOs.Auth;
 
 namespace Application.Interfaces;
 
@@ -25,8 +26,15 @@ public interface IAuthService
     /// Returns the authenticated user profile.
     /// </summary>
     /// <param name="userId">The unique identifier of the user.</param>
+    /// <returns>The authenticated user data.</returns>
+    Task<UserDto> GetMeAsync(Guid userId);
+
+    /// <summary>
+    /// Refreshes the access token using the provided refresh token.
+    /// </summary>
+    /// <param name="request">The refresh token request.</param>
     /// <returns>The authentication response.</returns>
-    Task<AuthResponseDto> GetMeAsync(Guid userId);
+    Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenRequestDto request);
 
     /// <summary>
     /// Changes the password of the authenticated user.
