@@ -29,4 +29,9 @@ public enum RegisterErrorCode
     /// The request payload is invalid.
     /// </summary>
     VALIDATION_ERROR,
+
+    /// <summary>
+    /// The provided username is reserved and cannot be used.
+    /// </summary>
+    USERNAME_RESERVED,
 }

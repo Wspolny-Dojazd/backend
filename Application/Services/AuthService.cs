@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
+using Application.Constants;
 using Application.DTOs;
 using Application.DTOs.Auth;
 using Application.Exceptions;
@@ -59,6 +60,11 @@ public class AuthService(
         if (existingUsername is not null)
         {
             throw new AppException(409, "USERNAME_ALREADY_USED", "Username is already used.");
+        }
+
+        if (ReservedUsernames.List.Contains(request.Username))
+        {
+            throw new AppException(400, "USERNAME_RESERVED", "This username is reserved.");
         }
 
         var user = new User
