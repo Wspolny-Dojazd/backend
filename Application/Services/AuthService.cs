@@ -1,9 +1,9 @@
-﻿using Application.DTOs.Auth;
+﻿using Application.Constants;
+using Application.DTOs.Auth;
 using Application.Exceptions;
 using Application.Interfaces;
 using Domain.Interfaces;
 using Domain.Model;
-using PublicTransportService.Application.Constants;
 
 namespace Application.Services;
 
