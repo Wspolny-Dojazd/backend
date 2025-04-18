@@ -1,5 +1,4 @@
 ﻿using Application.DTOs;
-using Application.Exceptions;
 
 namespace Application.Interfaces;
 
@@ -46,9 +45,6 @@ public interface IGroupService
     /// <param name="groupId">The unique identifier of the group.</param>
     /// <param name="userId">The unique identifier of the user to remove.</param>
     /// <returns>The updated group details.</returns>
-    /// <exception cref="KickGroupCreatorException">
-    /// Thrown when there is a try to kick a group creator from their group.
-    /// </exception>
     Task<GroupDto> KickUserAsync(int groupId, Guid userId);
 
     /// <summary>

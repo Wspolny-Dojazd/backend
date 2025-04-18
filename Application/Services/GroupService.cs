@@ -84,7 +84,10 @@ public class GroupService(
 
         if (group.CreatorId == userId)
         {
-            throw new KickGroupCreatorException(userId, groupId);
+            throw new AppException(
+                403,
+                "ACCESS_DENIED",
+                $"The user with ID {userId} is the creator of the group with ID {groupId} and cannot be kicked from it.");
         }
 
         await groupRepository.RemoveUserAsync(group, user);
