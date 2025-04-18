@@ -70,22 +70,18 @@ public class GroupsController(IGroupService groupService, IMessageService messag
     /// Removes the currently authenticated user from the specified group.
     /// </summary>
     /// <param name="id">The unique identifier of the group.</param>
-    /// <returns>The updated group details.</returns>
-    /// <response code="200">The user was successfully removed from the group.</response>
-    /// <response code="204">
-    /// The user who was the group creator was successfully removed, along with the entire group.
-    /// </response>
+    /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
+    /// <response code="204">The user was successfully removed from the group.</response>
     /// <response code="404">The group or the user was not found.</response>
     [HttpPost("{id}/leave")]
-    [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GroupDto>> Leave(int id)
+    public async Task<IActionResult> Leave(int id)
     {
         var userId = this.User.GetUserId();
-        var group = await groupService.RemoveUserAsync(id, userId);
+        _ = await groupService.RemoveUserAsync(id, userId);
 
-        return group is null ? this.NoContent() : this.Ok(group);
+        return this.NoContent();
     }
 
     /// <summary>
@@ -96,14 +92,16 @@ public class GroupsController(IGroupService groupService, IMessageService messag
     /// <returns>The updated group details.</returns>
     /// <response code="200">The user was successfully removed from the group.</response>
     /// <response code="400">The user is not a member of the group.</response>
+    /// <response code="403">The user is the creator of the group and cannot be kicked from it.</response>
     /// <response code="404">The group or the user was not found.</response>
     [HttpPost("{id}/kick/{userId}")]
     [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<GroupDto>> Kick(int id, Guid userId)
     {
-        var group = await groupService.RemoveUserAsync(id, userId);
+        var group = await groupService.KickUserAsync(id, userId);
         return this.Ok(group);
     }
 
