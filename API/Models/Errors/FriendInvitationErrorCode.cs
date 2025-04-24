@@ -1,45 +1,43 @@
 namespace API.Models.Errors;
 
 /// <summary>
-/// Error codes for friend invitation operations that identify specific error conditions.
-/// These codes are used in API responses when friend invitation operations fail.
+/// Defines error codes for friend invitation operations,
+/// returned in API error responses.
 /// </summary>
 public enum FriendInvitationErrorCode
 {
     /// <summary>
-    /// Indicates that the specified invitation could not be found in the system.
-    /// Typically returned when trying to accept, decline, or cancel a non-existent invitation.
+    /// The invitation was not found.
     /// </summary>
     INVITATION_NOT_FOUND,
 
     /// <summary>
-    /// Indicates that the specified user could not be found.
-    /// Typically returned when trying to send an invitation to a non-existent user.
+    /// The recipient user was not found.
     /// </summary>
-    USER_NOT_FOUND,
+    RECIPIENT_NOT_FOUND,
 
     /// <summary>
-    /// Indicates that a user attempted to send a friend invitation to themselves,
-    /// which is not allowed by the system.
+    /// The users are already friends.
     /// </summary>
-    CANNOT_INVITE_SELF,
+    ALREADY_FRIEND,
 
     /// <summary>
-    /// Indicates that a user attempted to send a friend invitation to someone
-    /// who is already their friend.
+    /// The invitation has already been sent.
     /// </summary>
-    ALREADY_FRIENDS,
+    ALREADY_SENT,
 
     /// <summary>
-    /// Indicates that an invitation already exists between the specified users.
-    /// Prevents duplicate invitations from being created.
+    /// The recipient has already sent an invitation to the sender.
     /// </summary>
-    INVITATION_ALREADY_EXISTS,
+    RECIPROCAL_EXISTS,
 
     /// <summary>
-    /// Indicates that a user attempted to perform an operation on an invitation
-    /// that they are not authorized to perform, such as accepting/declining an invitation
-    /// they didn't receive, or canceling an invitation they didn't send.
+    /// A user cannot invite themselves.
     /// </summary>
-    UNAUTHORIZED_ACTION,
+    SELF_INVITATION,
+
+    /// <summary>
+    /// The user is not authorized to access or modify the invitation.
+    /// </summary>
+    ACCESS_DENIED,
 }

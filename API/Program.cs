@@ -69,6 +69,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddPTSInfrastructure(builder.Configuration);
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IFriendInvitationRepository, FriendInvitationRepository>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 builder.Services.AddScoped<IGroupPathRepository, GroupPathRepository>();
 builder.Services.AddScoped<IProposedPathRepository, ProposedPathRepository>();
@@ -76,10 +77,9 @@ builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IUserConfigurationRepository, UserConfigurationRepository>();
 builder.Services.AddScoped<IUserLocationRepository, UserLocationRepository>();
 
-builder.Services.AddScoped<IFriendInvitationRepository, FriendInvitationRepository>();
-builder.Services.AddScoped<IFriendInvitationService, FriendInvitationService>();
-
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IFriendService, FriendService>();
+builder.Services.AddScoped<IFriendInvitationService, FriendInvitationService>();
 builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<IGroupPathService, GroupPathService>();
 builder.Services.AddScoped<IProposedPathService, ProposedPathService>();

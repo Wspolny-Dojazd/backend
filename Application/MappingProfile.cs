@@ -24,6 +24,8 @@ public class MappingProfile : Profile
         _ = this.CreateMap<UserConfiguration, UserConfigurationDto>();
         _ = this.CreateMap<UserLocation, UserLocationDto>();
         _ = this.CreateMap<Message, MessageDto>();
+        _ = this.CreateMap<FriendInvitation, FriendInvitationDto>();
+
         _ = this.CreateMap<Group, GroupDto>()
             .AfterMap((src, dest) =>
             {
@@ -37,9 +39,6 @@ public class MappingProfile : Profile
         _ = this.CreateMap<GroupPath, GroupPathDto>()
             .ForCtorParam("Paths", opt =>
                 opt.MapFrom(src => DeserializeUserPathDtos(src.SerializedDto)));
-                
-        _ = this.CreateMap<FriendInvitation, FriendInvitationDto>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.InvitationId));
     }
 
     private static IEnumerable<UserPathDto> DeserializeUserPathDtos(string serializedDto)

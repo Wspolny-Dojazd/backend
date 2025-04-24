@@ -5,42 +5,30 @@ using Microsoft.EntityFrameworkCore;
 namespace Persistence.Repositories;
 
 /// <summary>
-/// Repository implementation for performing data access operations on friend invitations.
+/// Provides data access operations for <see cref="FriendInvitation"/> entities.
 /// </summary>
-public class FriendInvitationRepository(DatabaseContext databaseContext) : IFriendInvitationRepository
+/// <param name="databaseContext">The database context used to access friend invitation data.</param>
+public class FriendInvitationRepository(DatabaseContext databaseContext)
+    : IFriendInvitationRepository
 {
-    /// <summary>
-    /// Creates a new friend invitation in the database.
-    /// </summary>
-    /// <param name="invitation">The friend invitation entity to create.</param>
-    /// <returns>The created friend invitation with updated database-assigned values.</returns>
-    public async Task<FriendInvitation> CreateAsync(FriendInvitation invitation)
+    /// <inheritdoc/>
+    public async Task AddAsync(FriendInvitation invitation)
     {
-        await databaseContext.FriendInvitations.AddAsync(invitation);
-        await databaseContext.SaveChangesAsync();
-        return invitation;
+        _ = await databaseContext.FriendInvitations.AddAsync(invitation);
+        _ = await databaseContext.SaveChangesAsync();
     }
 
-    /// <summary>
-    /// Retrieves a friend invitation by its unique identifier.
-    /// </summary>
-    /// <param name="invitationId">The unique identifier of the invitation to retrieve.</param>
-    /// <returns>The friend invitation.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when no invitation with the specified ID exists.</exception>
-    public async Task<FriendInvitation> GetByIdAsync(Guid invitationId)
+    /// <inheritdoc/>
+    public async Task<FriendInvitation?> GetByIdAsync(Guid invitationId)
     {
         return await databaseContext.FriendInvitations
             .Include(i => i.Sender)
             .Include(i => i.Receiver)
-            .FirstAsync(i => i.InvitationId == invitationId);
+            .FirstOrDefaultAsync(i => i.Id == invitationId);
     }
 
-    /// <summary>
-    /// Retrieves all invitations sent by a specific user.
-    /// </summary>
-    /// <param name="userId">The ID of the user who sent the invitations.</param>
-    /// <returns>A list of friend invitations sent by the specified user.</returns>
-    public async Task<List<FriendInvitation>> GetSentInvitationsAsync(Guid userId)
+    /// <inheritdoc/>
+    public async Task<List<FriendInvitation>> GetSentAsync(Guid userId)
     {
         return await databaseContext.FriendInvitations
             .Include(i => i.Sender)
@@ -49,12 +37,8 @@ public class FriendInvitationRepository(DatabaseContext databaseContext) : IFrie
             .ToListAsync();
     }
 
-    /// <summary>
-    /// Retrieves all invitations received by a specific user.
-    /// </summary>
-    /// <param name="userId">The ID of the user who received the invitations.</param>
-    /// <returns>A list of friend invitations received by the specified user.</returns>
-    public async Task<List<FriendInvitation>> GetReceivedInvitationsAsync(Guid userId)
+    /// <inheritdoc/>
+    public async Task<List<FriendInvitation>> GetReceivedAsync(Guid userId)
     {
         return await databaseContext.FriendInvitations
             .Include(i => i.Sender)
@@ -63,35 +47,26 @@ public class FriendInvitationRepository(DatabaseContext databaseContext) : IFrie
             .ToListAsync();
     }
 
-    /// <summary>
-    /// Deletes a friend invitation from the database.
-    /// </summary>
-    /// <param name="invitationId">The unique identifier of the invitation to delete.</param>
-    /// <returns>A task representing the asynchronous delete operation.</returns>
-    /// <remarks>
-    /// If the invitation doesn't exist, this method completes without throwing an exception.
-    /// </remarks>
-    public async Task DeleteAsync(Guid invitationId)
+    /// <inheritdoc/>
+    public async Task DeleteAsync(FriendInvitation invitation)
     {
-        var invitation = await databaseContext.FriendInvitations
-            .FirstOrDefaultAsync(i => i.InvitationId == invitationId);
-
-        if (invitation != null)
-        {
-            databaseContext.FriendInvitations.Remove(invitation);
-            await databaseContext.SaveChangesAsync();
-        }
+        _ = databaseContext.FriendInvitations.Remove(invitation);
+        _ = await databaseContext.SaveChangesAsync();
     }
 
-    /// <summary>
-    /// Checks if a friend invitation exists between the specified sender and receiver.
-    /// </summary>
-    /// <param name="senderId">The ID of the user who sent the invitation.</param>
-    /// <param name="receiverId">The ID of the user who received the invitation.</param>
-    /// <returns>True if an invitation exists; otherwise, false.</returns>
+    /// <inheritdoc/>
     public async Task<bool> ExistsAsync(Guid senderId, Guid receiverId)
     {
         return await databaseContext.FriendInvitations
             .AnyAsync(i => i.SenderId == senderId && i.ReceiverId == receiverId);
+    }
+
+    /// <inheritdoc/>
+    public async Task<FriendInvitation?> GetByUsersAsync(Guid senderId, Guid receiverId)
+    {
+        return await databaseContext.FriendInvitations
+            .Include(i => i.Sender)
+            .Include(i => i.Receiver)
+            .FirstOrDefaultAsync(i => i.SenderId == senderId && i.ReceiverId == receiverId);
     }
 }

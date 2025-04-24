@@ -1,28 +1,16 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Application.DTOs.FriendInvitation;
 
 /// <summary>
-/// Data transfer object for friend invitations.
-/// Contains invitation details and related user information for API responses.
+/// Represents a data transfer object for a friend invitation.
 /// </summary>
-public class FriendInvitationDto
-{
-    /// <summary>
-    /// Gets or sets the unique identifier for the invitation.
-    /// </summary>
-    public Guid Id { get; set; }
-
-    /// <summary>
-    /// Gets or sets the date and time when the invitation was created.
-    /// </summary>
-    public DateTime CreatedAt { get; set; }
-
-    /// <summary>
-    /// Gets or sets information about the user who sent the invitation.
-    /// </summary>
-    public required UserDto Sender { get; set; }
-
-    /// <summary>
-    /// Gets or sets information about the user who received the invitation.
-    /// </summary>
-    public required UserDto Receiver { get; set; }
-}
+/// <param name="Id">The unique identifier for the invitation.</param>
+/// <param name="CreatedAt">The date and time when the invitation was created.</param>
+/// <param name="Sender">Information about the user who sent the invitation.</param>
+/// <param name="Receiver">Information about the user who received the invitation.</param>
+public record class FriendInvitationDto(
+    [property: Required] Guid Id,
+    [property: Required] DateTime CreatedAt,
+    [property: Required] UserDto Sender,
+    [property: Required] UserDto Receiver);

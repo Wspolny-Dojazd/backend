@@ -8,7 +8,7 @@ public class FriendInvitation
     /// <summary>
     /// Gets or sets the unique identifier for the invitation.
     /// </summary>
-    public Guid InvitationId { get; set; }
+    public Guid Id { get; set; }
 
     /// <summary>
     /// Gets or sets the identifier of the user who sent the invitation.
@@ -26,14 +26,12 @@ public class FriendInvitation
     public DateTime CreatedAt { get; set; }
 
     /// <summary>
-    /// Gets or sets the navigation property to the user who sent the invitation.
-    /// This is used for eager loading the related sender information.
+    /// Gets or sets the user who sent the invitation.
     /// </summary>
-    public required User Sender { get; set; }
+    public User Sender { get; set; } = default!;
 
     /// <summary>
-    /// Gets or sets the navigation property to the user who received the invitation.
-    /// This is used for eager loading the related receiver information.
+    /// Gets or sets the user who received the invitation.
     /// </summary>
-    public required User Receiver { get; set; }
+    public User Receiver { get; set; } = default!;
 }

@@ -41,17 +41,4 @@ public interface IUserRepository
     /// <param name="user">The user to update.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task UpdateAsync(User user);
-
-    /// <summary>
-    /// Creates a friendship relationship between two users.
-    /// </summary>
-    /// <param name="userId1">The ID of the first user in the friendship.</param>
-    /// <param name="userId2">The ID of the second user in the friendship.</param>
-    /// <returns>A task representing the asynchronous operation of adding the users as friends.</returns>
-    /// <remarks>
-    /// This method establishes a bidirectional friendship relationship,
-    /// meaning both users will appear in each other's friends list.
-    /// If the users are already friends, this operation should be idempotent.
-    /// </remarks>
-    Task AddFriendAsync(Guid userId1, Guid userId2);
 }

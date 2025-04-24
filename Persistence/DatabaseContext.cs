@@ -272,9 +272,9 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
         {
             entity.ToTable("friend_invitations");
 
-            entity.HasKey(e => e.InvitationId);
+            entity.HasKey(e => e.Id);
 
-            entity.Property(e => e.InvitationId)
+            entity.Property(e => e.Id)
                 .HasColumnName("invitation_id");
 
             entity.Property(e => e.SenderId)
