@@ -24,10 +24,10 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Model.FriendInvitation", b =>
                 {
-                    b.Property<Guid>("InvitationId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
-                        .HasColumnName("invitation_id");
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
@@ -41,7 +41,7 @@ namespace Persistence.Migrations
                         .HasColumnType("char(36)")
                         .HasColumnName("sender_id");
 
-                    b.HasKey("InvitationId")
+                    b.HasKey("Id")
                         .HasName("pk_friend_invitations");
 
                     b.HasIndex("ReceiverId")

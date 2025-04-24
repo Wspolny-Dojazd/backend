@@ -267,31 +267,30 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             .WithOne()
             .HasForeignKey<UserLocation>(ul => ul.UserId);
 
-        // Add FriendInvitation configuration
         _ = modelBuilder.Entity<FriendInvitation>(entity =>
         {
-            entity.ToTable("friend_invitations");
+            _ = entity.ToTable("friend_invitations");
 
-            entity.HasKey(e => e.Id);
+            _ = entity.HasKey(e => e.Id);
 
-            entity.Property(e => e.Id)
-                .HasColumnName("invitation_id");
+            _ = entity.Property(e => e.Id)
+                .HasColumnName("id");
 
-            entity.Property(e => e.SenderId)
+            _ = entity.Property(e => e.SenderId)
                 .HasColumnName("sender_id");
 
-            entity.Property(e => e.ReceiverId)
+            _ = entity.Property(e => e.ReceiverId)
                 .HasColumnName("receiver_id");
 
-            entity.Property(e => e.CreatedAt)
+            _ = entity.Property(e => e.CreatedAt)
                 .HasColumnName("created_at");
 
-            entity.HasOne(e => e.Sender)
+            _ = entity.HasOne(e => e.Sender)
                 .WithMany()
                 .HasForeignKey(e => e.SenderId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            entity.HasOne(e => e.Receiver)
+            _ = entity.HasOne(e => e.Receiver)
                 .WithMany()
                 .HasForeignKey(e => e.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);

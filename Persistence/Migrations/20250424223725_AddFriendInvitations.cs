@@ -15,14 +15,14 @@ namespace Persistence.Migrations
                 name: "friend_invitations",
                 columns: table => new
                 {
-                    invitation_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     sender_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     receiver_id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_friend_invitations", x => x.invitation_id);
+                    table.PrimaryKey("pk_friend_invitations", x => x.id);
                     table.ForeignKey(
                         name: "fk_friend_invitations_users_receiver_id",
                         column: x => x.receiver_id,
