@@ -24,7 +24,7 @@ public class GroupService(
     public async Task<GroupDto> GetByIdAsync(int id)
     {
         var group = await groupRepository.GetByIdAsync(id)
-                    ?? throw new GroupNotFoundException(id);
+            ?? throw new GroupNotFoundException(id);
 
         return mapper.Map<Group, GroupDto>(group);
     }
@@ -38,7 +38,6 @@ public class GroupService(
         {
             JoiningCode = await groupRepository.GenerateUniqueJoiningCodeAsync(),
             CreatorId = creatorId,
-            Routes = [],
             GroupMembers = [creator],
         };
 
@@ -64,16 +63,31 @@ public class GroupService(
     }
 
     /// <inheritdoc/>
-    public async Task<GroupDto> RemoveUserAsync(int id, Guid userId)
+    public async Task<GroupDto?> RemoveUserAsync(int groupId, Guid userId)
     {
-        var group = await groupRepository.GetByIdAsync(id)
-            ?? throw new GroupNotFoundException(id);
+        var (user, group) = await this.ValidateIfUserIsInGroup(userId, groupId);
 
-        var user = await userService.GetEntityByIdAsync(userId);
-
-        if (!group.GroupMembers.Contains(user))
+        if (group.CreatorId == userId)
         {
-            throw new UserNotInGroupException(id, userId);
+            await groupRepository.RemoveAsync(group);
+            return null;
+        }
+
+        await groupRepository.RemoveUserAsync(group, user);
+        return mapper.Map<Group, GroupDto>(group);
+    }
+
+    /// <inheritdoc/>
+    public async Task<GroupDto> KickUserAsync(int groupId, Guid userId)
+    {
+        var (user, group) = await this.ValidateIfUserIsInGroup(userId, groupId);
+
+        if (group.CreatorId == userId)
+        {
+            throw new AppException(
+                403,
+                "ACCESS_DENIED",
+                $"The user with ID {userId} is the creator of the group with ID {groupId} and cannot be kicked from it.");
         }
 
         await groupRepository.RemoveUserAsync(group, user);
@@ -99,5 +113,18 @@ public class GroupService(
         return members.Select(user => new GroupMemberDto(
             user.Id, user.Username, user.Nickname, mapper.Map<UserLocation?, UserLocationDto?>(user.UserLocation))
             { IsCreator = group.CreatorId == user.Id });
+    }
+
+    private async Task<(User ValidatedUser, Group ValidatedGroup)> ValidateIfUserIsInGroup(
+        Guid userId, int groupId)
+    {
+        var group = await groupRepository.GetByIdAsync(groupId)
+            ?? throw new GroupNotFoundException(groupId);
+
+        var user = await userService.GetEntityByIdAsync(userId);
+
+        return group.GroupMembers.Contains(user)
+            ? (user, group)
+            : throw new UserNotInGroupException(groupId, userId);
     }
 }

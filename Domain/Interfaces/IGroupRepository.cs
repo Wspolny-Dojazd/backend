@@ -29,6 +29,13 @@ public interface IGroupRepository
     Task AddAsync(Group group);
 
     /// <summary>
+    /// Removes a group from the context.
+    /// </summary>
+    /// <param name="group">The group to remove.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    Task RemoveAsync(Group group);
+
+    /// <summary>
     /// Adds a user to a group.
     /// </summary>
     /// <param name="group">The group to update.</param>

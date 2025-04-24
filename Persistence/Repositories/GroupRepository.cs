@@ -38,6 +38,13 @@ public class GroupRepository(DatabaseContext databaseContext)
     }
 
     /// <inheritdoc/>
+    public async Task RemoveAsync(Group group)
+    {
+        _ = databaseContext.Groups.Remove(group);
+        _ = await databaseContext.SaveChangesAsync();
+    }
+
+    /// <inheritdoc/>
     public async Task AddUserAsync(Group group, User user)
     {
         group.GroupMembers.Add(user);

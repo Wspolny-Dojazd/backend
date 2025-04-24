@@ -7,7 +7,7 @@
 /// As of now, Warsaw supports only <see cref="Tram"/>,
 /// <see cref="Metro"/>, <see cref="Rail"/>, and <see cref="Bus"/>.
 /// </remarks>
-public enum RouteType
+public enum RouteType : byte
 {
     /// <summary>
     /// Tram, streetcar, or light rail lines.

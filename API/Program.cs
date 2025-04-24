@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using Persistence.Repositories;
+using PublicTransportService.Infrastructure;
 using PublicTransportService.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +35,8 @@ builder.Services.AddSwaggerGen(options =>
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+
+    options.UseOneOfForPolymorphism();
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -63,8 +66,12 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+builder.Services.AddPTSInfrastructure(builder.Configuration);
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<IGroupPathRepository, GroupPathRepository>();
+builder.Services.AddScoped<IProposedPathRepository, ProposedPathRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IUserConfigurationRepository, UserConfigurationRepository>();
 builder.Services.AddScoped<IUserLocationRepository, UserLocationRepository>();
@@ -74,12 +81,15 @@ builder.Services.AddScoped<IFriendInvitationService, FriendInvitationService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<IGroupPathService, GroupPathService>();
+builder.Services.AddScoped<IProposedPathService, ProposedPathService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IJWTTokenService, JWTTokenService>();
 builder.Services.AddScoped<IUserConfigurationService, UserConfigurationService>();
 builder.Services.AddScoped<IUserLocationService, UserLocationService>();
 
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<IPathAssembler, PathAssembler>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services
@@ -163,6 +173,8 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Transport API v1");
     });
 }
+
+await app.Services.InitializePTSInfrastructureAsync();
 
 app.UseHttpsRedirection();
 

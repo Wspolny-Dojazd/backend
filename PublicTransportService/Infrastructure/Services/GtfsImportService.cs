@@ -9,7 +9,7 @@ using PublicTransportService.Application.Interfaces;
 using PublicTransportService.Domain.Entities;
 using PublicTransportService.Domain.Enums;
 using PublicTransportService.Infrastructure.Data;
-using PublicTransportService.Infrastructure.Services.GtfsImport.CsvModels;
+using PublicTransportService.Infrastructure.Models.GtfsCsv;
 
 namespace PublicTransportService.Infrastructure.Services;
 
@@ -78,12 +78,14 @@ internal class GtfsImportService(PTSDbContext context, ILogger<GtfsImportService
             _ = await context.Stops.ExecuteDeleteAsync();
             _ = await context.Shapes.ExecuteDeleteAsync();
             _ = await context.Routes.ExecuteDeleteAsync();
+            _ = await context.Trips.ExecuteDeleteAsync();
             logger.LogInformation("Existing GTFS data cleared.");
 
             await this.ImportRoutesAsync(Path.Combine(tempPath, "routes.txt"), chunkSize);
             await this.ImportShapesAsync(Path.Combine(tempPath, "shapes.txt"), chunkSize);
             await this.ImportStopsAsync(Path.Combine(tempPath, "stops.txt"), chunkSize);
             await this.ImportStopTimesAsync(Path.Combine(tempPath, "stop_times.txt"), chunkSize);
+            await this.ImportTripsAsync(Path.Combine(tempPath, "trips.txt"), chunkSize);
 
             _ = await context.SaveChangesAsync();
             await transaction.CommitAsync();
@@ -118,25 +120,15 @@ internal class GtfsImportService(PTSDbContext context, ILogger<GtfsImportService
         }
     }
 
-    private static DateTime TimeSpanToDateTime(string time)
+    private static int ParseTimeToSeconds(string time)
     {
-        // GTFS allows extended hour format like 25:10:00, which represents 1:10 AM on the next day.
-        // This method parses such values safely and returns a proper DateTime.
         var parts = time.Split(':');
-
-        if (parts.Length != 3
+        return parts.Length != 3
             || !int.TryParse(parts[0], out var hours)
             || !int.TryParse(parts[1], out var minutes)
-            || !int.TryParse(parts[2], out var seconds))
-        {
-            throw new FormatException($"Invalid GTFS time format: '{time}'");
-        }
-
-        var daysToAdd = hours / 24;
-        var normalizedHours = hours % 24;
-
-        var timeSpan = new TimeSpan(normalizedHours, minutes, seconds);
-        return DateTime.Today.AddDays(daysToAdd).Add(timeSpan);
+            || !int.TryParse(parts[2], out var seconds)
+            ? throw new FormatException($"Invalid GTFS time format: '{time}'")
+            : (hours * 3600) + (minutes * 60) + seconds;
     }
 
     private async Task ImportRoutesAsync(string path, int chunkSize)
@@ -187,7 +179,7 @@ internal class GtfsImportService(PTSDbContext context, ILogger<GtfsImportService
                 Latitude = double.Parse(record.stop_lat, CultureInfo.InvariantCulture),
                 Longitude = double.Parse(record.stop_lon, CultureInfo.InvariantCulture),
                 LocationType = (LocationType)int.Parse(record.location_type),
-                ParentStationId = record.parent_station,
+                ParentStation = record.parent_station,
                 WheelchairBoarding = record.wheelchair_boarding == "1",
                 NameStem = record.stop_name_stem,
                 TownName = record.town_name,
@@ -209,13 +201,36 @@ internal class GtfsImportService(PTSDbContext context, ILogger<GtfsImportService
                 TripId = record.trip_id,
                 StopId = record.stop_id,
                 StopSequence = int.Parse(record.stop_sequence),
-                ArrivalTime = TimeSpanToDateTime(record.arrival_time),
-                DepartureTime = TimeSpanToDateTime(record.departure_time),
+                ArrivalTime = ParseTimeToSeconds(record.arrival_time),
+                DepartureTime = ParseTimeToSeconds(record.departure_time),
                 PickupType = (PickupType)int.Parse(record.pickup_type),
                 DropOffType = (DropOffType)int.Parse(record.drop_off_type),
             },
             context.StopTimes,
             "stop times",
+            chunkSize);
+    }
+
+    private async Task ImportTripsAsync(string path, int chunkSize)
+    {
+        await this.ImportInBatchesAsync<TripCsv, Trip>(
+            path,
+            record => new Trip
+            {
+                Id = record.trip_id,
+                RouteId = record.route_id,
+                ServiceId = record.service_id,
+                HeadSign = record.trip_headsign,
+                ShortName = record.trip_short_name,
+                ShapeId = record.shape_id,
+                DirectionId = int.Parse(record.direction_id),
+                WheelchairAccessible = record.wheelchair_accessible == "1",
+                HiddenBlockId = record.hidden_block_id,
+                Brigade = record.brigade,
+                FleetType = record.fleet_type,
+            },
+            context.Trips,
+            "trips",
             chunkSize);
     }
 
