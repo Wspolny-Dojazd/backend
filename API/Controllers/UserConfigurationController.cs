@@ -2,7 +2,6 @@ using API.Extensions;
 using API.Models.Errors;
 using Application.DTOs;
 using Application.Interfaces;
-using Domain.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;

@@ -49,6 +49,11 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
     public DbSet<ProposedPath> ProposedPaths { get; set; }
 
     /// <summary>
+    /// Gets or sets the database set for friend invitations.
+    /// </summary>
+    public DbSet<FriendInvitation> FriendInvitations { get; set; }
+
+    /// <summary>
     /// Configures the entity model and relationships for the database schema.
     /// </summary>
     /// <param name="modelBuilder">The builder used to construct the model for this context.</param>
@@ -261,5 +266,34 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             .HasOne(u => u.UserLocation)
             .WithOne()
             .HasForeignKey<UserLocation>(ul => ul.UserId);
+
+        _ = modelBuilder.Entity<FriendInvitation>(entity =>
+        {
+            _ = entity.ToTable("friend_invitations");
+
+            _ = entity.HasKey(e => e.Id);
+
+            _ = entity.Property(e => e.Id)
+                .HasColumnName("id");
+
+            _ = entity.Property(e => e.SenderId)
+                .HasColumnName("sender_id");
+
+            _ = entity.Property(e => e.ReceiverId)
+                .HasColumnName("receiver_id");
+
+            _ = entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at");
+
+            _ = entity.HasOne(e => e.Sender)
+                .WithMany()
+                .HasForeignKey(e => e.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            _ = entity.HasOne(e => e.Receiver)
+                .WithMany()
+                .HasForeignKey(e => e.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
     }
 }

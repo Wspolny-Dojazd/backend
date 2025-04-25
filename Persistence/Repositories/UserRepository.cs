@@ -15,6 +15,7 @@ public class UserRepository(DatabaseContext databaseContext)
     public async Task<User?> GetByIdAsync(Guid id)
     {
         return await databaseContext.Users
+            .Include(u => u.Friends)
             .Where(u => u.Id == id)
             .FirstOrDefaultAsync();
     }
