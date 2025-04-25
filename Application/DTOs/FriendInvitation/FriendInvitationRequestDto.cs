@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Application.DTOs.FriendInvitation;
 
 /// <summary>
-/// Represents a data transfer object for creating a friend invitation.
+/// Represents a data transfer object for sending a friend invitation.
 /// </summary>
 public class FriendInvitationRequestDto
 {

@@ -13,6 +13,7 @@ namespace Application.Services;
 /// <param name="invitationRepository">The repository for accessing friend invitation data.</param>
 /// <param name="friendService">The service for managing user friendships.</param>
 /// <param name="userRepository">The repository for accessing user data.</param>
+/// <param name="userService">The service for managing user data.</param>
 /// <param name="mapper">The object mapper.</param>
 public class FriendInvitationService(
     IFriendInvitationRepository invitationRepository,

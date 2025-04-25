@@ -8,7 +8,7 @@ namespace Application.Interfaces;
 public interface IFriendInvitationService
 {
     /// <summary>
-    /// Sends a friend invitation from one user to another.
+    /// Sends a new friend invitation from one user to another.
     /// </summary>
     /// <param name="senderId">The unique identifier of the user sending the invitation.</param>
     /// <param name="dto">The data transfer object containing the invitation details.</param>

@@ -8,10 +8,10 @@ namespace Application.Interfaces;
 public interface IFriendService
 {
     /// <summary>
-    /// Creates a new friendship between two users.
+    /// Creates a mutual friendship between two users.
     /// </summary>
-    /// <param name="userId">The unique identifier of the user initiating the friendship.</param>
-    /// <param name="friendId">The unique identifier of the user to be added as a friend.</param>
+    /// <param name="userId">The unique identifier of one of the users.</param>
+    /// <param name="friendId">The unique identifier of the other user.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task CreateFriendshipAsync(Guid userId, Guid friendId);
 

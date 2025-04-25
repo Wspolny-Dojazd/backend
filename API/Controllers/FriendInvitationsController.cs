@@ -16,18 +16,21 @@ public class FriendInvitationsController(IFriendInvitationService friendInvitati
     : ControllerBase
 {
     /// <summary>
-    /// Creates a new friend invitation from the authenticated user to another user.
+    /// Sends a new friend invitation from the authenticated user to another user.
     /// </summary>
     /// <param name="dto">The friend invitation request data.</param>
-    /// <returns>The created friend invitation.</returns>
-    /// <response code="200">Friend invitation created successfully.</response>
-    /// <response code="400">Self-invitation, already sent, already friends, or reciprocal invitation exists.</response>
+    /// <returns>The sent friend invitation.</returns>
+    /// <response code="200">Friend invitation sent successfully.</response>
+    /// <response code="400">
+    /// Self-invitation, already sent, already friends, or reciprocal invitation exists.
+    /// </response>
     /// <response code="404">The recipient user was not found.</response>
     [HttpPost]
     [ProducesResponseType(typeof(FriendInvitationDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<FriendInvitationErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<FriendInvitationErrorCode>), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<FriendInvitationDto>> SendInvitation([FromBody] FriendInvitationRequestDto dto)
+    public async Task<ActionResult<FriendInvitationDto>> SendInvitation(
+        [FromBody] FriendInvitationRequestDto dto)
     {
         var userId = this.User.GetUserId();
         var invitation = await friendInvitationService.SendAsync(userId, dto);
@@ -55,7 +58,7 @@ public class FriendInvitationsController(IFriendInvitationService friendInvitati
     /// <response code="200">The received invitations were retrieved successfully.</response>
     [HttpGet("received")]
     [ProducesResponseType(typeof(IEnumerable<FriendInvitationDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<List<FriendInvitationDto>>> GetReceivedInvitations()
+    public async Task<ActionResult<IEnumerable<FriendInvitationDto>>> GetReceivedInvitations()
     {
         var userId = this.User.GetUserId();
         var invitations = await friendInvitationService.GetReceivedAsync(userId);
