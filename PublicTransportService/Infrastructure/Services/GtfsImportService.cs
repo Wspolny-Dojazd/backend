@@ -87,6 +87,7 @@ internal class GtfsImportService(PTSDbContext context, ILogger<GtfsImportService
             await this.ImportStopTimesAsync(Path.Combine(tempPath, "stop_times.txt"), chunkSize);
             await this.ImportTripsAsync(Path.Combine(tempPath, "trips.txt"), chunkSize);
 
+            await this.UpdateGtfsMetadataAsync();
             _ = await context.SaveChangesAsync();
             await transaction.CommitAsync();
 
@@ -372,5 +373,24 @@ internal class GtfsImportService(PTSDbContext context, ILogger<GtfsImportService
         }
 
         Console.Write("\r");
+    }
+
+    private async Task UpdateGtfsMetadataAsync()
+    {
+        var metadata = await context.GtfsMetadata.FirstOrDefaultAsync();
+        if (metadata is null)
+        {
+            metadata = new GtfsMetadata
+            {
+                LastUpdated = DateTime.UtcNow,
+            };
+
+            _ = await context.GtfsMetadata.AddAsync(metadata);
+        }
+        else
+        {
+            metadata.LastUpdated = DateTime.UtcNow;
+            _ = context.GtfsMetadata.Update(metadata);
+        }
     }
 }
