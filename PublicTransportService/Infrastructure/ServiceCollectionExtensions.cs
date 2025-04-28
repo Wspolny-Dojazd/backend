@@ -41,7 +41,6 @@ public static class ServiceCollectionExtensions
 
         _ = services.AddHostedService<RaptorDataCacheRefresher>();
 
-
         return services;
     }
 
