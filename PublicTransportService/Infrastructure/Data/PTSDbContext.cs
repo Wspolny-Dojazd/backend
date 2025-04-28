@@ -11,6 +11,11 @@ public class PTSDbContext(DbContextOptions<PTSDbContext> options)
     : DbContext(options)
 {
     /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing GTFS metadata.
+    /// </summary>
+    public DbSet<GtfsMetadata> GtfsMetadata { get; set; }
+
+    /// <summary>
     /// Gets or sets the <see cref="DbSet{TEntity}"/> representing GTFS routes.
     /// </summary>
     public DbSet<Route> Routes { get; set; }

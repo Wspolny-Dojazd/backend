@@ -35,8 +35,12 @@ public static class ServiceCollectionExtensions
             .AddScoped<IRouteRepository, RouteRepository>()
             .AddScoped<IShapeRepository, ShapeRepository>()
             .AddScoped<IStopRepository, StopRepository>()
-            .AddScoped<ITripRepository, TripRepository>()
-            .AddSingleton<IRaptorDataCache, RaptorDataCache>();
+            .AddScoped<ITripRepository, TripRepository>();
+
+        _ = services.AddSingleton<IRaptorDataCache, RaptorDataCache>();
+
+        _ = services.AddHostedService<RaptorDataCacheRefresher>();
+
 
         return services;
     }
