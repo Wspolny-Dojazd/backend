@@ -112,7 +112,6 @@ public class AuthService(
         return new AuthResponseDto(user.Id, user.Username, user.Nickname, user.Email, token, user.RefreshToken);
     }
 
-
     /// <inheritdoc/>
     public async Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenRequestDto request)
     {
