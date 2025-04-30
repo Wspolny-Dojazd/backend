@@ -97,6 +97,28 @@ public class AuthService(
     }
 
     /// <inheritdoc/>
+    public async Task<AuthResponseDto> ChangePasswordAsync(Guid userId, ChangePasswordRequestDto request)
+    {
+        var user = await userRepository.GetByIdAsync(userId)
+            ?? throw new UserNotFoundException(userId);
+        var isPasswordValid = passwordHasher.Verify(user.PasswordHash, request.CurrentPassword);
+        if (!isPasswordValid)
+        {
+            throw new AppException(400, "INVALID_CURRENT_PASSWORD");
+        }
+
+        user.PasswordHash = passwordHasher.Hash(request.NewPassword);
+
+        user.RefreshToken = GenerateRefreshToken();
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(RefreshTokenExpiryDays);
+
+        await userRepository.UpdateAsync(user);
+
+        var token = jwtTokenService.GenerateToken(user);
+        return new AuthResponseDto(user.Id, user.Username, user.Nickname, user.Email, token, user.RefreshToken);
+    }
+
+    /// <inheritdoc/>
     public async Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenRequestDto request)
     {
         var principal = jwtTokenService.GetPrincipalFromExpiredToken(request.Token);

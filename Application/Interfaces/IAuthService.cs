@@ -35,4 +35,12 @@ public interface IAuthService
     /// <param name="request">The refresh token request.</param>
     /// <returns>The authentication response.</returns>
     Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenRequestDto request);
+
+    /// <summary>
+    /// Changes the password of the authenticated user.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user.</param>
+    /// <param name="request">The change-password request.</param>
+    /// <returns>The authentication response.</returns>
+    Task<AuthResponseDto> ChangePasswordAsync(Guid userId, ChangePasswordRequestDto request);
 }

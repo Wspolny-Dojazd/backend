@@ -24,4 +24,18 @@ public enum AuthErrorCode
     /// The token has expired and is no longer valid.
     /// </summary>
     EXPIRED_TOKEN,
+
+    /// <summary>
+    /// The specified user was not found.
+    /// </summary>
+    USER_NOT_FOUND,
+
+    /// <summary>
+    /// The provided current password is incorrect.
+    /// </summary>
+    /// <remarks>
+    /// Used when the user attempts to change their password and the provided current password
+    /// does not match the stored password.
+    /// </remarks>
+    INVALID_CURRENT_PASSWORD,
 }
