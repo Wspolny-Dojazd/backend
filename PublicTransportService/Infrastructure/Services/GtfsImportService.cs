@@ -1,14 +1,13 @@
 ﻿using System.Diagnostics;
-using System.Globalization;
 using System.IO.Compression;
-using CsvHelper;
-using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using PublicTransportService.Application.Interfaces;
 using PublicTransportService.Domain.Entities;
-using PublicTransportService.Domain.Enums;
 using PublicTransportService.Infrastructure.Data;
+using PublicTransportService.Infrastructure.Importing;
+using PublicTransportService.Infrastructure.Mapping;
 using PublicTransportService.Infrastructure.Models.GtfsCsv;
 
 namespace PublicTransportService.Infrastructure.Services;
@@ -17,14 +16,18 @@ namespace PublicTransportService.Infrastructure.Services;
 /// Represents a service for importing GTFS data into the database.
 /// </summary>
 /// <param name="context">The database context.</param>
+/// <param name="importStrategy">The import strategy.</param>
 /// <param name="logger">The logger.</param>
-internal class GtfsImportService(PTSDbContext context, ILogger<GtfsImportService> logger)
+internal class GtfsImportService(
+    PTSDbContext context,
+    IGtfsImportStrategy importStrategy,
+    ILogger<GtfsImportService> logger)
     : IGtfsImportService
 {
     private const string GtfsUrl = "https://mkuran.pl/gtfs/warsaw.zip";
 
     /// <inheritdoc/>
-    public async Task ImportAsync(string? localZipPath = null, int chunkSize = 10000)
+    public async Task ImportAsync(string? localZipPath, int chunkSize)
     {
         var stopwatch = Stopwatch.StartNew();
 
@@ -37,10 +40,13 @@ internal class GtfsImportService(PTSDbContext context, ILogger<GtfsImportService
         var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         var tempDir = Directory.CreateDirectory(tempPath);
 
-        logger.LogInformation("Starting GTFS import from {Url}", GtfsUrl);
         logger.LogDebug("Temporary directory created at {Path}", tempPath);
 
-        await using var transaction = await context.Database.BeginTransactionAsync();
+        IDbContextTransaction? transaction = null;
+        if (importStrategy.RequiresTransaction)
+        {
+            transaction = await context.Database.BeginTransactionAsync();
+        }
 
         try
         {
@@ -48,349 +54,139 @@ internal class GtfsImportService(PTSDbContext context, ILogger<GtfsImportService
 
             if (!string.IsNullOrWhiteSpace(localZipPath))
             {
-                if (!File.Exists(localZipPath))
-                {
-                    throw new FileNotFoundException("Local GTFS file not found.", localZipPath);
-                }
-
                 File.Copy(localZipPath, zipPath, overwrite: true);
                 logger.LogInformation("Using local GTFS file at {Path}", localZipPath);
             }
             else
             {
-                var downloadStopwatch = Stopwatch.StartNew();
-
                 using var httpClient = new HttpClient();
                 await this.DownloadGtfsWithProgressAsync(httpClient, zipPath);
-
-                var downloadTime = downloadStopwatch.Elapsed.TotalSeconds;
-                logger.LogInformation(
-                    "Downloaded GTFS zip from {Url} in {Time:N2} seconds",
-                    GtfsUrl,
-                    downloadTime);
             }
 
             ZipFile.ExtractToDirectory(zipPath, tempPath);
             logger.LogDebug("Extracted GTFS files to {Path}", tempPath);
 
-            logger.LogInformation("Clearing existing GTFS data...");
-            _ = await context.StopTimes.ExecuteDeleteAsync();
-            _ = await context.Stops.ExecuteDeleteAsync();
-            _ = await context.Shapes.ExecuteDeleteAsync();
-            _ = await context.Routes.ExecuteDeleteAsync();
-            _ = await context.Trips.ExecuteDeleteAsync();
-            logger.LogInformation("Existing GTFS data cleared.");
+            await importStrategy.ImportAsync<StopCsv, Stop>(
+                Path.Combine(tempPath, "stops.txt"),
+                GtfsCsvMapper.ParseStops,
+                chunkSize);
 
-            await this.ImportRoutesAsync(Path.Combine(tempPath, "routes.txt"), chunkSize);
-            await this.ImportShapesAsync(Path.Combine(tempPath, "shapes.txt"), chunkSize);
-            await this.ImportStopsAsync(Path.Combine(tempPath, "stops.txt"), chunkSize);
-            await this.ImportStopTimesAsync(Path.Combine(tempPath, "stop_times.txt"), chunkSize);
-            await this.ImportTripsAsync(Path.Combine(tempPath, "trips.txt"), chunkSize);
+            await importStrategy.ImportAsync<RouteCsv, Route>(
+                Path.Combine(tempPath, "routes.txt"),
+                GtfsCsvMapper.ParseRoutes,
+                chunkSize);
+
+            await importStrategy.ImportAsync<ShapeCsv, Shape>(
+                Path.Combine(tempPath, "shapes.txt"),
+                GtfsCsvMapper.ParseShapes,
+                chunkSize);
+
+            await importStrategy.ImportAsync<TripCsv, Trip>(
+                Path.Combine(tempPath, "trips.txt"),
+                GtfsCsvMapper.ParseTrips,
+                chunkSize);
+
+            await importStrategy.ImportAsync<StopTimeCsv, StopTime>(
+                Path.Combine(tempPath, "stop_times.txt"),
+                GtfsCsvMapper.ParseStopTimes,
+                chunkSize);
 
             await this.UpdateGtfsMetadataAsync();
-            _ = await context.SaveChangesAsync();
-            await transaction.CommitAsync();
+
+            if (transaction is not null)
+            {
+                await transaction.CommitAsync();
+                transaction.Dispose();
+            }
 
             logger.LogInformation("GTFS import completed successfully");
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "GTFS import failed: {Message}", ex.Message);
-            await transaction.RollbackAsync();
             throw;
         }
         finally
         {
             stopwatch.Stop();
-            logger.LogInformation("GTFS import took {Time} seconds", stopwatch.Elapsed.TotalSeconds);
-
-            try
-            {
-                tempDir.Delete(true);
-                logger.LogDebug("Deleted temporary directory at {Path}", tempPath);
-            }
-            catch (Exception ex)
-            {
-                logger.LogWarning(ex, "Could not delete temp folder: {Message}", ex.Message);
-            }
-
             context.ChangeTracker.AutoDetectChangesEnabled = originalAutoDetect;
             context.ChangeTracker.QueryTrackingBehavior = originalTracking;
 
-            logger.LogInformation("Restored original change tracking settings");
+            try
+            {
+                Directory.Delete(tempPath, recursive: true);
+            }
+            catch
+            {
+                logger.LogError("Failed to delete temporary directory {Path}", tempPath);
+            }
+
+            logger.LogInformation("GTFS import took {Time:N2} seconds", stopwatch.Elapsed.TotalSeconds);
         }
     }
 
-    private static int ParseTimeToSeconds(string time)
+    private async Task DownloadGtfsWithProgressAsync(HttpClient httpClient, string destinationFilePath)
     {
-        var parts = time.Split(':');
-        return parts.Length != 3
-            || !int.TryParse(parts[0], out var hours)
-            || !int.TryParse(parts[1], out var minutes)
-            || !int.TryParse(parts[2], out var seconds)
-            ? throw new FormatException($"Invalid GTFS time format: '{time}'")
-            : (hours * 3600) + (minutes * 60) + seconds;
-    }
+        logger.LogInformation("Downloading GTFS from {Url}", GtfsUrl);
+        var downloadStopwatch = Stopwatch.StartNew();
 
-    private async Task ImportRoutesAsync(string path, int chunkSize)
-    {
-        await this.ImportInBatchesAsync<RouteCsv, Route>(
-            path,
-            record => new Route
-            {
-                Id = record.route_id,
-                AgencyId = record.agency_id,
-                ShortName = record.route_short_name,
-                LongName = record.route_long_name,
-                Type = (RouteType)int.Parse(record.route_type),
-                Color = record.route_color,
-                TextColor = record.route_text_color,
-            },
-            context.Routes,
-            "routes",
-            chunkSize);
-    }
-
-    private async Task ImportShapesAsync(string path, int chunkSize)
-    {
-        await this.ImportInBatchesAsync<ShapeCsv, Shape>(
-            path,
-            record => new Shape
-            {
-                Id = record.shape_id,
-                PtSequence = int.Parse(record.shape_pt_sequence),
-                PtLatitude = double.Parse(record.shape_pt_lat, CultureInfo.InvariantCulture),
-                PtLongitude = double.Parse(record.shape_pt_lon, CultureInfo.InvariantCulture),
-            },
-            context.Shapes,
-            "shapes",
-            chunkSize);
-    }
-
-    private async Task ImportStopsAsync(string path, int chunkSize)
-    {
-        await this.ImportInBatchesAsync<StopCsv, Stop>(
-            path,
-            record => new Stop
-            {
-                Id = record.stop_id,
-                Name = record.stop_name,
-                Code = record.stop_code,
-                PlatformCode = record.platform_code,
-                Latitude = double.Parse(record.stop_lat, CultureInfo.InvariantCulture),
-                Longitude = double.Parse(record.stop_lon, CultureInfo.InvariantCulture),
-                LocationType = (LocationType)int.Parse(record.location_type),
-                ParentStation = record.parent_station,
-                WheelchairBoarding = record.wheelchair_boarding == "1",
-                NameStem = record.stop_name_stem,
-                TownName = record.town_name,
-                StreetName = record.street_name,
-            },
-            context.Stops,
-            "stops",
-            chunkSize);
-    }
-
-    private async Task ImportStopTimesAsync(string path, int chunkSize)
-    {
-        var currentId = 1;
-        await this.ImportInBatchesAsync<StopTimeCsv, StopTime>(
-            path,
-            record => new StopTime
-            {
-                Id = currentId++,
-                TripId = record.trip_id,
-                StopId = record.stop_id,
-                StopSequence = int.Parse(record.stop_sequence),
-                ArrivalTime = ParseTimeToSeconds(record.arrival_time),
-                DepartureTime = ParseTimeToSeconds(record.departure_time),
-                PickupType = (PickupType)int.Parse(record.pickup_type),
-                DropOffType = (DropOffType)int.Parse(record.drop_off_type),
-            },
-            context.StopTimes,
-            "stop times",
-            chunkSize);
-    }
-
-    private async Task ImportTripsAsync(string path, int chunkSize)
-    {
-        await this.ImportInBatchesAsync<TripCsv, Trip>(
-            path,
-            record => new Trip
-            {
-                Id = record.trip_id,
-                RouteId = record.route_id,
-                ServiceId = record.service_id,
-                HeadSign = record.trip_headsign,
-                ShortName = record.trip_short_name,
-                ShapeId = record.shape_id,
-                DirectionId = int.Parse(record.direction_id),
-                WheelchairAccessible = record.wheelchair_accessible == "1",
-                HiddenBlockId = record.hidden_block_id,
-                Brigade = record.brigade,
-                FleetType = record.fleet_type,
-            },
-            context.Trips,
-            "trips",
-            chunkSize);
-    }
-
-    private async Task ImportInBatchesAsync<TCsv, TEntity>(
-        string path,
-        Func<TCsv, TEntity> map,
-        DbSet<TEntity> dbSet,
-        string entityLabel,
-        int batchSize)
-        where TCsv : class
-        where TEntity : class
-    {
-        logger.LogInformation("Importing {Entity} from {Path}", entityLabel, path);
-
-        using var reader = new StreamReader(path);
-        using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
-        {
-            HeaderValidated = null,
-            MissingFieldFound = null,
-        });
-
-        var batch = new List<TEntity>(batchSize);
-        var count = 0;
-
-        var allRecords = new List<TEntity>();
-        await foreach (var record in csv.GetRecordsAsync<TCsv>())
-        {
-            allRecords.Add(map(record));
-        }
-
-        var totalChunks = (int)Math.Ceiling(allRecords.Count / (double)batchSize);
-
-        logger.LogInformation(
-            "Total records of {Entity}: {Count}. Processing in {Chunks} chunks of {BatchSize}",
-            entityLabel,
-            allRecords.Count,
-            totalChunks,
-            batchSize);
-
-        var globalStopwatch = Stopwatch.StartNew();
-        var chunkTimes = new List<TimeSpan>();
-
-        for (int i = 0; i < totalChunks; i++)
-        {
-            var chunkStopwatch = Stopwatch.StartNew();
-            var chunk = allRecords.Skip(i * batchSize).Take(batchSize);
-
-            const int RecentChunkPercentage = 10;
-            var recentCount = (int)Math.Ceiling(totalChunks * RecentChunkPercentage / 100.0);
-            var recentChunkTimes = chunkTimes.Count <= recentCount
-                ? chunkTimes
-                : chunkTimes.TakeLast(recentCount);
-
-            var averageChunkTime = recentChunkTimes.Any()
-                ? TimeSpan.FromMilliseconds(recentChunkTimes.Average(t => t.TotalMilliseconds))
-                : TimeSpan.Zero;
-
-            var percent = (i + 1) * 100.0 / totalChunks;
-            var remainingChunks = totalChunks - (i + 1);
-            var eta = TimeSpan.FromMilliseconds(averageChunkTime.TotalMilliseconds * remainingChunks);
-
-            var message = $"\rSaving chunk {i + 1}/{totalChunks} ({percent:N1}%)... ETA: {eta:hh\\:mm\\:ss}";
-            Console.Write(message.PadRight(100));
-
-            await dbSet.AddRangeAsync(chunk);
-            _ = await context.SaveChangesAsync();
-            context.ChangeTracker.Clear();
-
-            chunkStopwatch.Stop();
-            chunkTimes.Add(chunkStopwatch.Elapsed);
-
-            logger.LogDebug("Chunk {Index}/{Total} saved.", i + 1, totalChunks);
-            count += chunk.Count();
-        }
-
-        Console.Write("\r");
-        logger.LogInformation(
-            "Imported {Count} {Entity} in {Time:N2} seconds",
-            count,
-            entityLabel,
-            globalStopwatch.Elapsed.TotalSeconds);
-    }
-
-    private async Task DownloadGtfsWithProgressAsync(HttpClient httpClient, string destinationPath)
-    {
         using var response = await httpClient.SendAsync(
             new HttpRequestMessage(HttpMethod.Get, GtfsUrl),
             HttpCompletionOption.ResponseHeadersRead);
 
         _ = response.EnsureSuccessStatusCode();
+        var contentLength = response.Content.Headers.ContentLength
+            ?? throw new InvalidOperationException("Unknown content length");
 
-        var contentLength = response.Content.Headers.ContentLength;
+        await using var contentStream = await response.Content.ReadAsStreamAsync();
+        await using var fileStream = File.Create(destinationFilePath);
+        var buffer = new byte[8192];
+        long totalBytesRead = 0;
+        var progressStopwatch = Stopwatch.StartNew();
 
-        if (contentLength is null)
+        int bytesRead;
+        while ((bytesRead = await contentStream.ReadAsync(buffer)) > 0)
         {
-            logger.LogWarning("Cannot determine file size. Downloading without progress...");
-            await using var stream = await response.Content.ReadAsStreamAsync();
-            await using var fileStream = File.Create(destinationPath);
-            await stream.CopyToAsync(fileStream);
-            return;
-        }
+            await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
+            totalBytesRead += bytesRead;
+            var downloadSpeed = totalBytesRead / progressStopwatch.Elapsed.TotalSeconds / 1_000_000;
+            var progressPercentage = (int)(totalBytesRead * 100 / contentLength);
 
-        const int DownloadBufferSize = 8_192;
-        var buffer = new byte[DownloadBufferSize];
+            var estimatedTimeRemaining = TimeSpan.FromSeconds(
+                (contentLength - totalBytesRead) / (downloadSpeed * 1_000_000));
 
-        const double Megabyte = 1_000_000.0;
-        var totalBytes = contentLength.Value;
-        long totalRead = 0;
-        int read;
-
-        using var contentStream = await response.Content.ReadAsStreamAsync();
-        await using var fileContentStream = File.Create(destinationPath);
-
-        var lastProgress = -1;
-        var stopwatch = Stopwatch.StartNew();
-
-        while ((read = await contentStream.ReadAsync(buffer)) > 0)
-        {
-            await fileContentStream.WriteAsync(buffer.AsMemory(0, read));
-            totalRead += read;
-
-            var progress = (int)(totalRead * 100 / totalBytes);
-            if (progress != lastProgress)
-            {
-                var elapsedSeconds = stopwatch.Elapsed.TotalSeconds;
-                var speed = elapsedSeconds > 0 ? totalRead / elapsedSeconds : 0;
-                var speedMBs = speed / Megabyte;
-                var remainingBytes = totalBytes - totalRead;
-                var etaSeconds = speed > 0 ? remainingBytes / speed : 0;
-
-                var message =
-                    $"\rDownloading GTFS... {totalRead / Megabyte:N1} MB / {totalBytes / Megabyte:N1} " +
-                    $"MB ({progress}%) - {speedMBs:N2} MB/s, ETA: {TimeSpan.FromSeconds(etaSeconds):hh\\:mm\\:ss}";
-
-                Console.Write(message.PadRight(100));
-
-                lastProgress = progress;
-            }
+            Console.Write(
+                $"\rDownloading GTFS... {progressPercentage}% - {downloadSpeed:N2} MB/s, " +
+                $"ETA: {estimatedTimeRemaining:hh\\:mm\\:ss}".PadRight(80));
         }
 
         Console.Write("\r");
+
+        progressStopwatch.Stop();
+        downloadStopwatch.Stop();
+
+        logger.LogInformation(
+            "Downloaded GTFS in {Time:N2} seconds.",
+            downloadStopwatch.Elapsed.TotalSeconds);
     }
 
     private async Task UpdateGtfsMetadataAsync()
     {
-        var metadata = await context.GtfsMetadata.FirstOrDefaultAsync();
+        var metadata = await context.GtfsMetadata.SingleOrDefaultAsync();
         if (metadata is null)
         {
-            metadata = new GtfsMetadata
-            {
-                LastUpdated = DateTime.UtcNow,
-            };
-
+            logger.LogInformation("GTFS metadata not found — creating new entry");
+            metadata = new GtfsMetadata { LastUpdated = DateTime.UtcNow };
             _ = await context.GtfsMetadata.AddAsync(metadata);
         }
         else
         {
+            logger.LogInformation("Updating LastUpdated timestamp in GTFS metadata");
             metadata.LastUpdated = DateTime.UtcNow;
             _ = context.GtfsMetadata.Update(metadata);
         }
+
+        _ = await context.SaveChangesAsync();
+        logger.LogInformation("GTFS metadata updated with timestamp: {Timestamp}", metadata.LastUpdated);
     }
 }

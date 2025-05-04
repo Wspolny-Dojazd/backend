@@ -1,10 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using MySqlConnector;
 using PublicTransportService.Application.Interfaces;
 using PublicTransportService.Domain.Interfaces;
 using PublicTransportService.Infrastructure.Data;
 using PublicTransportService.Infrastructure.Data.Repositories;
+using PublicTransportService.Infrastructure.Importing;
 using PublicTransportService.Infrastructure.PathFinding.Raptor;
 using PublicTransportService.Infrastructure.Services;
 
@@ -35,7 +38,30 @@ public static class ServiceCollectionExtensions
             .AddScoped<IRouteRepository, RouteRepository>()
             .AddScoped<IShapeRepository, ShapeRepository>()
             .AddScoped<IStopRepository, StopRepository>()
-            .AddScoped<ITripRepository, TripRepository>();
+            .AddScoped<ITripRepository, TripRepository>()
+            .AddScoped<IGtfsImportStrategy>(provider =>
+            {
+                var builder = new MySqlConnectionStringBuilder(connectionString!);
+                var context = provider.GetRequiredService<PTSDbContext>();
+
+                if (builder.AllowLoadLocalInfile)
+                {
+                    var logger = provider.GetRequiredService<ILogger<BulkGtfsImportStrategy>>();
+                    return new BulkGtfsImportStrategy(context, logger);
+                }
+                else
+                {
+                    var logger = provider.GetRequiredService<ILogger<EfCoreGtfsImportStrategy>>();
+
+                    logger.LogWarning(
+                        "Local file loading is disabled. " +
+                        "Using EF insert instead of bulk insert. " +
+                        "This may be slow. " +
+                        "To enable it, set 'AllowLoadLocalInfile=true' in the connection string.");
+
+                    return new EfCoreGtfsImportStrategy(context, logger);
+                }
+            });
 
         _ = services.AddSingleton<IRaptorDataCache, RaptorDataCache>();
 
