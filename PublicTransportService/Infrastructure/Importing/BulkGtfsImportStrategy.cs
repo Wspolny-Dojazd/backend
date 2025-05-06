@@ -43,17 +43,19 @@ internal sealed class BulkGtfsImportStrategy(PTSDbContext context, ILogger<BulkG
         var processed = 0;
         logger.LogInformation("Preparing and inserting chunks into {Table}", tmpTableName);
         var chunks = CsvChunkGenerator.GenerateChunksAsync(path, chunkSize, map);
+
+        var bulkConfig = new BulkConfig
+        {
+            CustomDestinationTableName = tmpTableName,
+            SetOutputIdentity = false,
+            EnableStreaming = true,
+            PreserveInsertOrder = false,
+            UseTempDB = false,
+        };
+
         await foreach (var chunk in chunks)
         {
-            await context.BulkInsertAsync(chunk, new BulkConfig
-            {
-                CustomDestinationTableName = tmpTableName,
-                SetOutputIdentity = false,
-                EnableStreaming = true,
-                PreserveInsertOrder = false,
-                UseTempDB = false,
-            });
-
+            await context.BulkInsertAsync(chunk, bulkConfig);
             processed += chunk.Count;
             Console.Write($"\rInserted {processed} records into {tmpTableName}".PadRight(80));
         }
