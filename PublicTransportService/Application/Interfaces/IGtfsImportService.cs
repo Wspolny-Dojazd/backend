@@ -16,8 +16,8 @@ public interface IGtfsImportService
     /// </param>
     /// <param name="chunkSize">
     /// Optional size of data batches to be inserted into the database.
-    /// A higher value may speed up the process but consume more memory. Default is 10,000.
+    /// A higher value may speed up the process but consume more memory.
     /// </param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    Task ImportAsync(string? localZipPath = null, int chunkSize = 10_000);
+    Task ImportAsync(string? localZipPath, int chunkSize);
 }

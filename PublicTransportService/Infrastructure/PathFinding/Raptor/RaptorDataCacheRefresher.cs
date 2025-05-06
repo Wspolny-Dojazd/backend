@@ -30,8 +30,7 @@ internal class RaptorDataCacheRefresher(
                 var dbContext = scope.ServiceProvider.GetRequiredService<PTSDbContext>();
                 var currentTimestamp = await dbContext.GtfsMetadata
                     .Select(m => m.LastUpdated)
-                    .OrderBy((_) => _) // avoids warning
-                    .FirstAsync(stoppingToken);
+                    .SingleOrDefaultAsync(stoppingToken);
 
                 if (currentTimestamp != this.lastUpdateTimestamp)
                 {
