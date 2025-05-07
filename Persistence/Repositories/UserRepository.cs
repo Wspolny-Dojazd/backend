@@ -7,59 +7,44 @@ namespace Persistence.Repositories;
 /// <summary>
 /// Represents crud operations for user.
 /// </summary>
-public class UserRepository : IUserRepository
+/// <param name="databaseContext">The database context used to access user data.</param>
+public class UserRepository(DatabaseContext databaseContext)
+    : IUserRepository
 {
-    private readonly DatabaseContext databaseContext;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="UserRepository"/> class.
-    /// </summary>
-    /// <param name="databaseContext">Database context that allows to get and manipulate database data.</param>
-    public UserRepository(DatabaseContext databaseContext)
+    /// <inheritdoc/>
+    public async Task<User?> GetByIdAsync(Guid id)
     {
-        this.databaseContext = databaseContext;
-    }
-
-    /// <summary>
-    /// This async method get user's data by id from database.
-    /// </summary>
-    /// <param name="id">User's id.</param>
-    /// <returns>User's data from database.</returns>
-    public async Task<User> GetUserByIdAsync(int id)
-    {
-        return await this.databaseContext.Users
+        return await databaseContext.Users
+            .Include(u => u.Friends)
             .Where(u => u.Id == id)
             .FirstOrDefaultAsync();
     }
 
-    /// <summary>
-    /// This async method get all users' data by from database.
-    /// </summary>
-    /// <returns>All users' data from database.</returns>
-    public async Task<List<User>> GetAllUsersAsync()
+    /// <inheritdoc/>
+    public async Task<User?> GetByEmailAsync(string email)
     {
-        return await this.databaseContext.Users.ToListAsync();
+        return await databaseContext.Users
+            .FirstOrDefaultAsync(u => u.Email == email);
     }
 
-    /// <summary>
-    /// This async method deletes user's data from database.
-    /// </summary>
-    /// <param name="user">User's data.</param>
-    public async Task DeleteUserAsync(User user)
+    /// <inheritdoc/>
+    public async Task<User?> GetByUsernameAsync(string username)
     {
-        this.databaseContext.Users.Remove(user);
-        await this.databaseContext.SaveChangesAsync();
+        return await databaseContext.Users
+            .FirstOrDefaultAsync(u => u.Username == username);
     }
 
-    /// <summary>
-    /// This async method get user's data by nickname from database.
-    /// </summary>
-    /// <param name="nickname">Uniqe user's nickname.</param>
-    /// <returns>User's data from database.</returns>
-    public async Task<User> GetUserByNicknameAsync(string nickname)
+    /// <inheritdoc/>
+    public async Task AddAsync(User user)
     {
-        return await this.databaseContext.Users
-            .Where(u => u.Nickname == nickname)
-            .FirstOrDefaultAsync();
+        _ = await databaseContext.Users.AddAsync(user);
+        _ = await databaseContext.SaveChangesAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task UpdateAsync(User user)
+    {
+        _ = databaseContext.Users.Update(user);
+        _ = await databaseContext.SaveChangesAsync();
     }
 }

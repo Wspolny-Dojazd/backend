@@ -1,57 +1,62 @@
-﻿using Domain.Enums;
+using Domain.Enums;
 using Domain.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence;
 
 /// <summary>
-/// Represents connection between database tables and model objects.
+/// Represents the Entity Framework Core database context used to interact
+/// with the application's relational database. Configures entity mappings
+/// and database schema for the domain models.
 /// </summary>
-public class DatabaseContext : DbContext
+/// <param name="options">The options to configure the database context.</param>
+public class DatabaseContext(DbContextOptions<DatabaseContext> options)
+    : DbContext(options)
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="DatabaseContext"/> class.
-    /// </summary>
-    /// <param name="options">Database context options that are passed to the base constructor.</param>
-    public DatabaseContext(DbContextOptions<DatabaseContext> options)
-        : base(options)
-    {
-    }
-
-    /// <summary>
-    /// Gets or sets Group DbSet.
-    /// </summary>
-    public DbSet<Group> Groups { get; set; }
-
-    /// <summary>
-    /// Gets or sets Location DbSet.
-    /// </summary>
-    public DbSet<Location> Locations { get; set; }
-
-    /// <summary>
-    /// Gets or sets Message DbSet.
-    /// </summary>
-    public DbSet<Message> Messages { get; set; }
-
-    /// <summary>
-    /// Gets or sets UserConfiguration DbSet.
-    /// </summary>
-    public DbSet<UserConfiguration> UserConfiguration { get; set; }
-
-    /// <summary>
-    /// Gets or sets User DbSet.
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing users.
     /// </summary>
     public DbSet<User> Users { get; set; }
 
     /// <summary>
-    /// Gets or sets Route DbSet.
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing groups.
     /// </summary>
-    public DbSet<Route> Routes { get; set; }
+    public DbSet<Group> Groups { get; set; }
 
     /// <summary>
-    /// Connects model with database tables.
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing user configurations.
     /// </summary>
-    /// <param name="modelBuilder">Constructs model for a context. </param>
+    public DbSet<UserConfiguration> UserConfigurations { get; set; }
+
+    /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing messages.
+    /// </summary>
+    public DbSet<Message> Messages { get; set; }
+
+    /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing user locations.
+    /// </summary>
+    public DbSet<UserLocation> UserLocations { get; set; }
+
+    /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing accepted group paths.
+    /// </summary>
+    public DbSet<GroupPath> GroupPaths { get; set; }
+
+    /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing proposed paths.
+    /// </summary>
+    public DbSet<ProposedPath> ProposedPaths { get; set; }
+
+    /// <summary>
+    /// Gets or sets the database set for friend invitations.
+    /// </summary>
+    public DbSet<FriendInvitation> FriendInvitations { get; set; }
+
+    /// <summary>
+    /// Configures the entity model and relationships for the database schema.
+    /// </summary>
+    /// <param name="modelBuilder">The builder used to construct the model for this context.</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -61,10 +66,13 @@ public class DatabaseContext : DbContext
             _ = entity.ToTable("users");
             _ = entity.HasKey(p => p.Id).HasName("PK_User");
 
-            _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
+            _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("char(36)");
+            _ = entity.Property(p => p.Username).HasColumnName("username").HasMaxLength(32);
             _ = entity.Property(p => p.Nickname).HasColumnName("nickname");
             _ = entity.Property(p => p.Email).HasColumnName("email");
             _ = entity.Property(p => p.PasswordHash).HasColumnName("password_hash");
+            _ = entity.Property(p => p.RefreshToken).HasColumnName("refresh_token");
+            _ = entity.Property(p => p.RefreshTokenExpiryTime).HasColumnName("refresh_token_expiry_time").HasColumnType("datetime");
 
             _ = entity.Property(p => p.CreatedAt)
                 .HasColumnName("created_at")
@@ -79,23 +87,18 @@ public class DatabaseContext : DbContext
 
             _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
             _ = entity.Property(p => p.JoiningCode).HasColumnName("joining_code");
-            _ = entity.Property(p => p.DestinationLat).HasColumnName("destination_lat").HasColumnType("int");
-            _ = entity.Property(p => p.DestinationLon).HasColumnName("destination_lon").HasColumnType("int");
+            _ = entity.Property(p => p.CreatorId).HasColumnName("creator_id").HasColumnType("char(36)");
 
             _ = entity.Property(p => p.Status)
                 .HasColumnName("status")
-                .HasColumnType("ENUM('NOT_STARTED', 'STARTED')")
+                .HasColumnType("ENUM('NotStarted', 'Started')")
                 .HasConversion(
                     v => v.ToString(),
                     v => (Status)Enum.Parse(typeof(Status), v));
 
-            _ = entity.HasMany(g => g.Routes)
-                .WithOne()
-                .HasForeignKey("group_id");
-
-            _ = entity.HasMany(g => g.LiveLocations)
-                .WithOne()
-                .HasForeignKey("group_id");
+            _ = entity.HasOne(c => c.Creator)
+                .WithMany()
+                .HasForeignKey(g => g.CreatorId);
         });
 
         _ = modelBuilder.Entity<UserConfiguration>(entity =>
@@ -109,7 +112,7 @@ public class DatabaseContext : DbContext
 
             _ = entity.Property(p => p.UserId)
                 .HasColumnName("user_id")
-                .HasColumnType("int");
+                .HasColumnType("char(36)");
 
             _ = entity.Property(p => p.Language)
                .HasColumnName("language")
@@ -120,7 +123,7 @@ public class DatabaseContext : DbContext
 
             _ = entity.Property(p => p.TimeSystem)
                 .HasColumnName("time_system")
-                .HasColumnType("ENUM('AMPM', 'TwentyFourHour')")
+                .HasColumnType("ENUM('TwelveHour', 'TwentyFourHour')")
                 .HasConversion(
                     v => v.ToString(),
                     v => (TimeSystem)Enum.Parse(typeof(TimeSystem), v));
@@ -131,32 +134,13 @@ public class DatabaseContext : DbContext
                 .HasConversion(
                     v => v.ToString(),
                     v => (DistanceUnit)Enum.Parse(typeof(DistanceUnit), v));
-        });
 
-        _ = modelBuilder.Entity<Route>(entity =>
-        {
-            _ = entity.ToTable("routes");
-            _ = entity.HasKey(p => p.Id).HasName("PK_Route");
-
-            _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
-            _ = entity.Property(p => p.Tip).HasColumnName("tip");
-            _ = entity.Property(p => p.Lat).HasColumnName("lat").HasColumnType("int");
-            _ = entity.Property(p => p.Lon).HasColumnName("lon").HasColumnType("int");
-        });
-
-        _ = modelBuilder.Entity<Location>(entity =>
-        {
-            _ = entity.ToTable("locations");
-            _ = entity.HasKey(p => p.Id).HasName("PK_Location");
-
-            _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
-            _ = entity.Property(p => p.UserId).HasColumnName("user_id").HasColumnType("int");
-            _ = entity.Property(p => p.Lat).HasColumnName("lat").HasColumnType("int");
-            _ = entity.Property(p => p.Lon).HasColumnName("lon").HasColumnType("int");
-
-            _ = entity.HasOne(l => l.User)
-                .WithMany()
-                .HasForeignKey(l => l.UserId);
+            _ = entity.Property(p => p.Theme)
+                .HasColumnName("theme")
+                .HasColumnType("ENUM('Dark', 'Light')")
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (Theme)Enum.Parse(typeof(Theme), v));
         });
 
         _ = modelBuilder.Entity<Message>(entity =>
@@ -166,7 +150,8 @@ public class DatabaseContext : DbContext
 
             _ = entity.Property(p => p.Id).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd();
             _ = entity.Property(p => p.GroupId).HasColumnName("group_id").HasColumnType("int");
-            _ = entity.Property(p => p.UserId).HasColumnName("user_id").HasColumnType("int");
+            _ = entity.Property(p => p.UserId).HasColumnName("user_id").HasColumnType("char(36)");
+            _ = entity.Property(p => p.CreatedAt).HasColumnName("created_at").HasColumnType("datetime");
             _ = entity.Property(p => p.Content).HasColumnName("content");
 
             _ = entity.HasOne(m => m.Group)
@@ -176,6 +161,65 @@ public class DatabaseContext : DbContext
             _ = entity.HasOne(m => m.User)
                 .WithMany()
                 .HasForeignKey(m => m.UserId);
+        });
+
+        _ = modelBuilder.Entity<GroupPath>(entity =>
+        {
+            _ = entity.ToTable("group_paths");
+
+            _ = entity.HasKey(p => p.Id).HasName("PK_GroupPath");
+
+            _ = entity.Property(p => p.Id)
+                .HasColumnName("id")
+                .HasColumnType("char(36)");
+
+            _ = entity.Property(p => p.GroupId)
+                .HasColumnName("group_id")
+                .HasColumnType("int");
+
+            _ = entity.HasIndex(p => p.GroupId)
+                .IsUnique();
+
+            _ = entity.HasOne(p => p.Group)
+                .WithOne(g => g.CurrentPath)
+                .HasForeignKey<GroupPath>(p => p.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            _ = entity.Property(p => p.CreatedAt).
+                HasColumnName("created_at")
+                .HasColumnType("datetime");
+
+            _ = entity.Property(p => p.SerializedDto)
+                .HasColumnName("serialized_dto")
+                .HasColumnType("LONGTEXT");
+        });
+
+        _ = modelBuilder.Entity<ProposedPath>(entity =>
+        {
+            _ = entity.ToTable("proposed_paths");
+
+            _ = entity.HasKey(p => p.Id).HasName("PK_ProposedPath");
+
+            _ = entity.Property(p => p.Id)
+                .HasColumnName("id")
+                .HasColumnType("char(36)");
+
+            _ = entity.Property(p => p.GroupId)
+                .HasColumnName("group_id")
+                .HasColumnType("int");
+
+            _ = entity.HasOne(p => p.Group)
+                .WithMany(g => g.ProposedPaths)
+                .HasForeignKey(p => p.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            _ = entity.Property(p => p.CreatedAt)
+                .HasColumnName("created_at")
+                .HasColumnType("datetime");
+
+            _ = entity.Property(p => p.SerializedDto)
+                .HasColumnName("serialized_dto")
+                .HasColumnType("LONGTEXT");
         });
 
         _ = modelBuilder.Entity<User>()
@@ -198,5 +242,58 @@ public class DatabaseContext : DbContext
             .HasOne(u => u.UserConfiguration)
             .WithOne()
             .HasForeignKey<UserConfiguration>(uc => uc.UserId);
+
+        _ = modelBuilder.Entity<UserLocation>(entity =>
+        {
+            _ = entity.ToTable("user_locations");
+            _ = entity.HasKey(p => p.Id).HasName("PK_user_locations");
+
+            _ = entity.Property(p => p.Id)
+                .HasColumnName("id")
+                .HasColumnType("int").ValueGeneratedOnAdd();
+
+            _ = entity.Property(p => p.UserId).HasColumnName("user_id").HasColumnType("char(36)");
+            _ = entity.Property(p => p.Latitude).HasColumnName("latitude").HasColumnType("double");
+            _ = entity.Property(p => p.Longitude).HasColumnName("longitude").HasColumnType("double");
+
+            _ = entity.Property(p => p.UpdatedAt)
+                .HasColumnName("updated_at")
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+        });
+
+        _ = modelBuilder.Entity<User>()
+            .HasOne(u => u.UserLocation)
+            .WithOne()
+            .HasForeignKey<UserLocation>(ul => ul.UserId);
+
+        _ = modelBuilder.Entity<FriendInvitation>(entity =>
+        {
+            _ = entity.ToTable("friend_invitations");
+
+            _ = entity.HasKey(e => e.Id);
+
+            _ = entity.Property(e => e.Id)
+                .HasColumnName("id");
+
+            _ = entity.Property(e => e.SenderId)
+                .HasColumnName("sender_id");
+
+            _ = entity.Property(e => e.ReceiverId)
+                .HasColumnName("receiver_id");
+
+            _ = entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at");
+
+            _ = entity.HasOne(e => e.Sender)
+                .WithMany()
+                .HasForeignKey(e => e.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            _ = entity.HasOne(e => e.Receiver)
+                .WithMany()
+                .HasForeignKey(e => e.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
     }
 }

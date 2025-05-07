@@ -1,32 +1,44 @@
-﻿using Domain.Model;
+using Domain.Model;
 
 namespace Domain.Interfaces;
 
+/// <summary>
+/// Defines a contract for <see cref="User"/> data access operations.
+/// </summary>
 public interface IUserRepository
 {
     /// <summary>
-    /// Method that gets user display data.
+    /// Retrieves a user by its unique identifier.
     /// </summary>
-    /// <param name="id">Unique user identifier.</param>
-    /// <returns>Returns user display data.</returns>
-    Task<User> GetUserByIdAsync(int id);
+    /// <param name="id">The unique identifier of the user.</param>
+    /// <returns>The user if found; otherwise, <see langword="null"/>.</returns>
+    Task<User?> GetByIdAsync(Guid id);
 
     /// <summary>
-    /// Method that gets all users display data.
+    /// Retrieves a user by its email address.
     /// </summary>
-    /// <returns>Returns all users display data.</returns>
-    Task<List<User>> GetAllUsersAsync();
+    /// <param name="email">The email address of the user.</param>
+    /// <returns>The user if found; otherwise, <see langword="null"/>.</returns>
+    Task<User?> GetByEmailAsync(string email);
 
     /// <summary>
-    /// Method that deletes the user's data.
+    /// Retrieves a user by its username.
     /// </summary>
-    /// <param name="user">user data.</param>
-    Task DeleteUserAsync(User user);
+    /// <param name="username">The username of the user.</param>
+    /// <returns>The user if found; otherwise, <see langword="null"/>.</returns>
+    Task<User?> GetByUsernameAsync(string username);
 
     /// <summary>
-    /// This async method get user's data by id from database.
+    /// Adds a new user to the database.
     /// </summary>
-    /// <param name="nickname">Uniqe user's nickname.</param>
-    /// <returns>User's data from database.</returns>
-    Task<User> GetUserByNicknameAsync(string nickname);
+    /// <param name="user">The user to add.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task AddAsync(User user);
+
+    /// <summary>
+    /// Updates an existing user in the database.
+    /// </summary>
+    /// <param name="user">The user to update.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    Task UpdateAsync(User user);
 }

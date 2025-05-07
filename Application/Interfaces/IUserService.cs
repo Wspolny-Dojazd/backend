@@ -1,27 +1,31 @@
 ﻿using Application.DTOs;
+using Application.Exceptions;
 using Domain.Model;
 
 namespace Application.Interfaces;
 
+/// <summary>
+/// Defines a contract for user-related operations.
+/// </summary>
 public interface IUserService
 {
     /// <summary>
-    /// Method that gets user display data.
+    /// Retrieves a user data transfer object by their unique identifier.
     /// </summary>
-    /// <param name="id">Unique user identifier.</param>
-    /// <returns>Returns user display data.</returns>
-    Task<UserDto> GetUserByIdAsync(int id);
+    /// <param name="id">The ID of the user to retrieve.</param>
+    /// <returns>The user data transfer object.</returns>
+    Task<UserDto> GetByIdAsync(Guid id);
 
     /// <summary>
-    /// Method that deletes the user.
+    /// Retrieves a user entity by their unique identifier.
     /// </summary>
-    /// <param name="nickname">Unique user nickname.</param>
-    Task DeleteUserByNicknameAsync(string nickname);
-
-    /// <summary>
-    /// Method that gets users display data.
-    /// </summary>
-    /// <param name="value">String by which the users are found.</param>
-    /// <returns>Returns users display data.</returns>
-    Task<List<UserDto>> GetUsersByNicknameAsync(string value);
+    /// <param name="id">The ID of the user to retrieve.</param>
+    /// <returns>The user entity.</returns>
+    /// <exception cref="UserNotFoundException">
+    /// Thrown when the user is not in the database.
+    /// </exception>
+    /// <remarks>
+    /// This method also checks if the user is in the database.
+    /// </remarks>
+    Task<User> GetEntityByIdAsync(Guid id);
 }
