@@ -1,4 +1,4 @@
-﻿namespace API.Models.Errors;
+﻿namespace Shared.Enums.ErrorCodes;
 
 /// <summary>
 /// Represents a standardized error response returned by the API.

@@ -1,8 +1,8 @@
-﻿using API.Models.Errors;
-using API.Models.Errors.Auth;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Shared.Enums.ErrorCodes;
+using Shared.Enums.ErrorCodes.Auth;
 
 namespace API.Conventions;
 

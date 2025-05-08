@@ -7,6 +7,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Interfaces;
 using Domain.Model;
+using Shared.Enums.ErrorCodes.Auth;
 
 namespace Application.Services;
 
@@ -53,18 +54,18 @@ public class AuthService(
         var existingEmail = await userRepository.GetByEmailAsync(request.Email);
         if (existingEmail is not null)
         {
-            throw new EmailAlreadyUsedException();
+            throw new AppException(400, RegisterErrorCode.EMAIL_ALREADY_USED);
         }
 
         var existingUsername = await userRepository.GetByUsernameAsync(request.Username);
         if (existingUsername is not null)
         {
-            throw new AppException(409, "USERNAME_ALREADY_USED", "Username is already used.");
+            throw new AppException(400, RegisterErrorCode.USERNAME_ALREADY_USED);
         }
 
         if (ReservedUsernames.List.Contains(request.Username))
         {
-            throw new AppException(400, "USERNAME_RESERVED", "This username is reserved.");
+            throw new AppException(400, RegisterErrorCode.USERNAME_RESERVED);
         }
 
         var user = new User
@@ -104,7 +105,7 @@ public class AuthService(
         var isPasswordValid = passwordHasher.Verify(user.PasswordHash, request.CurrentPassword);
         if (!isPasswordValid)
         {
-            throw new AppException(400, "INVALID_CURRENT_PASSWORD");
+            throw new AppException(400, AuthErrorCode.INVALID_CURRENT_PASSWORD);
         }
 
         user.PasswordHash = passwordHasher.Hash(request.NewPassword);
@@ -123,14 +124,14 @@ public class AuthService(
     {
         var principal = jwtTokenService.GetPrincipalFromExpiredToken(request.Token);
         var username = principal?.Claims?.FirstOrDefault(c => c.Type == "username")?.Value
-            ?? throw new AppException(400, "INVALID_TOKEN");
+            ?? throw new AppException(400, AuthErrorCode.INVALID_TOKEN);
 
         var user = await userRepository.GetByUsernameAsync(username)
             ?? throw new UserNotFoundException(username);
 
         if (user.RefreshTokenExpiryTime <= DateTime.UtcNow || user.RefreshToken != request.RefreshToken)
         {
-            throw new AppException(400, "INVALID_REFRESH_TOKEN");
+            throw new AppException(400, AuthErrorCode.INVALID_REFRESH_TOKEN);
         }
 
         user.RefreshToken = GenerateRefreshToken();

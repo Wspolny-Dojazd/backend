@@ -4,6 +4,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Interfaces;
 using Domain.Model;
+using Shared.Enums.ErrorCodes;
 
 namespace Application.Services;
 
@@ -19,8 +20,7 @@ public class UserConfigurationService(IUserConfigurationRepository repository, I
     public async Task<UserConfigurationDto> GetByUserIdAsync(Guid userId)
     {
         var configuration = await repository.GetByUserIdAsync(userId)
-            ?? throw new UserConfigurationNotFoundException(userId);
-
+            ?? throw new AppException(404, UserConfigurationErrorCode.USER_CONFIGURATION_NOT_FOUND);
         return mapper.Map<UserConfiguration, UserConfigurationDto>(configuration);
     }
 

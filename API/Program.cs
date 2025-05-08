@@ -3,8 +3,6 @@ using System.Text;
 using System.Text.Json.Serialization;
 using API.Conventions;
 using API.Middleware;
-using API.Models.Errors;
-using API.Models.Errors.Auth;
 using Application;
 using Application.Interfaces;
 using Application.Services;
@@ -20,6 +18,8 @@ using Persistence;
 using Persistence.Repositories;
 using PublicTransportService.Infrastructure;
 using PublicTransportService.Infrastructure.Data;
+using Shared.Enums.ErrorCodes;
+using Shared.Enums.ErrorCodes.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 

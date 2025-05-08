@@ -3,6 +3,7 @@ using Application.Exceptions;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Interfaces;
+using Shared.Enums.ErrorCodes;
 
 namespace Application.Services;
 
@@ -26,7 +27,7 @@ public class FriendService(
 
         if (user.Friends.Any(f => f.Id == friendId))
         {
-            throw new AppException(400, "ALREADY_FRIEND");
+            throw new AppException(400, FriendInvitationErrorCode.ALREADY_FRIEND);
         }
 
         user.Friends.Add(friend);

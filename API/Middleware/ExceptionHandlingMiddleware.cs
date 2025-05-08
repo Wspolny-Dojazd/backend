@@ -1,5 +1,5 @@
-﻿using API.Models.Errors;
-using Application.Exceptions;
+﻿using Application.Exceptions;
+using Shared.Enums.ErrorCodes;
 
 namespace API.Middleware;
 

@@ -1,12 +1,12 @@
 ﻿using API.Extensions;
-using API.Models.Errors;
-using API.Models.Errors.Auth;
 using Application.DTOs;
 using Application.DTOs.Auth;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Shared.Enums.ErrorCodes;
+using Shared.Enums.ErrorCodes.Auth;
 
 namespace API.Controllers;
 
