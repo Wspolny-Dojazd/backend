@@ -54,7 +54,7 @@ public class AuthService(
         var existingEmail = await userRepository.GetByEmailAsync(request.Email);
         if (existingEmail is not null)
         {
-            throw new AppException(400, RegisterErrorCode.EMAIL_ALREADY_USED);
+            throw new AppException(409, RegisterErrorCode.EMAIL_ALREADY_USED);
         }
 
         var existingUsername = await userRepository.GetByUsernameAsync(request.Username);
