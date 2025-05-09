@@ -28,4 +28,20 @@ public interface IUserService
     /// This method also checks if the user is in the database.
     /// </remarks>
     Task<User> GetEntityByIdAsync(Guid id);
+
+    /// <summary>
+    /// Retrieves a list of users by their unique nicknames or usernames.
+    /// </summary>
+    /// <param name="query">The string that is used to measure Levenstein distance between different usersnames or nicknames.</param>
+    /// <returns>The list of users data.</returns>
+    /// <exception cref="UserNotFoundException">
+    /// Thrown when the user is not in the database.
+    /// </exception>
+    Task<List<UserDto>> SearchByUsernameOrNicknameAsync(string query);
+
+    /// <summary>
+    /// Retrieves a list of all users from the database.
+    /// </summary>
+    /// <returns>The list of all of users data.</returns>
+    Task<List<UserDto>> GetAllAsync();
 }

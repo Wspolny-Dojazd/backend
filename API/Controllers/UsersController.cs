@@ -56,4 +56,21 @@ public class UsersController(IUserService userService, IUserLocationService user
         var updatedUserLocation = await userLocationService.UpdateAsync(userId, userLocationDto);
         return this.Ok(updatedUserLocation);
     }
+
+    /// <summary>
+    /// Retrieves a list of users that match the given query based on their username or nickname using Levenstein distance,
+    /// if such distance is less or equal 2, given users are returned.
+    /// </summary>
+    /// <param name="query">The string that is used to measure Levenstein distance between different usersnames or nicknames.</param>
+    /// <returns>The list of users data.</returns>
+    /// <response code="200">The user was found.</response>
+    /// <response code="404">The user was not found.</response>
+    [HttpGet("search")]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<UserErrorCode>), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<List<UserDto>>> SearchByUsernameOrNicknameAsync(string query)
+    {
+        var users = await userService.SearchByUsernameOrNicknameAsync(query);
+        return this.Ok(users);
+    }
 }

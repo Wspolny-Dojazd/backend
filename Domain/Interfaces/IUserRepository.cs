@@ -41,4 +41,10 @@ public interface IUserRepository
     /// <param name="user">The user to update.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     Task UpdateAsync(User user);
+
+    /// <summary>
+    /// Retrieves a list of all users from database.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task<List<User>> GetAllAsync();
 }
