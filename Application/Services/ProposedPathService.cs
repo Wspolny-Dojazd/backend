@@ -7,6 +7,7 @@ using Domain.Interfaces;
 using Domain.Model;
 using PublicTransportService.Application.Interfaces;
 using PublicTransportService.Domain.Interfaces;
+using Shared.Enums.ErrorCodes;
 
 namespace Application.Services;
 
@@ -38,8 +39,7 @@ public class ProposedPathService(
         var acceptedPath = await groupPathRepository.GetByGroupIdAsync(groupId);
         if (acceptedPath is not null)
         {
-            var excMsg = "Cannot generate new paths when one is already accepted.";
-            throw new AppException(400, "PATH_ALREADY_ACCEPTED", excMsg);
+            throw new AppException(400, GroupPathErrorCode.PATH_ALREADY_ACCEPTED);
         }
 
         await this.ResetAllForGroupAsync(groupId);
@@ -95,8 +95,7 @@ public class ProposedPathService(
         var acceptedPath = await groupPathRepository.GetByGroupIdAsync(groupId);
         if (acceptedPath is not null)
         {
-            var excMsg = "Cannot generate new paths when one is already accepted.";
-            throw new AppException(400, "PATH_ALREADY_ACCEPTED", excMsg);
+            throw new AppException(400, GroupPathErrorCode.PATH_ALREADY_ACCEPTED);
         }
 
         var proposedPaths = await proposedPathRepository.GetAllByGroupIdAsync(groupId);

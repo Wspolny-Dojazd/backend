@@ -1,4 +1,6 @@
-﻿namespace Application.Exceptions;
+﻿using Shared.Enums.ErrorCodes.Auth;
+
+namespace Application.Exceptions;
 
 /// <summary>
 /// Represents an exception thrown when a user is not found.
@@ -25,7 +27,7 @@ public class UserNotFoundException : AppException
     }
 
     private UserNotFoundException(string identifierType, string identifier)
-        : base(404, "USER_NOT_FOUND", $"The user with {identifierType} '{identifier}' was not found.")
+        : base(404, AuthErrorCode.USER_NOT_FOUND, $"The user with {identifierType} '{identifier}' was not found.")
     {
     }
 }

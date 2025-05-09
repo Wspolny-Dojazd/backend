@@ -4,6 +4,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Interfaces;
 using Domain.Model;
+using Shared.Enums.ErrorCodes;
 
 namespace Application.Services;
 
@@ -29,12 +30,12 @@ public class GroupPathService(
         var acceptedPath = await groupPathRepository.GetByGroupIdAsync(groupId);
         if (acceptedPath is not null)
         {
-            throw new AppException(400, "PATH_ALREADY_ACCEPTED", "A path has already been accepted for this group.");
+            throw new AppException(400, GroupPathErrorCode.PATH_ALREADY_ACCEPTED);
         }
 
         var allProposals = await proposedPathRepository.GetAllByGroupIdAsync(groupId);
         var selectedProposal = allProposals.FirstOrDefault(p => p.Id == proposalId)
-            ?? throw new AppException(404, "PATH_NOT_FOUND", "The specified proposal does not exist.");
+            ?? throw new AppException(404, GroupPathErrorCode.PATH_NOT_FOUND);
 
         var entity = new GroupPath
         {
@@ -56,7 +57,7 @@ public class GroupPathService(
         _ = await groupService.GetByIdAsync(groupId);
 
         var path = await groupPathRepository.GetByGroupIdAsync(groupId)
-            ?? throw new AppException(404, "PATH_NOT_FOUND", "The accepted path does not exist.");
+            ?? throw new AppException(404, GroupPathErrorCode.PATH_NOT_FOUND);
 
         return mapper.Map<GroupPathDto>(path);
     }

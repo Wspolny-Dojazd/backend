@@ -1,3 +1,5 @@
+using Shared.Enums.ErrorCodes;
+
 namespace Application.Exceptions;
 
 /// <summary>
@@ -24,7 +26,7 @@ public class GroupNotFoundException : AppException
     }
 
     private GroupNotFoundException(string identifierType, string identifier)
-    : base(404, "GROUP_NOT_FOUND", $"The group with {identifierType} '{identifier}' was not found.")
+    : base(404, GroupErrorCode.GROUP_NOT_FOUND, $"The group with {identifierType} '{identifier}' was not found.")
     {
     }
 }

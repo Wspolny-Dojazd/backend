@@ -4,6 +4,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Interfaces;
 using Domain.Model;
+using Shared.Enums.ErrorCodes;
 
 namespace Application.Services;
 
@@ -38,7 +39,7 @@ public class MessageService(
 
         if (string.IsNullOrWhiteSpace(content))
         {
-            throw new EmptyMessageException(userId);
+            throw new AppException(400, MessageErrorCode.EMPTY_MESSAGE);
         }
 
         var message = new Message()
@@ -64,6 +65,6 @@ public class MessageService(
 
         return group.GroupMembers.Any(m => m.Id == userId)
             ? (user, group)
-            : throw new GroupAccessDeniedException(userId, groupId);
+            : throw new AppException(403, GroupErrorCode.ACCESS_DENIED);
     }
 }

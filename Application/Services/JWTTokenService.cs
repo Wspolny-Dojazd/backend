@@ -6,6 +6,7 @@ using Application.Interfaces;
 using Domain.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Enums.ErrorCodes.Auth;
 
 namespace Application.Services;
 
@@ -65,9 +66,9 @@ public class JWTTokenService(IConfiguration configuration)
         {
             return tokenHandler.ValidateToken(token, tokenValidationParameters, out _);
         }
-        catch (Exception ex)
+        catch
         {
-            throw new AppException(400, "INVALID_TOKEN", ex.Message);
+            throw new AppException(400, AuthErrorCode.INVALID_TOKEN);
         }
     }
 }

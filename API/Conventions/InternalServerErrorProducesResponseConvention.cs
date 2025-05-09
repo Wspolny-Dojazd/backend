@@ -1,6 +1,6 @@
-using API.Models.Errors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Shared.Enums.ErrorCodes;
 
 namespace API.Conventions;
 

@@ -1,8 +1,8 @@
 using API.Extensions;
-using API.Models.Errors;
 using Application.DTOs.FriendInvitation;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Enums.ErrorCodes;
 
 namespace API.Controllers;
 

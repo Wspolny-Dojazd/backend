@@ -5,6 +5,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Interfaces;
 using Domain.Model;
+using Shared.Enums.ErrorCodes;
 
 namespace Application.Services;
 
@@ -55,7 +56,7 @@ public class GroupService(
 
         if (group.GroupMembers.Contains(user))
         {
-            throw new UserAlreadyInGroupException(group.Id, userId);
+            throw new AppException(400, GroupErrorCode.USER_ALREADY_IN_GROUP);
         }
 
         await groupRepository.AddUserAsync(group, user);
@@ -84,10 +85,7 @@ public class GroupService(
 
         if (group.CreatorId == userId)
         {
-            throw new AppException(
-                403,
-                "ACCESS_DENIED",
-                $"The user with ID {userId} is the creator of the group with ID {groupId} and cannot be kicked from it.");
+            throw new AppException(403, GroupErrorCode.ACCESS_DENIED);
         }
 
         await groupRepository.RemoveUserAsync(group, user);
@@ -125,6 +123,6 @@ public class GroupService(
 
         return group.GroupMembers.Contains(user)
             ? (user, group)
-            : throw new UserNotInGroupException(groupId, userId);
+            : throw new AppException(400, GroupErrorCode.USER_NOT_IN_GROUP);
     }
 }

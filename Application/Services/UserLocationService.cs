@@ -4,6 +4,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Interfaces;
 using Domain.Model;
+using Shared.Enums.ErrorCodes;
 
 namespace Application.Services;
 
@@ -18,7 +19,7 @@ public class UserLocationService(IUserLocationRepository userLocationRepository,
     public async Task<UserLocationDto> GetByUserIdAsync(Guid userId)
     {
         var userLocation = await userLocationRepository.GetByUserIdAsync(userId)
-            ?? throw new UserLocationNotFoundException(userId);
+            ?? throw new AppException(404, UserLocationErrorCode.LOCATION_NOT_FOUND);
 
         return mapper.Map<UserLocationDto>(userLocation);
     }

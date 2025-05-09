@@ -39,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{0F18669E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GtfsImporter", "Tools\GtfsImporter\GtfsImporter.csproj", "{D32743AD-CACA-4C8E-BB7D-E97FC45F0CA4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{AE1D930A-9BDB-44DB-9406-17DC84173885}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,14 +75,18 @@ Global
 		{D32743AD-CACA-4C8E-BB7D-E97FC45F0CA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D32743AD-CACA-4C8E-BB7D-E97FC45F0CA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D32743AD-CACA-4C8E-BB7D-E97FC45F0CA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE1D930A-9BDB-44DB-9406-17DC84173885}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE1D930A-9BDB-44DB-9406-17DC84173885}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE1D930A-9BDB-44DB-9406-17DC84173885}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE1D930A-9BDB-44DB-9406-17DC84173885}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {54EA1CE2-5561-41D2-BC40-8BCCB92121E7}
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D32743AD-CACA-4C8E-BB7D-E97FC45F0CA4} = {0F18669E-12A8-4EC9-A1B7-793AD1580804}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {54EA1CE2-5561-41D2-BC40-8BCCB92121E7}
 	EndGlobalSection
 EndGlobal

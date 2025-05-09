@@ -1,4 +1,4 @@
-namespace API.Models.Errors;
+namespace Shared.Enums.ErrorCodes;
 
 /// <summary>
 /// Defines error codes for friend invitation operations,

@@ -1,9 +1,9 @@
 ﻿using API.Extensions;
-using API.Models.Errors;
 using Application.DTOs;
 using Application.DTOs.UserLocation;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Enums.ErrorCodes;
 
 namespace API.Controllers;
 

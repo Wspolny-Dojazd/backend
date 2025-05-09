@@ -1,7 +1,7 @@
-﻿using API.Models.Errors;
-using Application.DTOs.Path;
+﻿using Application.DTOs.Path;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Enums.ErrorCodes;
 
 namespace API.Controllers;
 

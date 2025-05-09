@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace API.Models.Errors;
+namespace Shared.Enums.ErrorCodes;
 
 /// <summary>
 /// Represents a strongly-typed error response containing a machine-readable error code.

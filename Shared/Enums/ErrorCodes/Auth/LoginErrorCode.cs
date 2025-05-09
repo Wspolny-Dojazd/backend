@@ -1,4 +1,4 @@
-﻿namespace API.Models.Errors.Auth;
+﻿namespace Shared.Enums.ErrorCodes.Auth;
 
 /// <summary>
 /// Defines error codes returned by the login endpoint.

@@ -4,6 +4,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Interfaces;
 using Domain.Model;
+using Shared.Enums.ErrorCodes;
 
 namespace Application.Services;
 
@@ -28,26 +29,26 @@ public class FriendInvitationService(
     {
         if (senderId == dto.UserId)
         {
-            throw new AppException(400, "SELF_INVITATION");
+            throw new AppException(400, FriendInvitationErrorCode.SELF_INVITATION);
         }
 
         var receiver = await userRepository.GetByIdAsync(dto.UserId)
-            ?? throw new AppException(404, "RECIPIENT_NOT_FOUND");
+            ?? throw new AppException(404, FriendInvitationErrorCode.RECIPIENT_NOT_FOUND);
 
         var sender = await userService.GetEntityByIdAsync(senderId);
         if (sender.Friends.Any(f => f.Id == dto.UserId))
         {
-            throw new AppException(400, "ALREADY_FRIEND");
+            throw new AppException(400, FriendInvitationErrorCode.ALREADY_FRIEND);
         }
 
         if (await invitationRepository.ExistsAsync(dto.UserId, senderId))
         {
-            throw new AppException(400, "RECIPROCAL_EXISTS");
+            throw new AppException(400, FriendInvitationErrorCode.RECIPROCAL_EXISTS);
         }
 
         if (await invitationRepository.ExistsAsync(senderId, dto.UserId))
         {
-            throw new AppException(400, "ALREADY_SENT");
+            throw new AppException(400, FriendInvitationErrorCode.ALREADY_SENT);
         }
 
         var invitation = new FriendInvitation
@@ -80,11 +81,11 @@ public class FriendInvitationService(
     public async Task AcceptAsync(Guid userId, Guid invitationId)
     {
         var invitation = await invitationRepository.GetByIdAsync(invitationId)
-            ?? throw new AppException(404, "INVITATION_NOT_FOUND");
+            ?? throw new AppException(404, FriendInvitationErrorCode.INVITATION_NOT_FOUND);
 
         if (invitation.ReceiverId != userId)
         {
-            throw new AppException(403, "ACCESS_DENIED", "You are not authorized to accept this invitation.");
+            throw new AppException(403, FriendInvitationErrorCode.ACCESS_DENIED);
         }
 
         if (!await friendService.AreFriendsAsync(invitation.SenderId, userId))
@@ -100,7 +101,7 @@ public class FriendInvitationService(
     public async Task DeleteAsync(Guid userId, Guid invitationId)
     {
         var invitation = await invitationRepository.GetByIdAsync(invitationId)
-            ?? throw new AppException(404, "INVITATION_NOT_FOUND");
+            ?? throw new AppException(404, FriendInvitationErrorCode.INVITATION_NOT_FOUND);
 
         if (invitation.SenderId == userId)
         {
@@ -115,7 +116,7 @@ public class FriendInvitationService(
         }
         else
         {
-            throw new AppException(403, "ACCESS_DENIED", "You are not authorized to delete this invitation.");
+            throw new AppException(403, FriendInvitationErrorCode.ACCESS_DENIED);
         }
     }
 

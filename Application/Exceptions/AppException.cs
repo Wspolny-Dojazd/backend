@@ -6,7 +6,7 @@
 /// <param name="statusCode">The associated HTTP status code.</param>
 /// <param name="code">The machine-readable error code.</param>
 /// <param name="message">The error message associated with the exception.</param>
-public class AppException(int statusCode, string code, string message = "")
+public class AppException(int statusCode, Enum code, string message = "")
     : Exception(message)
 {
     /// <summary>
@@ -17,5 +17,5 @@ public class AppException(int statusCode, string code, string message = "")
     /// <summary>
     /// Gets the machine-readable error code for the exception.
     /// </summary>
-    public string Code { get; } = code;
+    public Enum Code { get; } = code;
 }
