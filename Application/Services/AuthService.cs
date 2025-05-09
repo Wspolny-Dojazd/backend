@@ -60,7 +60,7 @@ public class AuthService(
         var existingUsername = await userRepository.GetByUsernameAsync(request.Username);
         if (existingUsername is not null)
         {
-            throw new AppException(400, RegisterErrorCode.USERNAME_ALREADY_USED);
+            throw new AppException(409, RegisterErrorCode.USERNAME_ALREADY_USED);
         }
 
         if (ReservedUsernames.List.Contains(request.Username))

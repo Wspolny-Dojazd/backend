@@ -27,7 +27,7 @@ public class UserNotFoundException : AppException
     }
 
     private UserNotFoundException(string identifierType, string identifier)
-        : base(404, AuthErrorCode.USER_NOT_FOUND)
+        : base(404, AuthErrorCode.USER_NOT_FOUND, $"The user with {identifierType} '{identifier}' was not found.")
     {
     }
 }

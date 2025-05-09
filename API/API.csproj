@@ -51,9 +51,5 @@
     <ProjectReference Include="..\PublicTransportService\PublicTransportService.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
 
 </Project>

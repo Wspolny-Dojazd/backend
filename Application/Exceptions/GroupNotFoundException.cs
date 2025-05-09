@@ -26,7 +26,7 @@ public class GroupNotFoundException : AppException
     }
 
     private GroupNotFoundException(string identifierType, string identifier)
-    : base(404, GroupErrorCode.GROUP_NOT_FOUND)
+    : base(404, GroupErrorCode.GROUP_NOT_FOUND, $"The group with {identifierType} '{identifier}' was not found.")
     {
     }
 }

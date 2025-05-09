@@ -6,4 +6,4 @@ namespace Application.Exceptions;
 /// Represents an exception thrown when the provided credentials are invalid.
 /// </summary>
 public class InvalidCredentialsException()
-    : AppException(401, LoginErrorCode.INVALID_CREDENTIALS);
+    : AppException(400, LoginErrorCode.INVALID_CREDENTIALS);
