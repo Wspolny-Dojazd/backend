@@ -4,7 +4,6 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Interfaces;
 using Domain.Model;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Application.Services;
 
@@ -33,24 +32,24 @@ public class UserService(IUserRepository userRepository, IMapper mapper)
     }
 
     /// <inheritdoc/>
-    public async Task<List<UserDto>> GetAllAsync()
+    public async Task<IEnumerable<UserDto>> SearchByUsernameOrNicknameAsync(string query)
     {
+        const int threshold = 2;
         var users = await userRepository.GetAllAsync();
-        return mapper.Map<List<User>, List<UserDto>>(users);
-    }
+        query = query.ToLowerInvariant();
 
-    /// <inheritdoc/>
-    public async Task<List<UserDto>> SearchByUsernameOrNicknameAsync(string query)
-    {
-        var users = await userRepository.GetAllAsync();
-
-        IEnumerable<User> result =
-        users.Where(user =>
+        IEnumerable<User> result = users
+        .Select(user => new
         {
-            int levenshteinDistance_u = Fastenshtein.Levenshtein.Distance(query.ToLower(), user.Username.ToLower());
-            int levenshteinDistance_n = Fastenshtein.Levenshtein.Distance(query.ToLower(), user.Nickname.ToLower());
-            return levenshteinDistance_u <= 2 || levenshteinDistance_n <= 2;
-        });
-        return mapper.Map<IEnumerable<User>, List<UserDto>>(result);
+            User = user,
+            DistanceUsername = Fastenshtein.Levenshtein.Distance(query, user.Username.ToLowerInvariant()),
+            DistanceNickname = Fastenshtein.Levenshtein.Distance(query, user.Nickname.ToLowerInvariant()),
+        })
+        .Where(x => x.DistanceUsername <= threshold || x.DistanceNickname <= threshold)
+        .OrderBy(x => x.DistanceUsername)
+        .ThenBy(x => x.DistanceNickname)
+        .Select(x => x.User);
+
+        return mapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(result);
     }
 }

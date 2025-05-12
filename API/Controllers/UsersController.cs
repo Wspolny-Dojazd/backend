@@ -58,17 +58,20 @@ public class UsersController(IUserService userService, IUserLocationService user
     }
 
     /// <summary>
-    /// Retrieves a list of users that match the given query based on their username or nickname using Levenstein distance,
-    /// if such distance is less or equal 2, given users are returned.
+    /// Retrieves a list of users whose username or nickname closely matches the provided query.
     /// </summary>
-    /// <param name="query">The string that is used to measure Levenstein distance between different usersnames or nicknames.</param>
-    /// <returns>The list of users data.</returns>
-    /// <response code="200">The user was found.</response>
-    /// <response code="404">The user was not found.</response>
+    /// <param name="query">The search string to compare against usernames and nicknames.</param>
+    /// <remarks>
+    /// Uses the Levenshtein distance to match usernames and nicknames.
+    /// Users are returned if the distance is less than or equal to 2
+    /// and the results are ordered by increasing distance.
+    /// The comparison is case-insensitive.
+    /// </remarks>
+    /// <returns>The collection of matching user data.</returns>
+    /// <response code="200">Users matching the query were found.</response>
     [HttpGet("search")]
-    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse<UserErrorCode>), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<List<UserDto>>> SearchByUsernameOrNicknameAsync(string query)
+    [ProducesResponseType(typeof(IEnumerable<UserDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<UserDto>>> SearchByUsernameOrNicknameAsync(string query)
     {
         var users = await userService.SearchByUsernameOrNicknameAsync(query);
         return this.Ok(users);

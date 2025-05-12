@@ -43,8 +43,8 @@ public interface IUserRepository
     Task UpdateAsync(User user);
 
     /// <summary>
-    /// Retrieves a list of all users from database.
+    /// Retrieves a list of all users from the database.
     /// </summary>
-    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <returns>A list of all users.</returns>
     Task<List<User>> GetAllAsync();
 }

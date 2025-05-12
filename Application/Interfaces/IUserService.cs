@@ -30,18 +30,9 @@ public interface IUserService
     Task<User> GetEntityByIdAsync(Guid id);
 
     /// <summary>
-    /// Retrieves a list of users by their unique nicknames or usernames.
+    /// Retrieves a list of users whose username or nickname closely matches the provided query.
     /// </summary>
-    /// <param name="query">The string that is used to measure Levenstein distance between different usersnames or nicknames.</param>
-    /// <returns>The list of users data.</returns>
-    /// <exception cref="UserNotFoundException">
-    /// Thrown when the user is not in the database.
-    /// </exception>
-    Task<List<UserDto>> SearchByUsernameOrNicknameAsync(string query);
-
-    /// <summary>
-    /// Retrieves a list of all users from the database.
-    /// </summary>
-    /// <returns>The list of all of users data.</returns>
-    Task<List<UserDto>> GetAllAsync();
+    /// <param name="query">The search string to compare against usernames and nicknames.</param>
+    /// <returns>The collection of matching user data.</returns>
+    Task<IEnumerable<UserDto>> SearchByUsernameOrNicknameAsync(string query);
 }
