@@ -58,14 +58,14 @@ public class UsersController(IUserService userService, IUserLocationService user
     }
 
     /// <summary>
-    /// Retrieves a list of users whose username or nickname closely matches the provided query.
+    /// Retrieves users whose username or nickname closely matches the provided query.
     /// </summary>
     /// <param name="query">The search string to compare against usernames and nicknames.</param>
     /// <remarks>
-    /// Uses the Levenshtein distance to match usernames and nicknames.
-    /// Users are returned if the distance is less than or equal to 2
-    /// and the results are ordered by increasing distance.
+    /// Users are matched using the Levenshtein distance.
     /// The comparison is case-insensitive.
+    /// Results are ordered first by the distance to the username,
+    /// then by the distance to the nickname.
     /// </remarks>
     /// <returns>The collection of matching user data.</returns>
     /// <response code="200">Users matching the query were found.</response>

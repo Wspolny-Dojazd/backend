@@ -30,7 +30,7 @@ public interface IUserService
     Task<User> GetEntityByIdAsync(Guid id);
 
     /// <summary>
-    /// Retrieves a list of users whose username or nickname closely matches the provided query.
+    /// Retrieves users whose username or nickname closely matches the provided query.
     /// </summary>
     /// <param name="query">The search string to compare against usernames and nicknames.</param>
     /// <returns>The collection of matching user data.</returns>
