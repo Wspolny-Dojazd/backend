@@ -28,4 +28,11 @@ public interface IUserService
     /// This method also checks if the user is in the database.
     /// </remarks>
     Task<User> GetEntityByIdAsync(Guid id);
+
+    /// <summary>
+    /// Retrieves users whose username or nickname closely matches the provided query.
+    /// </summary>
+    /// <param name="query">The search string to compare against usernames and nicknames.</param>
+    /// <returns>The collection of matching user data.</returns>
+    Task<IEnumerable<UserDto>> SearchByUsernameOrNicknameAsync(string query);
 }

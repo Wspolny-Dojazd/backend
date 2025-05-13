@@ -56,4 +56,24 @@ public class UsersController(IUserService userService, IUserLocationService user
         var updatedUserLocation = await userLocationService.UpdateAsync(userId, userLocationDto);
         return this.Ok(updatedUserLocation);
     }
+
+    /// <summary>
+    /// Retrieves users whose username or nickname closely matches the provided query.
+    /// </summary>
+    /// <param name="query">The search string to compare against usernames and nicknames.</param>
+    /// <remarks>
+    /// Users are matched using the Levenshtein distance.
+    /// The comparison is case-insensitive.
+    /// Results are ordered first by the distance to the username,
+    /// then by the distance to the nickname.
+    /// </remarks>
+    /// <returns>The collection of matching user data.</returns>
+    /// <response code="200">Users matching the query were found.</response>
+    [HttpGet("search")]
+    [ProducesResponseType(typeof(IEnumerable<UserDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<UserDto>>> SearchByUsernameOrNicknameAsync(string query)
+    {
+        var users = await userService.SearchByUsernameOrNicknameAsync(query);
+        return this.Ok(users);
+    }
 }
