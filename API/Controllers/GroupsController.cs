@@ -1,3 +1,4 @@
+using API.Attributes;
 using API.Extensions;
 using Application.DTOs;
 using Application.DTOs.Message;
@@ -72,9 +73,12 @@ public class GroupsController(IGroupService groupService, IMessageService messag
     /// <param name="id">The unique identifier of the group.</param>
     /// <returns>An <see cref="IActionResult"/> representing the result of the operation.</returns>
     /// <response code="204">The user was successfully removed from the group.</response>
+    /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group or the user was not found.</response>
     [HttpPost("{id}/leave")]
+    [RequireGroupMembership]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Leave(int id)
     {
@@ -92,9 +96,13 @@ public class GroupsController(IGroupService groupService, IMessageService messag
     /// <returns>The updated group details.</returns>
     /// <response code="200">The user was successfully removed from the group.</response>
     /// <response code="400">The user is not a member of the group.</response>
-    /// <response code="403">The user is the creator of the group and cannot be kicked from it.</response>
+    /// <response code="403">
+    /// The user is not a member of the group.
+    /// The user is the creator of the group and cannot be kicked from it.
+    /// </response>
     /// <response code="404">The group or the user was not found.</response>
     [HttpPost("{id}/kick/{userId}")]
+    [RequireGroupMembership]
     [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status403Forbidden)]
@@ -114,6 +122,7 @@ public class GroupsController(IGroupService groupService, IMessageService messag
     /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group or the user was not found.</response>
     [HttpGet("{id}/messages")]
+    [RequireGroupMembership]
     [ProducesResponseType(typeof(IEnumerable<MessageDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
@@ -135,6 +144,7 @@ public class GroupsController(IGroupService groupService, IMessageService messag
     /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group or the user was not found.</response>
     [HttpPost("{id}/messages")]
+    [RequireGroupMembership]
     [ProducesResponseType(typeof(MessageDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<MessageErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status403Forbidden)]
@@ -168,9 +178,12 @@ public class GroupsController(IGroupService groupService, IMessageService messag
     /// <param name="id">The unique identifier of the group.</param>
     /// <returns>A list of users who are members of the specified group.</returns>
     /// <response code="200">Successfully retrieved the members of the group.</response>
+    /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group was not found.</response>
     [HttpGet("{id}/members")]
+    [RequireGroupMembership]
     [ProducesResponseType(typeof(IEnumerable<GroupMemberDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<GroupMemberDto>>> GetGroupMembers(int id)
     {

@@ -91,6 +91,7 @@ builder.Services.AddScoped<IUserLocationService, UserLocationService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IPathAssembler, PathAssembler>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IGroupAuthorizationService, GroupAuthorizationService>();
 
 builder.Services
     .AddControllers(options =>
