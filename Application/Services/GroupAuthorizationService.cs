@@ -1,6 +1,7 @@
 using Application.Exceptions;
 using Application.Interfaces;
 using Domain.Interfaces;
+using Shared.Enums.ErrorCodes;
 
 namespace Application.Services;
 
@@ -19,7 +20,10 @@ public class GroupAuthorizationService(IGroupRepository groupRepository) : IGrou
         var isMember = await groupRepository.HasMemberAsync(groupId, userId);
         if (!isMember)
         {
-            throw new UserNotInGroupException(userId, groupId);
+            throw new AppException(
+                403,
+                GroupErrorCode.ACCESS_DENIED,
+                $"The user with ID '{userId}' does not belong to the group with ID '{groupId}'.");
         }
     }
 }

@@ -33,7 +33,7 @@ public class GroupPathsController(
     [RequireGroupMembership]
     [ProducesResponseType(typeof(IEnumerable<ProposedPathDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<ProposedPathDto>>> GeneratePaths(int groupId, [FromBody] PathRequestDto request)
     {
@@ -54,7 +54,7 @@ public class GroupPathsController(
     [RequireGroupMembership]
     [ProducesResponseType(typeof(IEnumerable<ProposedPathDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<ProposedPathDto>>> GetPaths(int groupId)
     {
@@ -73,7 +73,7 @@ public class GroupPathsController(
     [HttpGet("accepted")]
     [RequireGroupMembership]
     [ProducesResponseType(typeof(ProposedPathDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProposedPathDto>> GetAcceptedPath(int groupId)
     {
@@ -95,7 +95,7 @@ public class GroupPathsController(
     [RequireGroupMembership]
     [ProducesResponseType(typeof(ProposedPathDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProposedPathDto>> AcceptPath(int groupId, Guid pathId)
     {

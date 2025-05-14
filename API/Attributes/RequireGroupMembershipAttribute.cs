@@ -1,6 +1,6 @@
 using API.Extensions;
-using Application.Exceptions;
 using Application.Interfaces;
+using Domain.Model;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace API.Attributes;
