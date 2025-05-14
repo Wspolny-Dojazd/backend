@@ -6,7 +6,7 @@ using Shared.Enums.ErrorCodes;
 namespace Application.Services;
 
 /// <summary>
-/// Provides services to ensure that a user is a member of a specific group.
+/// Provides authorization checks related to group membership.
 /// </summary>
 /// <param name="groupRepository">The repository for accessing group data.</param>
 public class GroupAuthorizationService(IGroupRepository groupRepository) : IGroupAuthorizationService
