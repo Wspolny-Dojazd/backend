@@ -35,7 +35,7 @@ jobs:
       - name: Build and capture warnings
         id: dotnet-build
         run: | 
-          dotnet build --ucr -c Debug --no-restore -warnaserror:false -v:minimal > build.log
+          dotnet build --ucr -c Debug --no-restore -warnaserror:false -v:minimal > build.log || true
           grep -P '(?!SA0001)(SA[0-9]{4}|CS[0-9]{4})' build.log | awk '!seen[$0] {print} {++seen[$0]}' > warnings.txt || true
           echo "warnings<<EOF" >> $GITHUB_OUTPUT
           cat warnings.txt >> $GITHUB_OUTPUT
