@@ -66,7 +66,10 @@ public class GroupService(
     /// <inheritdoc/>
     public async Task<GroupDto?> RemoveUserAsync(int groupId, Guid userId)
     {
-        var (user, group) = await this.ValidateIfUserIsInGroup(userId, groupId);
+        var group = await groupRepository.GetByIdAsync(groupId)
+            ?? throw new GroupNotFoundException(groupId);
+
+        var user = await userService.GetEntityByIdAsync(userId);
 
         if (group.CreatorId == userId)
         {
@@ -81,7 +84,10 @@ public class GroupService(
     /// <inheritdoc/>
     public async Task<GroupDto> KickUserAsync(int groupId, Guid userId)
     {
-        var (user, group) = await this.ValidateIfUserIsInGroup(userId, groupId);
+        var group = await groupRepository.GetByIdAsync(groupId)
+            ?? throw new GroupNotFoundException(groupId);
+
+        var user = await userService.GetEntityByIdAsync(userId);
 
         if (group.CreatorId == userId)
         {
@@ -111,18 +117,5 @@ public class GroupService(
         return members.Select(user => new GroupMemberDto(
             user.Id, user.Username, user.Nickname, mapper.Map<UserLocation?, UserLocationDto?>(user.UserLocation))
             { IsCreator = group.CreatorId == user.Id });
-    }
-
-    private async Task<(User ValidatedUser, Group ValidatedGroup)> ValidateIfUserIsInGroup(
-        Guid userId, int groupId)
-    {
-        var group = await groupRepository.GetByIdAsync(groupId)
-            ?? throw new GroupNotFoundException(groupId);
-
-        var user = await userService.GetEntityByIdAsync(userId);
-
-        return group.GroupMembers.Contains(user)
-            ? (user, group)
-            : throw new AppException(400, GroupErrorCode.USER_NOT_IN_GROUP);
     }
 }

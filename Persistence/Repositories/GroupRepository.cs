@@ -83,4 +83,13 @@ public class GroupRepository(DatabaseContext databaseContext)
             .Include(g => g.GroupMembers)
             .ToListAsync();
     }
+
+    /// <inheritdoc/>
+    public async Task<bool> HasMemberAsync(int groupId, Guid userId)
+    {
+        return await databaseContext.Groups
+            .Where(g => g.Id == groupId)
+            .SelectMany(g => g.GroupMembers)
+            .AnyAsync(m => m.Id == userId);
+    }
 }

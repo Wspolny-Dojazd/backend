@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Path;
+﻿using API.Attributes;
+using Application.DTOs.Path;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Enums.ErrorCodes;
@@ -26,10 +27,13 @@ public class GroupPathsController(
     /// <returns>The generated proposed paths.</returns>
     /// <response code="200">The paths were successfully generated.</response>
     /// <response code="400">Cannot generate paths because one has already been accepted.</response>
+    /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group was not found.</response>
     [HttpPost]
+    [RequireGroupMembership]
     [ProducesResponseType(typeof(IEnumerable<ProposedPathDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<ProposedPathDto>>> GeneratePaths(int groupId, [FromBody] PathRequestDto request)
     {
@@ -44,10 +48,13 @@ public class GroupPathsController(
     /// <returns>The proposed paths.</returns>
     /// <response code="200">The paths were successfully retrieved.</response>
     /// <response code="400">Cannot retrieve paths because one has already been accepted.</response>
+    /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group was not found.</response>
     [HttpGet]
+    [RequireGroupMembership]
     [ProducesResponseType(typeof(IEnumerable<ProposedPathDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<ProposedPathDto>>> GetPaths(int groupId)
     {
@@ -61,9 +68,12 @@ public class GroupPathsController(
     /// <param name="groupId">The identifier of the group.</param>
     /// <returns>The accepted proposed path.</returns>
     /// <response code="200">The accepted path was successfully retrieved.</response>
+    /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group or the path was not found.</response>
     [HttpGet("accepted")]
+    [RequireGroupMembership]
     [ProducesResponseType(typeof(ProposedPathDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProposedPathDto>> GetAcceptedPath(int groupId)
     {
@@ -79,10 +89,13 @@ public class GroupPathsController(
     /// <returns>The accepted path.</returns>
     /// <response code="200">The path was successfully accepted.</response>
     /// <response code="400">The path is already accepted.</response>
+    /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group or the path was not found.</response>
     [HttpPost("{pathId}/accept")]
+    [RequireGroupMembership]
     [ProducesResponseType(typeof(ProposedPathDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProposedPathDto>> AcceptPath(int groupId, Guid pathId)
     {

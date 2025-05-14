@@ -25,4 +25,9 @@ public enum GroupPathErrorCode
     /// The path is already accepted.
     /// </summary>
     PATH_ALREADY_ACCEPTED,
+
+    /// <summary>
+    /// The specified user does not have access to group.
+    /// </summary>
+    ACCESS_DENIED,
 }

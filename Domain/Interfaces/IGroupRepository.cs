@@ -63,4 +63,15 @@ public interface IGroupRepository
     /// <param name="userId">The unique identifier of a user.</param>
     /// <returns>The list of groups the user is a member of.</returns>
     Task<List<Group>> GetGroupsByUserIdAsync(Guid userId);
+
+    /// <summary>
+    /// Determines whether the specified user is a member of the given group.
+    /// </summary>
+    /// <param name="groupId">The unique identifier of a group.</param>
+    /// <param name="userId">The unique identifier of a user.</param>
+    /// <returns>
+    /// <see langword="true"/> if the user is a member of the group;
+    /// otherwise, <see langword="false"/>.
+    /// </returns>
+    Task<bool> HasMemberAsync(int groupId, Guid userId);
 }
