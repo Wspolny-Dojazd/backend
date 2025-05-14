@@ -70,8 +70,8 @@ public interface IGroupRepository
     /// <param name="groupId">The unique identifier of a group.</param>
     /// <param name="userId">The unique identifier of a user.</param>
     /// <returns>
-    <see langword="true"/> if the user is a member of the group;
-    otherwise, <see langword="false"/>.
-    </returns>
+    /// <see langword="true"/> if the user is a member of the group;
+    /// otherwise, <see langword="false"/>.
+    /// </returns>
     Task<bool> HasMemberAsync(int groupId, Guid userId);
 }
