@@ -19,12 +19,7 @@ public class RequireGroupMembershipAttribute : Attribute, IAsyncActionFilter
     /// <param name="next">The delegate to execute the next action filter or the action itself.</param>
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        if (!context.RouteData.Values.TryGetValue("id", out var groupIdObj) ||
-            !int.TryParse(groupIdObj?.ToString(), out var groupId))
-        {
-            throw new InternalServerErrorException();
-        }
-
+        var groupId = int.Parse(context.RouteData.Values[nameof(Group.Id)]!.ToString()!);
         var userId = context.HttpContext.User.GetUserId();
         var authService = context.HttpContext.RequestServices.GetRequiredService<IGroupAuthorizationService>();
 
