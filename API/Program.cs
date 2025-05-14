@@ -20,6 +20,7 @@ using PublicTransportService.Infrastructure;
 using PublicTransportService.Infrastructure.Data;
 using Shared.Enums.ErrorCodes;
 using Shared.Enums.ErrorCodes.Auth;
+using Shared.JsonConverters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -103,6 +104,7 @@ builder.Services
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.Converters.Add(new DateTimeUtcJsonConverter());
     });
 
 var connectionString = builder.Configuration.GetConnectionString("AppDbConnectionString");
