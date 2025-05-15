@@ -73,6 +73,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFriendInvitationRepository, FriendInvitationRepository>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 builder.Services.AddScoped<IGroupPathRepository, GroupPathRepository>();
+builder.Services.AddScoped<IFriendRepository, FriendRepository>();
 builder.Services.AddScoped<IProposedPathRepository, ProposedPathRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IUserConfigurationRepository, UserConfigurationRepository>();

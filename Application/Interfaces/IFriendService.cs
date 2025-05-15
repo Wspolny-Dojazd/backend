@@ -34,4 +34,13 @@ public interface IFriendService
     /// otherwise, <see langword="false"/>.
     /// </returns>
     Task<bool> AreFriendsAsync(Guid userId, Guid friendId);
+
+    /// <summary>
+    /// Retrieves all friends of a specific user.
+    /// </summary>
+    /// <param name="userId">
+    /// The unique identifier of the user whose friends are to be retrieved.
+    /// </param>
+    /// <returns>The friends of the specified user.</returns>
+    Task<IEnumerable<UserDto>> GetAllAsync(Guid userId);
 }
