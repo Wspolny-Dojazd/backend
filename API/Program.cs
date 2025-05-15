@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using Persistence.Repositories;
+using PublicTransportService.Application.Interfaces;
 using PublicTransportService.Infrastructure;
 using PublicTransportService.Infrastructure.Data;
 using Shared.Enums.ErrorCodes;
@@ -107,6 +108,14 @@ builder.Services
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         options.JsonSerializerOptions.Converters.Add(new DateTimeUtcJsonConverter());
     });
+
+builder.Services.AddHttpClient<OpenRouteServiceWalkingTimeEstimator>();
+builder.Services.AddSingleton<IWalkingTimeEstimator>(sp =>
+{
+    var apiKey = builder.Configuration["OpenRouteService:ApiKey"]!;
+    var httpClient = sp.GetRequiredService<HttpClient>();
+    return new OpenRouteServiceWalkingTimeEstimator(httpClient, apiKey);
+});
 
 var connectionString = builder.Configuration.GetConnectionString("AppDbConnectionString");
 builder.Services.AddDbContext<DatabaseContext>(options =>
