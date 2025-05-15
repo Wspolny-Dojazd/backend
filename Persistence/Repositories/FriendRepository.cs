@@ -17,6 +17,6 @@ public class FriendRepository(DatabaseContext databaseContext)
         var user = await databaseContext.Users
             .FirstOrDefaultAsync(u => u.Id == userId);
 
-        return user.Friends;
+        return user?.Friends ?? new List<User>();
     }
 }
