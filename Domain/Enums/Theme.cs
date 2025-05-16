@@ -14,4 +14,9 @@ public enum Theme
     /// Light theme.
     /// </summary>
     Light,
+
+    /// <summary>
+    /// System theme.
+    /// </summary>
+    System,
 }
