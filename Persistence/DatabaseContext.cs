@@ -137,7 +137,7 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
 
             _ = entity.Property(p => p.Theme)
                 .HasColumnName("theme")
-                .HasColumnType("ENUM('Dark', 'Light')")
+                .HasColumnType("ENUM('Dark', 'Light', 'System')")
                 .HasConversion(
                     v => v.ToString(),
                     v => (Theme)Enum.Parse(typeof(Theme), v));
