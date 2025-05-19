@@ -13,6 +13,7 @@ namespace API.Controllers;
 /// <param name="proposedPathService">The service that handles logic related to proposed paths.</param>
 [Route("api/groups/{groupId}/paths")]
 [ApiController]
+[RequireGroupMembership("groupId")]
 public class GroupPathsController(
     IGroupPathService groupPathService,
     IProposedPathService proposedPathService)
@@ -30,7 +31,6 @@ public class GroupPathsController(
     /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group was not found.</response>
     [HttpPost]
-    [RequireGroupMembership]
     [ProducesResponseType(typeof(IEnumerable<ProposedPathDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
@@ -51,7 +51,6 @@ public class GroupPathsController(
     /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group was not found.</response>
     [HttpGet]
-    [RequireGroupMembership]
     [ProducesResponseType(typeof(IEnumerable<ProposedPathDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
@@ -71,7 +70,6 @@ public class GroupPathsController(
     /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group or the path was not found.</response>
     [HttpGet("accepted")]
-    [RequireGroupMembership]
     [ProducesResponseType(typeof(ProposedPathDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status404NotFound)]
@@ -92,7 +90,6 @@ public class GroupPathsController(
     /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group or the path was not found.</response>
     [HttpPost("{pathId}/accept")]
-    [RequireGroupMembership]
     [ProducesResponseType(typeof(ProposedPathDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
