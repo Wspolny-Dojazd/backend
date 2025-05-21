@@ -7,7 +7,7 @@ namespace Persistence.Repositories;
 /// <summary>
 /// Represents crud operations for friendship relationships.
 /// </summary>
-/// <param name="databaseContext">The database context used to access group data.</param>
+/// <param name="databaseContext">The database context used to access user and friendship data.</param>
 public class FriendRepository(DatabaseContext databaseContext)
     : IFriendRepository
 {
