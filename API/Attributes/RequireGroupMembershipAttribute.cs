@@ -1,6 +1,5 @@
 using API.Extensions;
 using Application.Interfaces;
-using Domain.Model;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace API.Attributes;
@@ -10,7 +9,7 @@ namespace API.Attributes;
 /// </summary>
 /// <param name="routeKey">The key used to retrieve the group ID from the route data.</param>
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
-public class RequireGroupMembershipAttribute(string? routeKey = "id") : Attribute, IAsyncActionFilter
+public class RequireGroupMembershipAttribute(string routeKey = "id") : Attribute, IAsyncActionFilter
 {
     /// <summary>
     /// Checks if the user is authorized to access the group.
