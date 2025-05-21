@@ -3,6 +3,7 @@ using Application.Exceptions;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Interfaces;
+using Domain.Model;
 using Shared.Enums.ErrorCodes;
 
 namespace Application.Services;
@@ -16,6 +17,7 @@ namespace Application.Services;
 public class FriendService(
     IUserService userService,
     IUserRepository userRepository,
+    IFriendRepository friendRepository,
     IMapper mapper)
     : IFriendService
 {
@@ -49,5 +51,12 @@ public class FriendService(
     {
         var user = await userService.GetEntityByIdAsync(userId);
         return user.Friends.Any(f => f.Id == friendId);
+    }
+
+    /// <inheritdoc/>
+    public async Task<IEnumerable<UserDto>> GetAllAsync(Guid userId)
+    {
+        var users = await friendRepository.GetAllAsync(userId);
+        return mapper.Map<IEnumerable<User>, IEnumerable<UserDto>>(users);
     }
 }
