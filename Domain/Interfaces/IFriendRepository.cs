@@ -11,6 +11,6 @@ public interface IFriendRepository
     /// Retrieves a list of friends by user's unique identifier.
     /// </summary>
     /// <param name="userId">The unique identifier of the user.</param>
-    /// <returns>The user if found; otherwise, <see langword="null"/>.</returns>
+    /// <returns>The friends of the specified user.</returns>
     Task<IEnumerable<User>> GetAllAsync(Guid userId);
 }
