@@ -120,6 +120,27 @@ public class AuthService(
     }
 
     /// <inheritdoc/>
+    public async Task<AuthResponseDto> ChangeNicknameAsync(Guid userId, ChangeNicknameRequestDto request)
+    {
+        var user = await userRepository.GetByIdAsync(userId)
+            ?? throw new UserNotFoundException(userId);
+        if (request.NewNickname == string.Empty)
+        {
+            throw new AppException(400, AuthErrorCode.INVALID_NICKNAME);
+        }
+
+        user.Nickname = request.NewNickname;
+
+        user.RefreshToken = GenerateRefreshToken();
+        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(RefreshTokenExpiryDays);
+
+        await userRepository.UpdateAsync(user);
+
+        var token = jwtTokenService.GenerateToken(user);
+        return new AuthResponseDto(user.Id, user.Username, user.Nickname, user.Email, token, user.RefreshToken);
+    }
+
+    /// <inheritdoc/>
     public async Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenRequestDto request)
     {
         var principal = jwtTokenService.GetPrincipalFromExpiredToken(request.Token);

@@ -43,4 +43,12 @@ public interface IAuthService
     /// <param name="request">The change-password request.</param>
     /// <returns>The authentication response.</returns>
     Task<AuthResponseDto> ChangePasswordAsync(Guid userId, ChangePasswordRequestDto request);
+
+    /// <summary>
+    /// Changes the nickname of the authenticated user.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user.</param>
+    /// <param name="request">The change-nickname request.</param>
+    /// <returns>The authentication response.</returns>
+    Task<AuthResponseDto> ChangeNicknameAsync(Guid userId, ChangeNicknameRequestDto request);
 }
