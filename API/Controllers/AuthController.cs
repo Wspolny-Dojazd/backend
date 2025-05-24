@@ -96,7 +96,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     /// <returns>The authenticated user's data and token.</returns>
     /// <response code="200">The user password has been changed successfully.</response>
     /// <response code="400">The request payload is invalid.</response>
-    /// <responce code="404">The authenticated user was not found.</responce>
+    /// <response code="404">The authenticated user was not found.</response>
     [HttpPost("change-password")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<AuthErrorCode>), StatusCodes.Status400BadRequest)]
@@ -111,16 +111,16 @@ public class AuthController(IAuthService authService) : ControllerBase
     /// <summary>
     /// Changes the nickname of the currently authenticated user.
     /// </summary>
-    /// <param name="request">The change-nickname request containing current and new nickname.</param>
-    /// <returns>The authenticated user's data and token.</returns>
+    /// <param name="request">The request containing the new nickname.</param>
+    /// <returns>The updated user data with the new nickname.</returns>
     /// <response code="200">The user nickname has been changed successfully.</response>
     /// <response code="400">The request payload is invalid.</response>
-    /// <responce code="404">The authenticated user was not found.</responce>
+    /// <response code="404">The authenticated user was not found.</response>
     [HttpPost("change-nickname")]
     [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<AuthErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<AuthErrorCode>), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<AuthResponseDto>> ChangeNickname([FromBody] ChangeNicknameRequestDto request)
+    public async Task<ActionResult<UserDto>> ChangeNickname([FromBody] ChangeNicknameRequestDto request)
     {
         var userId = this.User.GetUserId();
         var result = await authService.ChangeNicknameAsync(userId, request);

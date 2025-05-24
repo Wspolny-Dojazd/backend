@@ -50,5 +50,5 @@ public interface IAuthService
     /// <param name="userId">The unique identifier of the user.</param>
     /// <param name="request">The change-nickname request.</param>
     /// <returns>The authentication response.</returns>
-    Task<AuthResponseDto> ChangeNicknameAsync(Guid userId, ChangeNicknameRequestDto request);
+    Task<UserDto> ChangeNicknameAsync(Guid userId, ChangeNicknameRequestDto request);
 }
