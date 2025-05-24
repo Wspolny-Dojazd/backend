@@ -91,6 +91,11 @@ internal class GtfsImportService(
                 GtfsCsvMapper.ParseStopTimes,
                 chunkSize);
 
+            await importStrategy.ImportAsync<FrequencyCsv, Frequency>(
+                Path.Combine(tempPath, "frequencies.txt"),
+                GtfsCsvMapper.ParseFrequencies,
+                chunkSize);
+
             await this.UpdateGtfsMetadataAsync();
 
             if (transaction is not null)
