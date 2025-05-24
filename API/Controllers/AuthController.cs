@@ -117,7 +117,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     /// <response code="400">The request payload is invalid.</response>
     /// <response code="404">The authenticated user was not found.</response>
     [HttpPost("change-nickname")]
-    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<AuthErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<AuthErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserDto>> ChangeNickname([FromBody] ChangeNicknameRequestDto request)
