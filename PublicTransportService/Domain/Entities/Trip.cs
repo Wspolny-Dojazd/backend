@@ -7,8 +7,6 @@ namespace PublicTransportService.Domain.Entities;
 /// </summary>
 public class Trip
 {
-    private DateOnly? cachedServiceDate;
-
     /// <summary>
     /// Gets the unique identifier of the trip.
     /// </summary>
@@ -77,26 +75,4 @@ public class Trip
     /// </summary>
     [Column("fleet_type")]
     public string? FleetType { get; init; }
-
-    /// <summary>
-    /// Gets the date of service for the trip, parsed from the trip ID prefix.
-    /// </summary>
-    /// <remarks>
-    /// The date is extracted from the trip ID,
-    /// which is expected to be in the format "yyyy-MM-dd:other_info".
-    /// </remarks>
-    [NotMapped]
-    public DateOnly ServiceDate
-    {
-        get
-        {
-            if (this.cachedServiceDate is not { } date)
-            {
-                date = DateOnly.ParseExact(this.Id.Split(':')[0], "yyyy-MM-dd");
-                this.cachedServiceDate = date;
-            }
-
-            return date;
-        }
-    }
 }

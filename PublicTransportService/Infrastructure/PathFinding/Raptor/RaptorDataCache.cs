@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using PublicTransportService.Application.PathFinding;
 using PublicTransportService.Infrastructure.Data;
 
 namespace PublicTransportService.Infrastructure.PathFinding.Raptor;
@@ -35,30 +36,58 @@ internal class RaptorDataCache(IServiceScopeFactory scopeFactory) : IRaptorDataC
 
         var trips = await dbContext.Trips
             .AsNoTracking()
-            .Where(t => !EF.Functions.Like(t.Id, "M%")) // Skip metro for now
             .ToDictionaryAsync(t => t.Id);
-
-        var tripBaseDates = trips.ToDictionary(
-            kvp => kvp.Key,
-            kvp => kvp.Value.ServiceDate.ToDateTime(TimeOnly.MinValue));
 
         var stopTimes = await dbContext.StopTimes
             .AsNoTracking()
             .ToListAsync();
 
+        var frequencies = await dbContext.Frequencies
+            .AsNoTracking()
+            .ToListAsync();
+
         var stopTimesByTrip = stopTimes
-            .Where(st => trips.ContainsKey(st.TripId))
-            .Select(st => new PathFindingStopTime(
+            .GroupBy(st => st.TripId)
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        var datedTrips = trips
+            .Where(kvp => TripIdUtils.IsTripIdWithDate(kvp.Key))
+            .ToDictionary(
+                kvp => kvp.Key,
+                kvp => TripIdUtils.GetServiceDate(kvp.Key));
+
+        var minDate = datedTrips.Values.Min();
+        var maxDate = datedTrips.Values.Max();
+
+        var pathFindingStopTimes = new List<PathFindingStopTime>();
+
+        foreach (var st in stopTimes)
+        {
+            if (!datedTrips.TryGetValue(st.TripId, out var baseDate))
+            {
+                continue;
+            }
+
+            pathFindingStopTimes.Add(new PathFindingStopTime(
                 TripId: st.TripId,
                 StopId: st.StopId,
-                ArrivalTime: tripBaseDates[st.TripId].AddSeconds(st.ArrivalTime),
-                DepartureTime: tripBaseDates[st.TripId].AddSeconds(st.DepartureTime),
-                StopSequence: st.StopSequence))
-            .GroupBy(st => st.TripId)
-            .ToDictionary(
-                g => g.Key,
-                g => g.OrderBy(x => x.StopSequence).ToList());
+                ArrivalTime: baseDate.AddSeconds(st.ArrivalTime),
+                DepartureTime: baseDate.AddSeconds(st.DepartureTime),
+                StopSequence: st.StopSequence));
+        }
 
-        this.context = new RaptorContext(stopTimesByTrip, stops);
+        var generatedTrips = FrequencyTripExpander.GenerateTrips(
+            frequencies,
+            stopTimesByTrip,
+            minDate,
+            maxDate);
+
+        pathFindingStopTimes.AddRange(generatedTrips);
+
+        var final = pathFindingStopTimes
+            .GroupBy(st => st.TripId)
+            .ToDictionary(g => g.Key, g => g.OrderBy(x => x.StopSequence).ToList());
+
+        this.context = new RaptorContext(final, stops);
     }
 }

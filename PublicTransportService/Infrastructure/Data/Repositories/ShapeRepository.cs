@@ -15,10 +15,12 @@ internal class ShapeRepository(PTSDbContext dbContext)
     /// <inheritdoc/>
     public async Task<List<Shape>> GetSegmentShapesAsync(PathSegment segment)
     {
+        var segmentTripId = TripIdUtils.GetBaseTripId(segment.TripId!, '@');
+
         var trip = await dbContext.Trips
             .AsNoTracking()
-            .FirstOrDefaultAsync(t => t.Id == segment.TripId)
-            ?? throw new InvalidOperationException($"Trip with ID '{segment.TripId}' not found.");
+            .FirstOrDefaultAsync(t => t.Id == segmentTripId)
+            ?? throw new InvalidOperationException($"Trip with ID '{segmentTripId}' not found.");
 
         var stopIds = new HashSet<string> { segment.FromStopId, segment.ToStopId };
         var stops = await dbContext.Stops
