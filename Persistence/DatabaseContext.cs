@@ -54,6 +54,11 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
     public DbSet<FriendInvitation> FriendInvitations { get; set; }
 
     /// <summary>
+    /// Gets or sets the database set for group invitations.
+    /// </summary>
+    public DbSet<GroupInvitation> GroupInvitations { get; set; }
+
+    /// <summary>
     /// Configures the entity model and relationships for the database schema.
     /// </summary>
     /// <param name="modelBuilder">The builder used to construct the model for this context.</param>
@@ -293,6 +298,43 @@ public class DatabaseContext(DbContextOptions<DatabaseContext> options)
             _ = entity.HasOne(e => e.Receiver)
                 .WithMany()
                 .HasForeignKey(e => e.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        _ = modelBuilder.Entity<GroupInvitation>(entity =>
+        {
+            _ = entity.ToTable("group_invitations");
+
+            _ = entity.HasKey(e => e.Id);
+
+            _ = entity.Property(e => e.Id)
+                .HasColumnName("id");
+
+            _ = entity.Property(e => e.SenderId)
+                .HasColumnName("sender_id");
+
+            _ = entity.Property(e => e.ReceiverId)
+                .HasColumnName("receiver_id");
+
+            _ = entity.Property(e => e.GroupId)
+                .HasColumnName("group_id");
+
+            _ = entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at");
+
+            _ = entity.HasOne(e => e.Sender)
+                .WithMany()
+                .HasForeignKey(e => e.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            _ = entity.HasOne(e => e.Receiver)
+                .WithMany()
+                .HasForeignKey(e => e.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            _ = entity.HasOne(e => e.Group)
+                .WithMany()
+                .HasForeignKey(e => e.GroupId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }

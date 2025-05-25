@@ -78,6 +78,7 @@ builder.Services.AddScoped<IProposedPathRepository, ProposedPathRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IUserConfigurationRepository, UserConfigurationRepository>();
 builder.Services.AddScoped<IUserLocationRepository, UserLocationRepository>();
+builder.Services.AddScoped<IGroupInvitationRepository, GroupInvitationRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFriendService, FriendService>();
@@ -89,6 +90,7 @@ builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IJWTTokenService, JWTTokenService>();
 builder.Services.AddScoped<IUserConfigurationService, UserConfigurationService>();
 builder.Services.AddScoped<IUserLocationService, UserLocationService>();
+builder.Services.AddScoped<IGroupInvitationService, GroupInvitationService>();
 
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IPathAssembler, PathAssembler>();

@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Application.DTOs;
 using Application.DTOs.FriendInvitation;
+using Application.DTOs.GroupInvitation;
 using Application.DTOs.Message;
 using Application.DTOs.Path;
 using Application.DTOs.UserLocation;
@@ -25,6 +26,7 @@ public class MappingProfile : Profile
         _ = this.CreateMap<UserLocation, UserLocationDto>();
         _ = this.CreateMap<Message, MessageDto>();
         _ = this.CreateMap<FriendInvitation, FriendInvitationDto>();
+        _ = this.CreateMap<GroupInvitation, GroupInvitationDto>();
 
         _ = this.CreateMap<Group, GroupDto>()
             .AfterMap((src, dest) =>

@@ -30,6 +30,14 @@ public interface IGroupService
     Task<GroupDto> AddUserByCodeAsync(string joiningCode, Guid userId);
 
     /// <summary>
+    /// Adds the specified user to the group using an invitation.
+    /// </summary>
+    /// <param name="groupId">The unique identifier of the group.</param>
+    /// <param name="userId">The unique identifier of the user to add.</param>
+    /// <returns>The updated group details.</returns>
+    Task AddUserByInvitationAsync(int groupId, Guid userId);
+
+    /// <summary>
     /// Removes the specified user from the group.
     /// </summary>
     /// <param name="groupId">The unique identifier of the group.</param>
@@ -61,4 +69,15 @@ public interface IGroupService
     /// <param name="groupId">The unique identifier of the group.</param>
     /// <returns>A collection representing users who are members of the specified group.</returns>
     Task<IEnumerable<GroupMemberDto>> GetGroupMembersAsync(int groupId);
+
+    /// <summary>
+    /// Determines whether a user is a member of a specific group.
+    /// </summary>
+    /// <param name="groupId">The unique identifier of the group.</param>
+    /// <param name="userId">The unique identifier of the first user.</param>
+    /// <returns>
+    /// <see langword="true"/> if the user is in the group;
+    /// otherwise, <see langword="false"/>.
+    /// </returns>
+    Task<bool> IsInGroup(int groupId, Guid userId);
 }
