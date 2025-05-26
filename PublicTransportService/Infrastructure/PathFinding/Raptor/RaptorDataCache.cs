@@ -61,6 +61,8 @@ internal class RaptorDataCache(IServiceScopeFactory scopeFactory) : IRaptorDataC
 
         var pathFindingStopTimes = new List<PathFindingStopTime>();
 
+        var tz = TimeZoneInfo.FindSystemTimeZoneById("Europe/Warsaw");
+
         foreach (var st in stopTimes)
         {
             if (!datedTrips.TryGetValue(st.TripId, out var baseDate))
@@ -68,11 +70,17 @@ internal class RaptorDataCache(IServiceScopeFactory scopeFactory) : IRaptorDataC
                 continue;
             }
 
+            var arrivalLocal = baseDate.AddSeconds(st.ArrivalTime);
+            var arrivalUtc = TimeZoneInfo.ConvertTimeToUtc(arrivalLocal, tz);
+
+            var departureLocal = baseDate.AddSeconds(st.DepartureTime);
+            var departureUtc = TimeZoneInfo.ConvertTimeToUtc(departureLocal, tz);
+
             pathFindingStopTimes.Add(new PathFindingStopTime(
                 TripId: st.TripId,
                 StopId: st.StopId,
-                ArrivalTime: baseDate.AddSeconds(st.ArrivalTime),
-                DepartureTime: baseDate.AddSeconds(st.DepartureTime),
+                ArrivalTime: arrivalUtc,
+                DepartureTime: departureUtc,
                 StopSequence: st.StopSequence));
         }
 
@@ -90,4 +98,5 @@ internal class RaptorDataCache(IServiceScopeFactory scopeFactory) : IRaptorDataC
 
         this.context = new RaptorContext(final, stops);
     }
+
 }
