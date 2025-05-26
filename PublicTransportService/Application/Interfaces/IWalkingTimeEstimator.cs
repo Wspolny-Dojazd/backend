@@ -19,6 +19,19 @@ public interface IWalkingTimeEstimator
     Task<int> GetWalkingTimeAsync(double depLatitude, double depLongitude, double destLatitude, double destLongitude);
 
     /// <summary>
+    /// Gets list of geografic coordinates for determining the shape of route between a departure point and
+    /// a destination point.
+    /// </summary>
+    /// <param name="depLatitude">The latitude of the departure point.</param>
+    /// <param name="depLongitude">The longitude of the departure point.</param>
+    /// <param name="destLatitude">The latitude of the destination point.</param>
+    /// <param name="destLongitude">The longitude of the destination point.</param>
+    /// <returns>
+    /// The list of geografic coordinates for determining the shape of route.
+    /// </returns>
+    Task<List<List<double>>> GetWalkingPathCoordinatesAsync(double depLatitude, double depLongitude, double destLatitude, double destLongitude);
+
+    /// <summary>
     /// Estimates the walking time in seconds between a departure point and
     /// a destination point based on their geographic coordinates.
     /// </summary>

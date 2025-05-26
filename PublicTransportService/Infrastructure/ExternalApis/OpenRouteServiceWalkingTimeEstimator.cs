@@ -1,5 +1,7 @@
-using System.Text.Json;
+using Newtonsoft.Json.Linq;
 using PublicTransportService.Application.Interfaces;
+
+namespace PublicTransportService.Infrastructure.ExternalApis;
 
 /// <summary>
 /// Estimates walking time between two geographical points using the OpenRouteService API.
@@ -16,51 +18,65 @@ public class OpenRouteServiceWalkingTimeEstimator(HttpClient httpClient, string 
         _ = response.EnsureSuccessStatusCode();
 
         using var stream = await response.Content.ReadAsStreamAsync();
-        var json = await JsonDocument.ParseAsync(stream);
+        using var reader = new StreamReader(stream);
+        var content = await reader.ReadToEndAsync();
 
-        var duration = json
-            .RootElement
-            .GetProperty("features")[0]
-            .GetProperty("properties")
-            .GetProperty("summary")
-            .GetProperty("duration")
-            .GetDouble();
+        var json = JObject.Parse(content);
+
+        var duration = (double)json["features"]![0]!["properties"]!["summary"]!["duration"]!;
 
         return (int)duration;
+    }
+
+    /// <inheritdoc/>
+    public async Task<List<List<double>>> GetWalkingPathCoordinatesAsync(double depLatitude, double depLongitude, double destLatitude, double destLongitude)
+    {
+        string url = $"https://api.openrouteservice.org/v2/directions/foot-walking?" +
+                     $"api_key={apiKey}&start={depLongitude},{depLatitude}&end={destLongitude},{destLatitude}";
+
+        var response = await httpClient.GetAsync(url);
+        _ = response.EnsureSuccessStatusCode();
+
+        using var stream = await response.Content.ReadAsStreamAsync();
+        using var reader = new StreamReader(stream);
+        var content = await reader.ReadToEndAsync();
+
+        var json = JObject.Parse(content);
+
+        var coordinatesToken = json["features"]![0]!["geometry"]!["coordinates"]!;
+        var coordinates = coordinatesToken
+            .Select(coord =>
+            {
+                var lon = (double)coord[0]!;
+                var lat = (double)coord[1]!;
+                return new List<double> { lat, lon };
+            })
+            .ToList();
+
+        return coordinates;
     }
 
     /// <inheritdoc/>
     public int GetWalkingTimeEstimate(double depLatitude, double depLongitude, double destLatitude, double destLongitude)
     {
         const double routeFactor = 1.3; // Adjusts for realistic paths
-        double walkingSpeedKmh = 5.0; // Average walking speed
-        double distance = HaversineDistance(depLatitude, depLongitude, destLatitude, destLongitude) * routeFactor;
+        double walkingSpeedKmh = 3.0;
+        double distance = FlatDistance(depLatitude, depLongitude, destLatitude, destLongitude) * routeFactor;
         double timeSeconds = (distance / walkingSpeedKmh) * 60 * 60;
 
-        return (int)Math.Round(timeSeconds);
+        return (int)Math.Ceiling(timeSeconds);
     }
 
-    private static double HaversineDistance(double lat1, double lon1, double lat2, double lon2)
+    private static double FlatDistance(double lat1, double lon1, double lat2, double lon2)
     {
         const double R = 6371.0;
+        double dLat = (lat2 - lat1) * Math.PI / 180.0;
+        double dLon = (lon2 - lon1) * Math.PI / 180.0;
+        double avgLat = (lat1 + lat2) / 2.0 * Math.PI / 180.0;
 
-        double dLat = ToRadians(lat2 - lat1);
-        double dLon = ToRadians(lon2 - lon1);
+        double x = dLon * Math.Cos(avgLat);
+        double y = dLat;
 
-        double rLat1 = ToRadians(lat1);
-        double rLat2 = ToRadians(lat2);
-
-        double a = (Math.Sin(dLat / 2) * Math.Sin(dLat / 2)) +
-                   (Math.Cos(rLat1) * Math.Cos(rLat2) *
-                   Math.Sin(dLon / 2) * Math.Sin(dLon / 2));
-
-        double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-
-        return R * c;
-    }
-
-    private static double ToRadians(double angle)
-    {
-        return angle * Math.PI / 180.0;
+        return R * Math.Sqrt((x * x) + (y * y));
     }
 }

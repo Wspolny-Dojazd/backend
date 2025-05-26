@@ -7,6 +7,7 @@ using PublicTransportService.Application.Interfaces;
 using PublicTransportService.Domain.Interfaces;
 using PublicTransportService.Infrastructure.Data;
 using PublicTransportService.Infrastructure.Data.Repositories;
+using PublicTransportService.Infrastructure.ExternalApis;
 using PublicTransportService.Infrastructure.Importing;
 using PublicTransportService.Infrastructure.PathFinding.Raptor;
 using PublicTransportService.Infrastructure.Services;

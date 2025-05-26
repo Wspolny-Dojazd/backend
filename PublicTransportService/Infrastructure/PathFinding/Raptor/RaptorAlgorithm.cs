@@ -12,7 +12,6 @@ namespace PublicTransportService.Infrastructure.PathFinding.Raptor;
 internal class RaptorAlgorithm(RaptorContext context, IStopRepository stopRepository, IWalkingTimeEstimator walkingTimeEstimator)
 {
     private const int HourLimit = 3; // Temp solution: Time window for backward search from the arrival time
-    private const int WalkTimeMin = 1; // Temp solution: Walking time in minutes between stops
 
     // Maintain pre-sorted stop times for each trip (for forward and backward traversal).
     private readonly Dictionary<string, List<PathFindingStopTime>> ascendingStopTimesByTrip = [];
@@ -40,6 +39,11 @@ internal class RaptorAlgorithm(RaptorContext context, IStopRepository stopReposi
 
         var logicalIdByStop = context.Stops.Values
             .ToDictionary(s => s.Id, s => s.LogicalId);
+
+        var coordsByStop = context.Stops.Values
+            .ToDictionary(
+                s => s.Id,
+                s => new { s.Latitude, s.Longitude });
 
         // bestStates[stopId] holds the best backward state found so far.
         // Initialize each stop as unreachable.
@@ -182,13 +186,12 @@ internal class RaptorAlgorithm(RaptorContext context, IStopRepository stopReposi
                         continue;
                     }
 
-                    var depStop = await stopRepository.GetByIdAsync(currentStop);
-                    var destStop = await stopRepository.GetByIdAsync(siblingId);
+                    var depStop = coordsByStop[currentStop];
+                    var destStop = coordsByStop[siblingId];
 
-                    var walkTime = currentState.DepartureTime.AddMinutes(-WalkTimeMin);
-                    // var walkTime = currentState.DepartureTime.AddSeconds(
-                    //     -walkingTimeEstimator.GetWalkingTimeEstimate(
-                    //         depStop.Latitude, depStop.Longitude, destStop.Latitude, destStop.Longitude));
+                    var walkTime = currentState.DepartureTime.AddSeconds(
+                        -walkingTimeEstimator.GetWalkingTimeEstimate(
+                            depStop.Latitude, depStop.Longitude, destStop.Latitude, destStop.Longitude));
 
                     // Avoid going below the min DateTime range.
                     if (walkTime < DateTime.MinValue.AddDays(1))
