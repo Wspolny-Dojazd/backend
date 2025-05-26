@@ -32,6 +32,8 @@ public static class ServiceCollectionExtensions
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
                 .UseSnakeCaseNamingConvention());
 
+        _ = services.AddHttpClient();
+
         _ = services
             .AddScoped<IGtfsImportService, GtfsImportService>()
             .AddScoped<IPathPlanningService, PathPlanningService>()
@@ -61,6 +63,15 @@ public static class ServiceCollectionExtensions
 
                     return new EfCoreGtfsImportStrategy(context, logger);
                 }
+            })
+            .AddScoped<IWalkingTimeEstimator>(provider =>
+            {
+                var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+                var client = httpClientFactory.CreateClient();
+
+                string apiKey = configuration["OpenRouteService:ApiKey"]!;
+
+                return new OpenRouteServiceWalkingTimeEstimator(client, apiKey);
             });
 
         _ = services.AddSingleton<IRaptorDataCache, RaptorDataCache>();

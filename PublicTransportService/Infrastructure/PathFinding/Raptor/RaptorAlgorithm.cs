@@ -1,4 +1,5 @@
-﻿using PublicTransportService.Application.PathFinding;
+﻿using PublicTransportService.Application.Interfaces;
+using PublicTransportService.Application.PathFinding;
 using PublicTransportService.Domain.Interfaces;
 
 namespace PublicTransportService.Infrastructure.PathFinding.Raptor;
@@ -8,7 +9,7 @@ namespace PublicTransportService.Infrastructure.PathFinding.Raptor;
 /// </summary>
 /// <param name="context">The context containing the data needed for pathfinding.</param>
 /// <param name="stopRepository">The repository for accessing stop data.</param>
-internal class RaptorAlgorithm(RaptorContext context, IStopRepository stopRepository)
+internal class RaptorAlgorithm(RaptorContext context, IStopRepository stopRepository, IWalkingTimeEstimator walkingTimeEstimator)
 {
     private const int HourLimit = 3; // Temp solution: Time window for backward search from the arrival time
     private const int WalkTimeMin = 1; // Temp solution: Walking time in minutes between stops
@@ -181,7 +182,13 @@ internal class RaptorAlgorithm(RaptorContext context, IStopRepository stopReposi
                         continue;
                     }
 
+                    var depStop = await stopRepository.GetByIdAsync(currentStop);
+                    var destStop = await stopRepository.GetByIdAsync(siblingId);
+
                     var walkTime = currentState.DepartureTime.AddMinutes(-WalkTimeMin);
+                    // var walkTime = currentState.DepartureTime.AddSeconds(
+                    //     -walkingTimeEstimator.GetWalkingTimeEstimate(
+                    //         depStop.Latitude, depStop.Longitude, destStop.Latitude, destStop.Longitude));
 
                     // Avoid going below the min DateTime range.
                     if (walkTime < DateTime.MinValue.AddDays(1))
