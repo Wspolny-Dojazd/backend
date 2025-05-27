@@ -13,7 +13,6 @@ namespace API.Controllers;
 /// <param name="proposedPathService">The service that handles logic related to proposed paths.</param>
 [Route("api/groups/{groupId}/paths")]
 [ApiController]
-[RequireGroupMembership("groupId")]
 public class GroupPathsController(
     IGroupPathService groupPathService,
     IProposedPathService proposedPathService)
@@ -30,8 +29,9 @@ public class GroupPathsController(
     /// <response code="400">Cannot generate paths because one has already been accepted.</response>
     /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group was not found.</response>
+    /// <response code="405">The user is not a owner of the group.</response>
     [HttpPost]
-    [RequireGroupOwnership]
+    [RequireGroupOwnership("groupId")]
     [ProducesResponseType(typeof(IEnumerable<ProposedPathDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
@@ -52,6 +52,7 @@ public class GroupPathsController(
     /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group was not found.</response>
     [HttpGet]
+    [RequireGroupMembership("groupId")]
     [ProducesResponseType(typeof(IEnumerable<ProposedPathDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
@@ -71,6 +72,7 @@ public class GroupPathsController(
     /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group or the path was not found.</response>
     [HttpGet("accepted")]
+    [RequireGroupMembership("groupId")]
     [ProducesResponseType(typeof(ProposedPathDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status404NotFound)]
@@ -90,8 +92,9 @@ public class GroupPathsController(
     /// <response code="400">The path is already accepted.</response>
     /// <response code="403">The user is not a member of the group.</response>
     /// <response code="404">The group or the path was not found.</response>
+    /// <response code="405">The user is not a owner of the group.</response>
     [HttpPost("{pathId}/accept")]
-    [RequireGroupOwnership]
+    [RequireGroupOwnership("groupId")]
     [ProducesResponseType(typeof(ProposedPathDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<GroupPathErrorCode>), StatusCodes.Status403Forbidden)]
