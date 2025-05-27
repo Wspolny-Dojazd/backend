@@ -137,20 +137,6 @@ public class PathAssembler(
             SegmentType.Walk => await this.BuildWalkSegmentDto(stopsOrdered, stopLookup),
             _ => throw new ArgumentException($"Nieznany typ segmentu: {segmentType}"),
         };
-
-        // if (segmentType == SegmentType.Route)
-        // {
-        //     return await this.BuildRouteSegmentDto(segmentsGroup, stopsOrdered, stopLookup);
-        // }
-        // else if (segmentType == SegmentType.Walk)
-        // {
-        //     logger.LogInformation("KURWA Z BUTA");
-        //     return await this.BuildWalkSegmentDto(stopsOrdered, stopLookup);
-        // }
-        // else
-        // {
-        //     throw new ArgumentException($"Nieznany typ segmentu: {segmentType}");
-        // }
     }
 
     private async Task<SegmentDtoBase> BuildRouteSegmentDto(
