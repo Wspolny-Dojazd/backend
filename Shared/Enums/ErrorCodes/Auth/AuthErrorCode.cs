@@ -38,4 +38,9 @@ public enum AuthErrorCode
     /// does not match the stored password.
     /// </remarks>
     INVALID_CURRENT_PASSWORD,
+
+    /// <summary>
+    /// The provided nickname is invalid.
+    /// </summary>
+    INVALID_NICKNAME,
 }

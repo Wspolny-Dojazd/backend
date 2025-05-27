@@ -11,6 +11,11 @@ public class PTSDbContext(DbContextOptions<PTSDbContext> options)
     : DbContext(options)
 {
     /// <summary>
+    /// Gets or sets the <see cref="DbSet{TEntity}"/> representing GTFS trip frequencies.
+    /// </summary>
+    public DbSet<Frequency> Frequencies { get; set; }
+
+    /// <summary>
     /// Gets or sets the <see cref="DbSet{TEntity}"/> representing GTFS metadata.
     /// </summary>
     public DbSet<GtfsMetadata> GtfsMetadata { get; set; }
@@ -44,6 +49,9 @@ public class PTSDbContext(DbContextOptions<PTSDbContext> options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        _ = modelBuilder.Entity<Frequency>()
+            .ToTable("pts_frequencies");
 
         _ = modelBuilder.Entity<Route>()
             .ToTable("pts_routes");
