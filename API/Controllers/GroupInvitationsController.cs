@@ -39,7 +39,7 @@ public class GroupInvitationsController(IGroupInvitationService groupInvitationS
     }
 
     /// <summary>
-    /// Retrieves all invitations sent by the authenticated user.
+    /// Retrieves all invitations that were sent from the specific group.
     /// </summary>
     /// <param name="id">The unique identifier of the group.</param>
     /// <returns>The sent invitations.</returns>

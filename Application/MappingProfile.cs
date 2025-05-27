@@ -31,7 +31,11 @@ public class MappingProfile : Profile
         _ = this.CreateMap<Group, GroupDto>()
             .AfterMap((src, dest) =>
             {
-                dest.GroupMembers.First(m => m.Id == src.CreatorId).IsCreator = true;
+                var creator = dest.GroupMembers.FirstOrDefault(m => m.Id == src.CreatorId);
+                if (creator != null)
+                {
+                    creator.IsCreator = true;
+                }
             });
 
         _ = this.CreateMap<ProposedPath, ProposedPathDto>()
