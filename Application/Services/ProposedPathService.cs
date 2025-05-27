@@ -66,10 +66,16 @@ public class ProposedPathService(
         var stops = await stopRepository.GetByIdsAsync(stopIds);
         var stopLookup = stops.ToDictionary(stop => stop.Id, stop => stop);
 
+        var userLocations = request.UserLocations.ToDictionary(
+                l => l.UserId,
+                l => (l.Latitude, l.Longitude));
+        var destination = (request.DestinationLatitude, request.DestinationLongitude);
+
         var proposedPaths = new List<ProposedPath>();
         foreach (var paths in allPaths)
         {
-            var assembledPaths = await pathAssembler.AssemblePaths(paths, stopLookup);
+            var assembledPaths = await pathAssembler.AssemblePaths(
+                paths, stopLookup, userLocations, destination);
             var proposalId = Guid.NewGuid();
 
             var proposedPath = new ProposedPath

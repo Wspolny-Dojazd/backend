@@ -65,8 +65,14 @@ internal class RaptorAlgorithm(RaptorContext context, IStopRepository stopReposi
         // Mark each target stop as the initial backward state.
         foreach (var stopId in targetStops)
         {
-            bestStates[stopId] = new BestState(arrivalTime, 0, null);
-            backPointers[stopId] = new BackPointer(stopId, "init", arrivalTime, 0);
+            var stopLat = coordsByStop[stopId].Latitude;
+            var stopLong = coordsByStop[stopId].Longitude;
+
+            var walktime = await walkingTimeEstimator.GetWalkingTimeAsync(stopLat, stopLong, destLat, destLon);
+            var stopArrivalTime = arrivalTime.AddSeconds(-walktime);
+
+            bestStates[stopId] = new BestState(stopArrivalTime, 0, null);
+            backPointers[stopId] = new BackPointer(stopId, "init", stopArrivalTime, 0);
             queue.Enqueue(stopId);
         }
 
@@ -237,12 +243,24 @@ internal class RaptorAlgorithm(RaptorContext context, IStopRepository stopReposi
 
             foreach (var stopId in candidateStops)
             {
-                if (IsStopBetter(bestStates[stopId], best))
-                {
-                    best = bestStates[stopId];
-                    bestStop = stopId;
-                }
+                var stopCoords = coordsByStop[stopId];
+                var walktime = await walkingTimeEstimator.GetWalkingTimeAsync(
+                    stopCoords.Latitude, stopCoords.Longitude, lat, lon);
+
+                bestStates[stopId] = new BestState(
+                    bestStates[stopId].DepartureTime.AddSeconds(-walktime),
+                    bestStates[stopId].Transfers,
+                    bestStates[stopId].LastTripId);
             }
+
+            foreach (var stopId in candidateStops)
+                {
+                    if (IsStopBetter(bestStates[stopId], best))
+                    {
+                        best = bestStates[stopId];
+                        bestStop = stopId;
+                    }
+                }
 
             // If no route was found, provide an empty result.
             if (bestStop == null || best.DepartureTime == DateTime.MinValue)

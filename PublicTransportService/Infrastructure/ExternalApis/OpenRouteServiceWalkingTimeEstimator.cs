@@ -1,3 +1,4 @@
+using Domain.Models;
 using Newtonsoft.Json.Linq;
 using PublicTransportService.Application.Interfaces;
 
@@ -29,7 +30,7 @@ public class OpenRouteServiceWalkingTimeEstimator(HttpClient httpClient, string 
     }
 
     /// <inheritdoc/>
-    public async Task<List<List<double>>> GetWalkingPathCoordinatesAsync(double depLatitude, double depLongitude, double destLatitude, double destLongitude)
+    public async Task<WalkingPathInfo> GetWalkingPathInfoAsync(double depLatitude, double depLongitude, double destLatitude, double destLongitude)
     {
         string url = $"https://api.openrouteservice.org/v2/directions/foot-walking?" +
                      $"api_key={apiKey}&start={depLongitude},{depLatitude}&end={destLongitude},{destLatitude}";
@@ -49,11 +50,15 @@ public class OpenRouteServiceWalkingTimeEstimator(HttpClient httpClient, string 
             {
                 var lon = (double)coord[0]!;
                 var lat = (double)coord[1]!;
-                return new List<double> { lat, lon };
+                return (lat, lon);
             })
             .ToList();
 
-        return coordinates;
+        var summaryToken = json["features"]![0]!["properties"]!["summary"]!;
+        var duration = (int)MathF.Round(float.Parse(summaryToken["duration"]!.ToString()));
+        var distance = (int)MathF.Round(float.Parse(summaryToken["distance"]!.ToString()));
+
+        return new WalkingPathInfo(duration, distance, coordinates);
     }
 
     /// <inheritdoc/>

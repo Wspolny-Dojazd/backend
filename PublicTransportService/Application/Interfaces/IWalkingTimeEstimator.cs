@@ -1,3 +1,5 @@
+using Domain.Models;
+
 namespace PublicTransportService.Application.Interfaces;
 
 /// <summary>
@@ -27,9 +29,9 @@ public interface IWalkingTimeEstimator
     /// <param name="destLatitude">The latitude of the destination point.</param>
     /// <param name="destLongitude">The longitude of the destination point.</param>
     /// <returns>
-    /// The list of geografic coordinates for determining the shape of route.
+    /// The walking path information.
     /// </returns>
-    Task<List<List<double>>> GetWalkingPathCoordinatesAsync(double depLatitude, double depLongitude, double destLatitude, double destLongitude);
+    Task<WalkingPathInfo> GetWalkingPathInfoAsync(double depLatitude, double depLongitude, double destLatitude, double destLongitude);
 
     /// <summary>
     /// Estimates the walking time in seconds between a departure point and
