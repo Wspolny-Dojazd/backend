@@ -7,7 +7,7 @@ namespace Persistence.Repositories;
 /// <summary>
 /// Provides data access operations for <see cref="GroupInvitation"/> entities.
 /// </summary>
-/// <param name="databaseContext">The database context used to access friend invitation data.</param>
+/// <param name="databaseContext">The database context used to access group invitation data.</param>
 public class GroupInvitationRepository(DatabaseContext databaseContext)
     : IGroupInvitationRepository
 {
