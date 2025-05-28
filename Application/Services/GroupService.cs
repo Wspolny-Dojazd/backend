@@ -64,6 +64,22 @@ public class GroupService(
     }
 
     /// <inheritdoc/>
+    public async Task AddUserByInvitationAsync(int groupId, Guid userId)
+    {
+        var group = await groupRepository.GetByIdAsync(groupId)
+            ?? throw new GroupNotFoundException(groupId);
+
+        var user = await userService.GetEntityByIdAsync(userId);
+
+        if (group.GroupMembers.Contains(user))
+        {
+            throw new AppException(400, GroupErrorCode.USER_ALREADY_IN_GROUP);
+        }
+
+        await groupRepository.AddUserAsync(group, user);
+    }
+
+    /// <inheritdoc/>
     public async Task<GroupDto?> RemoveUserAsync(int groupId, Guid userId)
     {
         var group = await groupRepository.GetByIdAsync(groupId)
@@ -117,5 +133,14 @@ public class GroupService(
         return members.Select(user => new GroupMemberDto(
             user.Id, user.Username, user.Nickname, mapper.Map<UserLocation?, UserLocationDto?>(user.UserLocation))
             { IsCreator = group.CreatorId == user.Id });
+    }
+
+    /// <inheritdoc/>
+    public async Task<bool> IsInGroup(int groupId, Guid userId)
+    {
+        var group = await groupRepository.GetByIdAsync(groupId)
+            ?? throw new GroupNotFoundException(groupId);
+
+        return group.GroupMembers.Any(u => u.Id == userId);
     }
 }

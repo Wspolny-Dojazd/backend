@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Application.DTOs;
 using Application.DTOs.FriendInvitation;
+using Application.DTOs.GroupInvitation;
 using Application.DTOs.Message;
 using Application.DTOs.Path;
 using Application.DTOs.UserLocation;
@@ -25,11 +26,16 @@ public class MappingProfile : Profile
         _ = this.CreateMap<UserLocation, UserLocationDto>();
         _ = this.CreateMap<Message, MessageDto>();
         _ = this.CreateMap<FriendInvitation, FriendInvitationDto>();
+        _ = this.CreateMap<GroupInvitation, GroupInvitationDto>();
 
         _ = this.CreateMap<Group, GroupDto>()
             .AfterMap((src, dest) =>
             {
-                dest.GroupMembers.First(m => m.Id == src.CreatorId).IsCreator = true;
+                var creator = dest.GroupMembers.FirstOrDefault(m => m.Id == src.CreatorId);
+                if (creator is not null)
+                {
+                    creator.IsCreator = true;
+                }
             });
 
         _ = this.CreateMap<ProposedPath, ProposedPathDto>()
