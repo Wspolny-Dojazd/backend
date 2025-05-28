@@ -27,9 +27,8 @@ public class GroupPathsController(
     /// <returns>The generated proposed paths.</returns>
     /// <response code="200">The paths were successfully generated.</response>
     /// <response code="400">Cannot generate paths because one has already been accepted.</response>
-    /// <response code="403">The user is not a member of the group.</response>
+    /// <response code="403">The user is not the owner of the group.</response>
     /// <response code="404">The group was not found.</response>
-    /// <response code="405">The user is not a owner of the group.</response>
     [HttpPost]
     [RequireGroupOwnership("groupId")]
     [ProducesResponseType(typeof(IEnumerable<ProposedPathDto>), StatusCodes.Status200OK)]
