@@ -128,6 +128,28 @@ internal static class GtfsCsvMapper
         }
     }
 
+    /// <summary>
+    /// Maps a stream of <see cref="FrequencyCsv"/> records to <see cref="Frequency"/> entities.
+    /// </summary>
+    /// <param name="csvs">An async enumerable of CSV records.</param>
+    /// <returns>Async enumerable of mapped <see cref="Frequency"/> entities with auto-incremented IDs.</returns>
+    public static async IAsyncEnumerable<Frequency> ParseFrequencies(IAsyncEnumerable<FrequencyCsv> csvs)
+    {
+        var currentId = 1;
+        await foreach (var csv in csvs)
+        {
+            yield return new Frequency
+            {
+                Id = currentId++,
+                TripId = csv.trip_id,
+                StartTime = ParseTimeToSeconds(csv.start_time),
+                EndTime = ParseTimeToSeconds(csv.end_time),
+                Headway = int.Parse(csv.headway_secs),
+                ExactTimes = int.Parse(csv.exact_times),
+            };
+        }
+    }
+
     private static int ParseTimeToSeconds(string time)
     {
         var parts = time.Split(':');

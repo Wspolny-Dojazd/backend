@@ -288,7 +288,8 @@ public class PathAssembler(
             shapeList.Add(new ShapeSectionDto(seg.FromStopId, seg.ToStopId, coords));
         }
 
-        string tripId = segmentsGroup.First().TripId!;
+        var tripId = TripIdUtils.GetBaseTripId(segmentsGroup.First().TripId!, '@');
+
         var trip = await tripRepository.GetByIdAsync(tripId)
             ?? throw new KeyNotFoundException($"Trip with ID {tripId} not found.");
 
