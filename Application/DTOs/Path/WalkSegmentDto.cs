@@ -7,8 +7,8 @@ namespace Application.DTOs.Path;
 /// </summary>
 /// <param name="From">The origin walk location.</param>
 /// <param name="To">The destination walk location.</param>
-/// <param name="Duration">The walking time between two locations in minutes.</param>
-/// <param name="Distance">The distance between two locations in meters.</param>
+/// <param name="Duration">The walking time in minutes.</param>
+/// <param name="Distance">The distance in meters.</param>
 /// <param name="Shapes">The list of shape sections representing the walk path.</param>
 public record WalkSegmentDto(
     [property: Required] WalkLocationDto From,
