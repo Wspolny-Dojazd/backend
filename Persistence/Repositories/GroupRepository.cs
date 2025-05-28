@@ -92,4 +92,13 @@ public class GroupRepository(DatabaseContext databaseContext)
             .SelectMany(g => g.GroupMembers)
             .AnyAsync(m => m.Id == userId);
     }
+
+    /// <inheritdoc/>
+    public async Task<bool> IsOwnerAsync(int groupId, Guid userId)
+    {
+        return await databaseContext.Groups
+            .Where(g => g.Id == groupId)
+            .Select(g => g.Creator)
+            .AnyAsync(m => m.Id == userId);
+    }
 }

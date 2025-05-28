@@ -74,4 +74,15 @@ public interface IGroupRepository
     /// otherwise, <see langword="false"/>.
     /// </returns>
     Task<bool> HasMemberAsync(int groupId, Guid userId);
+
+    /// <summary>
+    /// Determines whether the specified user is an owner of the given group.
+    /// </summary>
+    /// <param name="groupId">The unique identifier of a group.</param>
+    /// <param name="userId">The unique identifier of a user.</param>
+    /// <returns>
+    /// <see langword="true"/> if the user is an owner of the group;
+    /// otherwise, <see langword="false"/>.
+    /// </returns>
+    Task<bool> IsOwnerAsync(int groupId, Guid userId);
 }

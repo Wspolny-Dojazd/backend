@@ -26,4 +26,20 @@ public class GroupAuthorizationService(IGroupRepository groupRepository) : IGrou
                 $"The user with ID '{userId}' does not belong to the group with ID '{groupId}'.");
         }
     }
+
+    /// <inheritdoc/>
+    public async Task EnsureOwnershipAsync(int groupId, Guid userId)
+    {
+        _ = await groupRepository.GetByIdAsync(groupId)
+            ?? throw new GroupNotFoundException(groupId);
+
+        var isOwner = await groupRepository.IsOwnerAsync(groupId, userId);
+        if (!isOwner)
+        {
+            throw new AppException(
+                403,
+                GroupErrorCode.ACCESS_DENIED,
+                $"The user with ID '{userId}' is not an owner of the group with ID '{groupId}'.");
+        }
+    }
 }

@@ -102,7 +102,7 @@ public class GroupsController(IGroupService groupService, IMessageService messag
     /// </response>
     /// <response code="404">The group or the user was not found.</response>
     [HttpPost("{id}/kick/{userId}")]
-    [RequireGroupMembership]
+    [RequireGroupOwnership]
     [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<GroupErrorCode>), StatusCodes.Status403Forbidden)]
