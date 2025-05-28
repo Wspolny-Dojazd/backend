@@ -72,14 +72,14 @@ public class GroupInvitationsController(IGroupInvitationService groupInvitationS
     /// <param name="id">The unique identifier of the invitation to accept.</param>
     /// <returns>The group the user was added to.</returns>
     /// <response code="200">Group invitation accepted successfully.</response>
+    /// <response code="400">The user is already in the group.</response>
     /// <response code="403">The user is not authorized to accept the invitation.</response>
     /// <response code="404">The invitation was not found.</response>
-    /// <response code="400">The user is already in the group.</response>
     [HttpPost("invitations/{id}/accept")]
     [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse<GroupInvitationErrorCode>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ErrorResponse<GroupInvitationErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupInvitationErrorCode>), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorResponse<GroupInvitationErrorCode>), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<GroupDto>> AcceptInvitation(Guid id)
     {
         var userId = this.User.GetUserId();
