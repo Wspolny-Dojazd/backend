@@ -89,9 +89,8 @@ public class GroupPathsController(
     /// <returns>The accepted path.</returns>
     /// <response code="200">The path was successfully accepted.</response>
     /// <response code="400">The path is already accepted.</response>
-    /// <response code="403">The user is not a member of the group.</response>
-    /// <response code="404">The group or the path was not found.</response>
-    /// <response code="405">The user is not a owner of the group.</response>
+    /// <response code="403">The user is not the owner of the group.</response>
+    /// <response code="404">The group was not found.</response>
     [HttpPost("{pathId}/accept")]
     [RequireGroupOwnership("groupId")]
     [ProducesResponseType(typeof(ProposedPathDto), StatusCodes.Status200OK)]
