@@ -27,6 +27,7 @@ public class GroupAuthorizationService(IGroupRepository groupRepository) : IGrou
         }
     }
 
+    /// <inheritdoc/>
     public async Task EnsureOwnershipAsync(int groupId, Guid userId)
     {
         _ = await groupRepository.GetByIdAsync(groupId)
