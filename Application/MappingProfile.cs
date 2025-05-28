@@ -32,7 +32,7 @@ public class MappingProfile : Profile
             .AfterMap((src, dest) =>
             {
                 var creator = dest.GroupMembers.FirstOrDefault(m => m.Id == src.CreatorId);
-                if (creator != null)
+                if (creator is not null)
                 {
                     creator.IsCreator = true;
                 }

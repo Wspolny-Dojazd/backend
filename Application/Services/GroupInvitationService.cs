@@ -108,6 +108,10 @@ public class GroupInvitationService(
         {
             await groupService.AddUserByInvitationAsync(invitation.GroupId, userId);
         }
+        else
+        {
+            throw new AppException(400, GroupInvitationErrorCode.ALREADY_IN_GROUP);
+        }
 
         await invitationRepository.DeleteAsync(invitation);
         await this.RemoveReciprocalInvitationIfExistsAsync(invitation.SenderId, userId, invitation.GroupId);

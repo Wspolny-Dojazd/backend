@@ -39,7 +39,7 @@ public interface IGroupInvitationRepository
     /// Retrieves all invitations to the specific group.
     /// </summary>
     /// <param name="groupId">The unique identifier of the group.</param>
-    /// <returns>The group invitations sent to all users.</returns>
+    /// <returns>The group invitations targeting the specified group.</returns>
     Task<List<GroupInvitation>> GetAllAsync(int groupId);
 
     /// <summary>

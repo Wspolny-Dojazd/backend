@@ -24,10 +24,10 @@ public interface IGroupInvitationService
     Task<IEnumerable<GroupInvitationDto>> GetSentAsync(Guid senderId);
 
     /// <summary>
-    /// Retrieves all invitations sent from all users in the group.
+    /// Retrieves all invitations sent for a specific group.
     /// </summary>
     /// <param name="groupId">The unique identifier of the group.</param>
-    /// <returns>Invitations sent from all users in the group.</returns>
+    /// <returns>Invitations sent for the specified group.</returns>
     Task<IEnumerable<GroupInvitationDto>> GetAllSentAsync(int groupId);
 
     /// <summary>
@@ -38,7 +38,7 @@ public interface IGroupInvitationService
     Task<IEnumerable<GroupInvitationDto>> GetReceivedAsync(Guid userId);
 
     /// <summary>
-    /// Accepts a group invitation and adds a reciver to the group.
+    /// Accepts a group invitation and adds the receiver to the group.
     /// </summary>
     /// <param name="userId">The unique identifier of the user accepting the invitation (must be the receiver).</param>
     /// <param name="invitationId">The unique identifier of the invitation to accept.</param>

@@ -41,14 +41,13 @@ public class GroupInvitationsController(IGroupInvitationService groupInvitationS
     /// <summary>
     /// Retrieves all invitations that were sent from the specific group.
     /// </summary>
-    /// <param name="id">The unique identifier of the group.</param>
+    /// <param name="groupId">The unique identifier of the group.</param>
     /// <returns>The sent invitations.</returns>
     /// <response code="200">The sent invitations were retrieved successfully.</response>
-    [HttpGet("{id}/invitations")]
+    [HttpGet("{groupId}/invitations")]
     [ProducesResponseType(typeof(IEnumerable<GroupInvitationDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<GroupInvitationDto>>> GetSentInvitations(int id)
+    public async Task<ActionResult<IEnumerable<GroupInvitationDto>>> GetSentInvitations(int groupId)
     {
-        var groupId = id;
         var invitations = await groupInvitationService.GetAllSentAsync(groupId);
         return this.Ok(invitations);
     }
@@ -68,15 +67,15 @@ public class GroupInvitationsController(IGroupInvitationService groupInvitationS
     }
 
     /// <summary>
-    /// Accepts a gorup invitation between the sender and receiver.
+    /// Accepts a group invitation between the sender and receiver.
     /// </summary>
     /// <param name="id">The unique identifier of the invitation to accept.</param>
-    /// <returns>An <see cref="IActionResult"/> indicating the result of the operation.</returns>
-    /// <response code="204">Group invitation accepted successfully.</response>
+    /// <returns>The group the user was added to.</returns>
+    /// <response code="200">Group invitation accepted successfully.</response>
     /// <response code="403">The user is not authorized to accept the invitation.</response>
     /// <response code="404">The invitation was not found.</response>
     [HttpPost("invitations/{id}/accept")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(GroupDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<GroupInvitationErrorCode>), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse<GroupInvitationErrorCode>), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<GroupDto>> AcceptInvitation(Guid id)

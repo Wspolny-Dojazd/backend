@@ -13,7 +13,7 @@ public enum GroupInvitationErrorCode
 
     /// <summary>
     /// The group was not found.
-    /// </summary>>
+    /// </summary>
     GROUP_NOT_FOUND,
 
     /// <summary>
@@ -22,7 +22,7 @@ public enum GroupInvitationErrorCode
     RECIPIENT_NOT_FOUND,
 
     /// <summary>
-    /// The users is already in the group.
+    /// The user is already in the group.
     /// </summary>
     ALREADY_IN_GROUP,
 

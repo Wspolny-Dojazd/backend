@@ -15,6 +15,7 @@ public class GroupInvitationRequestDto
 
     /// <summary>
     /// Gets the unique identifier of the group to which the invitation is sent.
+    /// </summary>
     [Required]
     public int GroupId { get; init; }
 }
