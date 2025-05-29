@@ -31,7 +31,7 @@ internal class RaptorDataCache(IServiceScopeFactory scopeFactory) : IRaptorDataC
 
         var stops = await dbContext.Stops
             .AsNoTracking()
-            .Select(s => new PathFindingStop(s.Id, s.LogicalId))
+            .Select(s => new PathFindingStop(s.Id, s.LogicalId, s.Latitude, s.Longitude))
             .ToDictionaryAsync(s => s.Id);
 
         var trips = await dbContext.Trips
