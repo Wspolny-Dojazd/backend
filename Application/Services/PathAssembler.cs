@@ -31,7 +31,12 @@ public class PathAssembler(
         {
             var segmentsDto = await this.BuildSegments(
                 pathResult, stopLookup, userLocations[userId], destination);
-            userPaths.Add(new UserPathDto(userId, segmentsDto));
+
+            var initWalkSeg = (segmentsDto[0] as WalkSegmentDto)!;
+            var firstStop = (segmentsDto[1] as RouteSegmentDto)!.Stops[0];
+            var departureTime = firstStop.DepartureTime!.Value.AddMinutes(-initWalkSeg.Duration);
+
+            userPaths.Add(new UserPathDto(userId, departureTime, segmentsDto));
         }
 
         return userPaths;
