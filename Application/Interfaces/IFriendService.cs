@@ -16,15 +16,6 @@ public interface IFriendService
     Task CreateFriendshipAsync(Guid userId, Guid friendId);
 
     /// <summary>
-    /// Retrieves all friends of a specific user.
-    /// </summary>
-    /// <param name="userId">
-    /// The unique identifier of the user whose friends are to be retrieved.
-    /// </param>
-    /// <returns>The friends of the specified user.</returns>
-    Task<IEnumerable<UserDto>> GetFriendsAsync(Guid userId);
-
-    /// <summary>
     /// Determines whether two users are already friends.
     /// </summary>
     /// <param name="userId">The unique identifier of the first user.</param>

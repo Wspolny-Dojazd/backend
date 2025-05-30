@@ -13,5 +13,5 @@ public enum UserLocationErrorCode
     /// <summary>
     /// The user location was not found.
     /// </summary>
-    LOCATION_NOT_FOUND
+    LOCATION_NOT_FOUND,
 }

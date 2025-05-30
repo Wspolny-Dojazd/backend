@@ -10,7 +10,7 @@ namespace API.Controllers;
 /// Provides API endpoints for managing users' friendship relationships.
 /// </summary>
 /// <param name="friendService">The service that handles friend-related logic.</param>
-[Route("api/[controller]")]
+// [Route("api/[controller]")]
 [ApiController]
 public class FriendsController(IFriendService friendService)
     : ControllerBase
@@ -24,11 +24,11 @@ public class FriendsController(IFriendService friendService)
     [HttpGet]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<UserErrorCode>), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<UserDto>>> GetGroupById()
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetAllFriends()
     {
         var userId = this.User.GetUserId();
 
-        var friends = await friendService.GetFriendsAsync(userId);
+        var friends = await friendService.GetAllAsync(userId);
         return this.Ok(friends);
     }
 }

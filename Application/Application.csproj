@@ -6,6 +6,16 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<None Update="$(OutputPath)$(AssemblyName).xml">
+		<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	</None>
+  </ItemGroup>
+
   <ItemGroup>
     <AdditionalFiles Include="../stylecop.json">
       <Visible>false</Visible>
