@@ -10,7 +10,7 @@ namespace API.Controllers;
 /// Provides API endpoints for managing users' friendship relationships.
 /// </summary>
 /// <param name="friendService">The service that handles friend-related logic.</param>
-// [Route("api/[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 public class FriendsController(IFriendService friendService)
     : ControllerBase
