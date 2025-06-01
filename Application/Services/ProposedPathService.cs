@@ -75,7 +75,7 @@ public class ProposedPathService(
         foreach (var paths in allPaths)
         {
             var assembledPaths = await pathAssembler.AssemblePaths(
-                paths, stopLookup, userLocations, destination);
+                paths, stopLookup, userLocations, destination, request.ArrivalTime);
             var proposalId = Guid.NewGuid();
 
             var proposedPath = new ProposedPath

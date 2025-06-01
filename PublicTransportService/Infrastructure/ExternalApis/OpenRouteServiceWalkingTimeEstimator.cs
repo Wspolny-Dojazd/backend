@@ -1,3 +1,4 @@
+using System.Globalization;
 using Domain.Models;
 using Newtonsoft.Json.Linq;
 using PublicTransportService.Application.Interfaces;
@@ -12,8 +13,12 @@ public class OpenRouteServiceWalkingTimeEstimator(HttpClient httpClient, string 
     /// <inheritdoc/>
     public async Task<int> GetWalkingTimeAsync(double depLatitude, double depLongitude, double destLatitude, double destLongitude)
     {
-        string url = $"https://api.openrouteservice.org/v2/directions/foot-walking?" +
-                     $"api_key={apiKey}&start={depLongitude},{depLatitude}&end={destLongitude},{destLatitude}";
+        string url = "https://api.openrouteservice.org/v2/directions/foot-walking?" +
+            $"api_key={apiKey}&" +
+            $"start={depLongitude.ToString(CultureInfo.InvariantCulture)}," +
+                $"{depLatitude.ToString(CultureInfo.InvariantCulture)}&" +
+            $"end={destLongitude.ToString(CultureInfo.InvariantCulture)}," +
+                $"{destLatitude.ToString(CultureInfo.InvariantCulture)}";
 
         var response = await httpClient.GetAsync(url);
         _ = response.EnsureSuccessStatusCode();
@@ -24,16 +29,25 @@ public class OpenRouteServiceWalkingTimeEstimator(HttpClient httpClient, string 
 
         var json = JObject.Parse(content);
 
-        var duration = (double)json["features"]![0]!["properties"]!["summary"]!["duration"]!;
+        var durationToken = json["features"]![0]!["properties"]!["summary"]!["duration"];
 
-        return (int)duration;
+        if (durationToken == null)
+        {
+            return 0;
+        }
+
+        return durationToken.Value<int>();
     }
 
     /// <inheritdoc/>
     public async Task<WalkingPathInfo> GetWalkingPathInfoAsync(double depLatitude, double depLongitude, double destLatitude, double destLongitude)
     {
-        string url = $"https://api.openrouteservice.org/v2/directions/foot-walking?" +
-                     $"api_key={apiKey}&start={depLongitude},{depLatitude}&end={destLongitude},{destLatitude}";
+        string url = "https://api.openrouteservice.org/v2/directions/foot-walking?" +
+            $"api_key={apiKey}&" +
+            $"start={depLongitude.ToString(CultureInfo.InvariantCulture)}," +
+                $"{depLatitude.ToString(CultureInfo.InvariantCulture)}&" +
+            $"end={destLongitude.ToString(CultureInfo.InvariantCulture)}," +
+                $"{destLatitude.ToString(CultureInfo.InvariantCulture)}";
 
         var response = await httpClient.GetAsync(url);
         _ = response.EnsureSuccessStatusCode();
@@ -43,6 +57,12 @@ public class OpenRouteServiceWalkingTimeEstimator(HttpClient httpClient, string 
         var content = await reader.ReadToEndAsync();
 
         var json = JObject.Parse(content);
+
+        var summaryToken = json["features"]![0]!["properties"]!["summary"]!;
+        if (summaryToken["duration"] == null)
+        {
+            return new WalkingPathInfo(0, 0, new List<(double Latitude, double Longitude)>());
+        }
 
         var coordinatesToken = json["features"]![0]!["geometry"]!["coordinates"]!;
         var coordinates = coordinatesToken
@@ -54,7 +74,6 @@ public class OpenRouteServiceWalkingTimeEstimator(HttpClient httpClient, string 
             })
             .ToList();
 
-        var summaryToken = json["features"]![0]!["properties"]!["summary"]!;
         var duration = (int)MathF.Round(float.Parse(summaryToken["duration"]!.ToString()));
         var distance = (int)MathF.Round(float.Parse(summaryToken["distance"]!.ToString()));
 

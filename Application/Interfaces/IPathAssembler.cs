@@ -16,10 +16,12 @@ public interface IPathAssembler
     /// <param name="stopLookup">A lookup containing stop metadata.</param>
     /// <param name="userLocations">A lookup containing user locations.</param>
     /// <param name="destination">The final destination of the path.</param>
+    /// <param name="arrivalTime">The arrival time.</param>
     /// <returns>The assembled user paths.</returns>
     Task<IEnumerable<UserPathDto>> AssemblePaths(
         Dictionary<Guid, PathResult> paths,
         IReadOnlyDictionary<string, Stop> stopLookup,
         IReadOnlyDictionary<Guid, (double Latitude, double Longitude)> userLocations,
-        (double Latitude, double Longitude) destination);
+        (double Latitude, double Longitude) destination,
+        DateTime arrivalTime);
 }

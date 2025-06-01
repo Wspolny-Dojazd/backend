@@ -24,7 +24,8 @@ public class PathAssembler(
         Dictionary<Guid, PathResult> paths,
         IReadOnlyDictionary<string, Stop> stopLookup,
         IReadOnlyDictionary<Guid, (double Latitude, double Longitude)> userLocations,
-        (double Latitude, double Longitude) destination)
+        (double Latitude, double Longitude) destination,
+        DateTime arrivalTime)
     {
         var userPaths = new List<UserPathDto>();
         foreach (var (userId, pathResult) in paths)
@@ -32,11 +33,35 @@ public class PathAssembler(
             var segmentsDto = await this.BuildSegments(
                 pathResult, stopLookup, userLocations[userId], destination);
 
-            var initWalkSeg = (segmentsDto[0] as WalkSegmentDto)!;
-            var firstStop = (segmentsDto[1] as RouteSegmentDto)!.Stops[0];
-            var departureTime = firstStop.DepartureTime!.Value.AddMinutes(-initWalkSeg.Duration);
+            if (segmentsDto.Count > 0)
+            {
+                var initWalkSeg = segmentsDto[0] as WalkSegmentDto;
+                DateTime departureTime;
+                if (initWalkSeg != null)
+                {
+                    var firstStopSeg = segmentsDto[1] as RouteSegmentDto;
+                    if (firstStopSeg != null)
+                    {
+                        var firstStop = firstStopSeg.Stops[0];
+                        departureTime = firstStop.DepartureTime!.Value.AddMinutes(-initWalkSeg.Duration);
+                    }
+                    else
+                    {
+                        departureTime = arrivalTime.AddMinutes(-initWalkSeg.Duration);
+                    }
+                }
+                else
+                {
+                    var firstStop = (segmentsDto[0] as RouteSegmentDto)!.Stops[0];
+                    departureTime = firstStop.DepartureTime!.Value;
+                }
 
-            userPaths.Add(new UserPathDto(userId, departureTime, segmentsDto));
+                userPaths.Add(new UserPathDto(userId, departureTime, segmentsDto));
+            }
+            else
+            {
+                userPaths.Add(new UserPathDto(userId, arrivalTime, segmentsDto));
+            }
         }
 
         return userPaths;
@@ -191,7 +216,11 @@ public class PathAssembler(
         }
 
         var firstStopSeg = originalSegments[0];
-        merged.Add(await this.BuildInitWalkSegmentDto(userLocation, firstStopSeg.FromStopId, stopLookup));
+        var firstStop = stopLookup[firstStopSeg.FromStopId];
+        if (firstStop.Longitude != userLocation.Longitude || firstStop.Latitude != userLocation.Latitude)
+        {
+            merged.Add(await this.BuildInitWalkSegmentDto(userLocation, firstStopSeg.FromStopId, stopLookup));
+        }
 
         var currentGroup = new List<PathSegment> { originalSegments[0] };
         SegmentType currentType = DetermineSegmentType(originalSegments[0]);
@@ -222,7 +251,11 @@ public class PathAssembler(
         }
 
         var lastStopSeg = originalSegments[^1];
-        merged.Add(await this.BuildFinalWalkSegmentDto(lastStopSeg.ToStopId, destination, stopLookup));
+        var lastStop = stopLookup[lastStopSeg.ToStopId];
+        if (lastStop.Longitude != destination.Longitude || lastStop.Latitude != destination.Latitude)
+        {
+            merged.Add(await this.BuildFinalWalkSegmentDto(lastStopSeg.ToStopId, destination, stopLookup));
+        }
 
         return merged;
     }
