@@ -23,4 +23,10 @@
 	</PackageReference>	
   </ItemGroup>
 
+  <ItemGroup>
+	<AdditionalFiles Include="../stylecop.json">
+		<Visible>false</Visible>
+	</AdditionalFiles>
+  </ItemGroup>
+
 </Project>
