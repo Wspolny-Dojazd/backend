@@ -24,11 +24,11 @@ public class FriendsController(IFriendService friendService)
     [HttpGet]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse<UserErrorCode>), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<UserDto>>> GetGroupById()
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetAllFriends()
     {
         var userId = this.User.GetUserId();
 
-        var friends = await friendService.GetFriendsAsync(userId);
+        var friends = await friendService.GetAllAsync(userId);
         return this.Ok(friends);
     }
 }

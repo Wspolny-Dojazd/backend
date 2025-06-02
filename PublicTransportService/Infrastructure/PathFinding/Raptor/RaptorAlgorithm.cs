@@ -9,6 +9,7 @@ namespace PublicTransportService.Infrastructure.PathFinding.Raptor;
 /// </summary>
 /// <param name="context">The context containing the data needed for pathfinding.</param>
 /// <param name="stopRepository">The repository for accessing stop data.</param>
+/// <param name="walkingTimeEstimator">The contract for estimating walking time between two geographical points.</param>
 internal class RaptorAlgorithm(RaptorContext context, IStopRepository stopRepository, IWalkingTimeEstimator walkingTimeEstimator)
 {
     private const int HourLimit = 3; // Temp solution: Time window for backward search from the arrival time

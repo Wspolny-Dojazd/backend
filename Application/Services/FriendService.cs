@@ -13,6 +13,7 @@ namespace Application.Services;
 /// </summary>
 /// <param name="userService">The service for managing user-related operations.</param>
 /// <param name="userRepository">The repository for accessing user data.</param>
+/// <param name="friendRepository">The repository for friends.</param>
 /// <param name="mapper">The object mapper.</param>
 public class FriendService(
     IUserService userService,
@@ -37,13 +38,6 @@ public class FriendService(
 
         await userRepository.UpdateAsync(user);
         await userRepository.UpdateAsync(friend);
-    }
-
-    /// <inheritdoc/>
-    public async Task<IEnumerable<UserDto>> GetFriendsAsync(Guid userId)
-    {
-        var user = await userService.GetEntityByIdAsync(userId);
-        return mapper.Map<IEnumerable<UserDto>>(user.Friends);
     }
 
     /// <inheritdoc/>
