@@ -7,6 +7,7 @@ using PublicTransportService.Application.Interfaces;
 using PublicTransportService.Domain.Interfaces;
 using PublicTransportService.Infrastructure.Data;
 using PublicTransportService.Infrastructure.Data.Repositories;
+using PublicTransportService.Infrastructure.ExternalApis;
 using PublicTransportService.Infrastructure.Importing;
 using PublicTransportService.Infrastructure.PathFinding.Raptor;
 using PublicTransportService.Infrastructure.Services;
@@ -31,6 +32,8 @@ public static class ServiceCollectionExtensions
         _ = services.AddDbContext<PTSDbContext>(options =>
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
                 .UseSnakeCaseNamingConvention());
+
+        _ = services.AddHttpClient();
 
         _ = services
             .AddScoped<IGtfsImportService, GtfsImportService>()
@@ -61,6 +64,15 @@ public static class ServiceCollectionExtensions
 
                     return new EfCoreGtfsImportStrategy(context, logger);
                 }
+            })
+            .AddScoped<IWalkingTimeEstimator>(provider =>
+            {
+                var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+                var client = httpClientFactory.CreateClient();
+
+                string apiKey = configuration["OpenRouteService:ApiKey"]!;
+
+                return new OpenRouteServiceWalkingTimeEstimator(client, apiKey);
             });
 
         _ = services.AddSingleton<IRaptorDataCache, RaptorDataCache>();

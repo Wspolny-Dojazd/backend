@@ -10,7 +10,8 @@ namespace PublicTransportService.Infrastructure.Services;
 /// </summary>
 /// <param name="dataCache">The data cache for Raptor algorithm context.</param>
 /// <param name="stopRepository">The repository for accessing stop data.</param>
-internal class PathPlanningService(IRaptorDataCache dataCache, IStopRepository stopRepository)
+/// <param name="walkingTimeEstimator">The repository foasdfr accessing stop data.</param>
+internal class PathPlanningService(IRaptorDataCache dataCache, IStopRepository stopRepository, IWalkingTimeEstimator walkingTimeEstimator)
     : IPathPlanningService
 {
     /// <inheritdoc/>
@@ -21,7 +22,7 @@ internal class PathPlanningService(IRaptorDataCache dataCache, IStopRepository s
         IEnumerable<(Guid, double, double)> userLocations)
     {
         var context = dataCache.GetContext();
-        var raptor = new RaptorAlgorithm(context, stopRepository);
+        var raptor = new RaptorAlgorithm(context, stopRepository, walkingTimeEstimator);
 
         var paths = await raptor.FindPathsForUsersAsync(destLatitude, destLongitude, arrivalTime, userLocations);
 

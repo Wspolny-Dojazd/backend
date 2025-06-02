@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.Path;
 using Application.Interfaces;
+using PublicTransportService.Application.Interfaces;
 using PublicTransportService.Application.PathFinding;
 using PublicTransportService.Domain.Entities;
 using PublicTransportService.Domain.Interfaces;
@@ -12,21 +13,56 @@ namespace Application.Services;
 /// <param name="tripRepository">The repository for accessing trip data.</param>
 /// <param name="routeRepository">The repository for accessing route data.</param>
 /// <param name="shapeRepository">The repository for accessing shape data.</param>
+/// <param name="walkingTimeEstimator">The repository for accessing time data.</param>
 public class PathAssembler(
     ITripRepository tripRepository,
     IRouteRepository routeRepository,
-    IShapeRepository shapeRepository) : IPathAssembler
+    IShapeRepository shapeRepository,
+    IWalkingTimeEstimator walkingTimeEstimator) : IPathAssembler
 {
     /// <inheritdoc/>
     public async Task<IEnumerable<UserPathDto>> AssemblePaths(
         Dictionary<Guid, PathResult> paths,
-        IReadOnlyDictionary<string, Stop> stopLookup)
+        IReadOnlyDictionary<string, Stop> stopLookup,
+        IReadOnlyDictionary<Guid, (double Latitude, double Longitude)> userLocations,
+        (double Latitude, double Longitude) destination,
+        DateTime arrivalTime)
     {
         var userPaths = new List<UserPathDto>();
         foreach (var (userId, pathResult) in paths)
         {
-            var segmentsDto = await this.BuildSegments(pathResult, stopLookup);
-            userPaths.Add(new UserPathDto(userId, segmentsDto));
+            var segmentsDto = await this.BuildSegments(
+                pathResult, stopLookup, userLocations[userId], destination);
+
+            if (segmentsDto.Count > 0)
+            {
+                var initWalkSeg = segmentsDto[0] as WalkSegmentDto;
+                DateTime departureTime;
+                if (initWalkSeg != null)
+                {
+                    var firstStopSeg = segmentsDto[1] as RouteSegmentDto;
+                    if (firstStopSeg != null)
+                    {
+                        var firstStop = firstStopSeg.Stops[0];
+                        departureTime = firstStop.DepartureTime!.Value.AddMinutes(-initWalkSeg.Duration);
+                    }
+                    else
+                    {
+                        departureTime = arrivalTime.AddMinutes(-initWalkSeg.Duration);
+                    }
+                }
+                else
+                {
+                    var firstStop = (segmentsDto[0] as RouteSegmentDto)!.Stops[0];
+                    departureTime = firstStop.DepartureTime!.Value;
+                }
+
+                userPaths.Add(new UserPathDto(userId, departureTime, segmentsDto));
+            }
+            else
+            {
+                userPaths.Add(new UserPathDto(userId, arrivalTime, segmentsDto));
+            }
         }
 
         return userPaths;
@@ -39,7 +75,7 @@ public class PathAssembler(
             : SegmentType.Route;
     }
 
-    private static WalkSegmentDto BuildWalkSegmentDto(
+    private async Task<WalkSegmentDto> BuildWalkSegmentDto(
         List<string> stopsOrdered,
         IReadOnlyDictionary<string, Stop> stopLookup)
     {
@@ -63,21 +99,114 @@ public class PathAssembler(
             Longitude: toStop.Longitude,
             Name: toName);
 
+        var walkingPathInfo = await walkingTimeEstimator.GetWalkingPathInfoAsync(
+            fromStop.Latitude, fromStop.Longitude, toStop.Latitude, toStop.Longitude);
+
+        var duration = (int)MathF.Ceiling(walkingPathInfo.Duration / 60f);
+
+        var coordinates = walkingPathInfo.Coordinates;
+
+        var shapeCoords = coordinates
+            .Select(c => new ShapeCoordDto(c.Latitude, c.Longitude))
+            .ToList();
+
         var shapeSection = new ShapeSectionDto(
             From: fromDto.Id,
             To: toDto.Id,
-            Coords:
-            [
-                new ShapeCoordDto(fromDto.Latitude, fromDto.Longitude),
-                new ShapeCoordDto(toDto.Latitude, toDto.Longitude)
-            ]);
+            Coords: shapeCoords);
 
-        return new WalkSegmentDto(fromDto, toDto, [shapeSection]);
+        return new WalkSegmentDto(
+            fromDto, toDto, duration, walkingPathInfo.Distance, [shapeSection]);
+    }
+
+    private async Task<WalkSegmentDto> BuildInitWalkSegmentDto(
+        (double Latitude, double Longitude) departure,
+        string stop,
+        IReadOnlyDictionary<string, Stop> stopLookup)
+    {
+        var toStop = stopLookup[stop];
+        var toName = string.IsNullOrEmpty(toStop.Code)
+            ? toStop.Name
+            : $"{toStop.Name} {toStop.Code}";
+
+        var fromDto = new WalkLocationDto(
+            Id: "init",
+            Latitude: departure.Latitude,
+            Longitude: departure.Longitude,
+            Name: string.Empty);
+
+        var toDto = new WalkLocationDto(
+            Id: toStop.Id,
+            Latitude: toStop.Latitude,
+            Longitude: toStop.Longitude,
+            Name: toName);
+
+        var walkingPathInfo = await walkingTimeEstimator.GetWalkingPathInfoAsync(
+            departure.Latitude, departure.Longitude, toStop.Latitude, toStop.Longitude);
+
+        var duration = (int)MathF.Ceiling(walkingPathInfo.Duration / 60f);
+
+        var coordinates = walkingPathInfo.Coordinates;
+
+        var shapeCoords = coordinates
+            .Select(c => new ShapeCoordDto(c.Latitude, c.Longitude))
+            .ToList();
+
+        var shapeSection = new ShapeSectionDto(
+            From: fromDto.Id,
+            To: toDto.Id,
+            Coords: shapeCoords);
+
+        return new WalkSegmentDto(
+            fromDto, toDto, duration, walkingPathInfo.Distance, [shapeSection]);
+    }
+
+    private async Task<WalkSegmentDto> BuildFinalWalkSegmentDto(
+        string stop,
+        (double Latitude, double Longitude) destination,
+        IReadOnlyDictionary<string, Stop> stopLookup)
+    {
+        var fromStop = stopLookup[stop];
+        var fromName = string.IsNullOrEmpty(fromStop.Code)
+            ? fromStop.Name
+            : $"{fromStop.Name} {fromStop.Code}";
+        var fromDto = new WalkLocationDto(
+            Id: fromStop.Id,
+            Latitude: fromStop.Latitude,
+            Longitude: fromStop.Longitude,
+            Name: fromName);
+
+        var toDto = new WalkLocationDto(
+            Id: "final",
+            Latitude: destination.Latitude,
+            Longitude: destination.Longitude,
+            Name: string.Empty);
+
+        var walkingPathInfo = await walkingTimeEstimator.GetWalkingPathInfoAsync(
+            fromStop.Latitude, fromStop.Longitude, destination.Latitude, destination.Longitude);
+
+        var duration = (int)MathF.Ceiling(walkingPathInfo.Duration / 60f);
+
+        var coordinates = walkingPathInfo.Coordinates;
+
+        var shapeCoords = coordinates
+            .Select(c => new ShapeCoordDto(c.Latitude, c.Longitude))
+            .ToList();
+
+        var shapeSection = new ShapeSectionDto(
+            From: fromDto.Id,
+            To: toDto.Id,
+            Coords: shapeCoords);
+
+        return new WalkSegmentDto(
+            fromDto, toDto, duration, walkingPathInfo.Distance, [shapeSection]);
     }
 
     private async Task<List<SegmentDtoBase>> BuildSegments(
         PathResult pathResult,
-        IReadOnlyDictionary<string, Stop> stopLookup)
+        IReadOnlyDictionary<string, Stop> stopLookup,
+        (double Latitude, double Longitude) userLocation,
+        (double Latitude, double Longitude) destination)
     {
         var originalSegments = pathResult.Segments;
         var merged = new List<SegmentDtoBase>();
@@ -85,6 +214,13 @@ public class PathAssembler(
         if (originalSegments.Count == 0)
         {
             return merged;
+        }
+
+        var firstStopSeg = originalSegments[0];
+        var firstStop = stopLookup[firstStopSeg.FromStopId];
+        if (firstStop.Longitude != userLocation.Longitude || firstStop.Latitude != userLocation.Latitude)
+        {
+            merged.Add(await this.BuildInitWalkSegmentDto(userLocation, firstStopSeg.FromStopId, stopLookup));
         }
 
         var currentGroup = new List<PathSegment> { originalSegments[0] };
@@ -115,6 +251,13 @@ public class PathAssembler(
             merged.Add(await this.BuildSingleSegmentDto(currentGroup, stopLookup, currentType));
         }
 
+        var lastStopSeg = originalSegments[^1];
+        var lastStop = stopLookup[lastStopSeg.ToStopId];
+        if (lastStop.Longitude != destination.Longitude || lastStop.Latitude != destination.Latitude)
+        {
+            merged.Add(await this.BuildFinalWalkSegmentDto(lastStopSeg.ToStopId, destination, stopLookup));
+        }
+
         return merged;
     }
 
@@ -129,8 +272,8 @@ public class PathAssembler(
         return segmentType switch
         {
             SegmentType.Route => await this.BuildRouteSegmentDto(segmentsGroup, stopsOrdered, stopLookup),
-            SegmentType.Walk => BuildWalkSegmentDto(stopsOrdered, stopLookup),
-            _ => throw new ArgumentException($"Nieznany typ segmentu: {segmentType}"),
+            SegmentType.Walk => await this.BuildWalkSegmentDto(stopsOrdered, stopLookup),
+            _ => throw new ArgumentException($"Unknown segment type: {segmentType}"),
         };
     }
 
