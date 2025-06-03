@@ -14,7 +14,7 @@ COPY ./DatabaseContextBundle .
 COPY ./PTSDbContextBundle .
 
 # Install required lib in order to support globalization and install certificates in order to send requests to 3rd party api
-RUN apt-get update && apt-get install -y libicu-dev && apt-get install ca-certificates
+RUN apt-get update && apt-get install -y libicu-dev && apt-get install -y ca-certificates
 
 # Run the application
 CMD ./DatabaseContextBundle && ./PTSDbContextBundle && ./publish/API/release/API --urls http://*:80
