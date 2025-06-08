@@ -23,14 +23,5 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install EF tooling
-        run: dotnet tool install --global dotnet-ef
-
-      - name: Restore dependencies
-        run: dotnet restore Backend.sln --ucr
-
-      - name: Build
-        run: dotnet build --ucr -c Release --no-restore
-
       - name: Testing
-        run: dotnet test --no-build --no-restore
+        run: dotnet test
