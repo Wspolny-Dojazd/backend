@@ -37,7 +37,6 @@ public class AuthServiceTests
     [Test]
     public async Task LoginAsync_WithValidCredentials_ReturnsAuthResponse()
     {
-        // Arrange
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -62,10 +61,8 @@ public class AuthServiceTests
         _passwordHasherMock.Setup(h => h.Verify(user.PasswordHash, request.Password)).Returns(true);
         _jwtTokenServiceMock.Setup(j => j.GenerateToken(user)).Returns("fake-token");
 
-        // Act
         var result = await _authService.LoginAsync(request);
 
-        // Assert
         Assert.That(result.Id, Is.EqualTo(user.Id));
         Assert.That(result.Username, Is.EqualTo(user.Username));
         Assert.That(result.Nickname, Is.EqualTo(user.Nickname));
@@ -77,7 +74,6 @@ public class AuthServiceTests
     [Test]
     public void LoginAsync_WithInvalidPassword_ThrowsInvalidCredentialsException()
     {
-        // Arrange
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -101,13 +97,12 @@ public class AuthServiceTests
         _userRepositoryMock.Setup(r => r.GetByEmailAsync(request.Email)).ReturnsAsync(user);
         _passwordHasherMock.Setup(h => h.Verify(user.PasswordHash, request.Password)).Returns(false);
 
-        // Act & Assert
         Assert.ThrowsAsync<InvalidCredentialsException>(() => _authService.LoginAsync(request));
     }
+
     [Test]
     public async Task RegisterAsync_WithValidData_AddsUserAndReturnsAuthResponse()
     {
-        // Arrange
         var request = new RegisterRequestDto
         {
             Username = "newuser",
@@ -116,8 +111,8 @@ public class AuthServiceTests
             Password = "secure-password"
         };
 
-        _userRepositoryMock.Setup(r => r.GetByEmailAsync(request.Email)).ReturnsAsync((User)null);
-        _userRepositoryMock.Setup(r => r.GetByUsernameAsync(request.Username)).ReturnsAsync((User)null);
+        _userRepositoryMock.Setup(r => r.GetByEmailAsync(request.Email)).ReturnsAsync((User?)null);
+        _userRepositoryMock.Setup(r => r.GetByUsernameAsync(request.Username)).ReturnsAsync((User?)null);
         _passwordHasherMock.Setup(h => h.Hash(request.Password)).Returns("hashed_pw");
         _jwtTokenServiceMock.Setup(j => j.GenerateToken(It.IsAny<User>())).Returns("token");
 
@@ -127,10 +122,8 @@ public class AuthServiceTests
             .Callback<User>(u => addedUser = u)
             .Returns(Task.CompletedTask);
 
-        // Act
         var result = await _authService.RegisterAsync(request);
 
-        // Assert
         Assert.That(addedUser, Is.Not.Null);
         Assert.That(addedUser.Username, Is.EqualTo(request.Username));
         Assert.That(addedUser.Email, Is.EqualTo(request.Email));
@@ -141,5 +134,4 @@ public class AuthServiceTests
         Assert.That(result.Token, Is.EqualTo("token"));
         Assert.That(result.RefreshToken, Is.Not.Null);
     }
-
 }

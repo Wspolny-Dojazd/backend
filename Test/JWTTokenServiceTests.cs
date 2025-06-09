@@ -14,15 +14,15 @@ public class JWTTokenServiceTests
     [SetUp]
     public void SetUp()
     {
-        var inMemorySettings = new[]
+        var settings = new Dictionary<string, string?>
         {
-            new KeyValuePair<string, string>("Jwt:Key", "test_secret_key_1234567890_ABCDEF!"), // 32+ chars
-            new KeyValuePair<string, string>("Jwt:Issuer", "TestIssuer"),
-            new KeyValuePair<string, string>("Jwt:Audience", "TestAudience")
+            { "Jwt:Key", "test_secret_key_1234567890_ABCDEF!" }, // 32+ chars
+            { "Jwt:Issuer", "TestIssuer" },
+            { "Jwt:Audience", "TestAudience" }
         };
 
         _configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(inMemorySettings)
+            .AddInMemoryCollection(settings!)
             .Build();
 
         _tokenService = new JWTTokenService(_configuration);
